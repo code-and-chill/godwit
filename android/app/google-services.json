@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1016836225987",
+    "firebase_url": "https://twitter-fx81029.firebaseio.com",
+    "project_id": "twitter-fx81029",
+    "storage_bucket": "twitter-fx81029.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016836225987:android:fb4c550b40c90ff4d39b76",
+        "android_client_info": {
+          "package_name": "io.raidnav.twitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016836225987-684e0q7260u1eof3706eufu8rivn8s2d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVejDLKTLcQPXxGFilbsLlYwk23_D_w-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016836225987-684e0q7260u1eof3706eufu8rivn8s2d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
