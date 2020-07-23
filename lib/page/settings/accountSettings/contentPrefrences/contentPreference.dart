@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsAppbar.dart';
@@ -33,19 +33,23 @@ class ContentPrefrencePage extends StatelessWidget {
           Divider(height: 0),
           SettingRowWidget(
             "Search settings",
-            navigateTo:null,
-            ),
-         
-          HeaderWidget('Languages', secondHeader: true,),
+            navigateTo: null,
+          ),
+          HeaderWidget(
+            'Languages',
+            secondHeader: true,
+          ),
           SettingRowWidget(
             "Recommendations",
             vPadding: 15,
             subtitle: "Select which language you want recommended Tweets, people, and trends to include",
-            ),
-          HeaderWidget('Safety', secondHeader: true,),
+          ),
+          HeaderWidget(
+            'Safety',
+            secondHeader: true,
+          ),
           SettingRowWidget("Blocked accounts"),
           SettingRowWidget("Muted accounts"),
-
         ],
       ),
     );

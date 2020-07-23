@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
+import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/page/common/usersListPage.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +12,7 @@ class FollowingListPage extends StatelessWidget {
         pageTitle: 'Following',
         userIdsList: state.profileUserModel.followingList,
         appBarIcon: AppIcon.follow,
-        emptyScreenText:
-            '${state?.profileUserModel?.userName ?? state.userModel.userName} isn\'t follow anyone',
+        emptyScreenText: '${state?.profileUserModel?.userName ?? state.userModel.userName} isn\'t follow anyone',
         emptyScreenSubTileText: 'When they do they\'ll be listed here.');
   }
 }

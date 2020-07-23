@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
-import 'package:twitter/page/common/widget/userListWidget.dart';
+import 'package:twitter/widgets/userListWidget.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/state/searchState.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -30,10 +30,7 @@ class UsersListPage extends StatelessWidget {
     List<User> userList;
     return Scaffold(
       backgroundColor: TwitterColor.mystic,
-      appBar: CustomAppBar(
-          isBackButton: true,
-          title: customTitleText(pageTitle),
-          icon: appBarIcon),
+      appBar: CustomAppBar(isBackButton: true, title: customTitleText(pageTitle), icon: appBarIcon),
       body: Consumer<SearchState>(
         builder: (context, state, child) {
           if (userIdsList != null && userIdsList.isNotEmpty) {

@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/model/feedModel.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/model/feed.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/state/feedState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:twitter/widgets/tweet/tweet.dart';
-import 'package:twitter/widgets/tweet/widgets/tweetBottomSheet.dart';
+import 'package:twitter/widgets/tweet/tweetBottomSheet.dart';
 import 'package:provider/provider.dart';
 
 class FeedPostDetail extends StatefulWidget {
@@ -38,21 +38,19 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
     );
   }
 
-  Widget _commentRow(FeedModel model) {
+  Widget _commentRow(Feed model) {
     return Tweet(
       model: model,
       type: TweetType.Reply,
-      trailing:
-          TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Reply),
+      trailing: TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Reply),
     );
   }
 
-  Widget _tweetDetail(FeedModel model) {
+  Widget _tweetDetail(Feed model) {
     return Tweet(
       model: model,
       type: TweetType.Detail,
-      trailing:
-          TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Detail),
+      trailing: TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Detail),
     );
   }
 
@@ -78,8 +76,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
     var state = Provider.of<FeedState>(context);
     return WillPopScope(
       onWillPop: () async {
-        Provider.of<FeedState>(context, listen: false)
-            .removeLastTweetDetail(postId);
+        Provider.of<FeedState>(context, listen: false).removeLastTweetDetail(postId);
         return Future.value(true);
       },
       child: Scaffold(
@@ -103,10 +100,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  state.tweetDetailModel == null ||
-                          state.tweetDetailModel.length == 0
-                      ? Container()
-                      : _tweetDetail(state.tweetDetailModel?.last),
+                  state.tweetDetailModel == null || state.tweetDetailModel.length == 0 ? Container() : _tweetDetail(state.tweetDetailModel?.last),
                   Container(
                     height: 6,
                     width: fullWidth(context),
@@ -117,9 +111,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
             ),
             SliverList(
               delegate: SliverChildListDelegate(
-                state.tweetReplyMap == null ||
-                        state.tweetReplyMap.length == 0 ||
-                        state.tweetReplyMap[postId] == null
+                state.tweetReplyMap == null || state.tweetReplyMap.length == 0 || state.tweetReplyMap[postId] == null
                     ? [
                         Container(
                           child: Center(
@@ -127,9 +119,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
                               ),
                         )
                       ]
-                    : state.tweetReplyMap[postId]
-                        .map((x) => _commentRow(x))
-                        .toList(),
+                    : state.tweetReplyMap[postId].map((x) => _commentRow(x)).toList(),
               ),
             )
           ],

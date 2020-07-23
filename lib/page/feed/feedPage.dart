@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/model/feedModel.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/model/feed.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/state/feedState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:twitter/widgets/newWidget/customLoader.dart';
 import 'package:twitter/widgets/newWidget/emptyList.dart';
 import 'package:twitter/widgets/tweet/tweet.dart';
-import 'package:twitter/widgets/tweet/widgets/tweetBottomSheet.dart';
+import 'package:twitter/widgets/tweet/tweetBottomSheet.dart';
 import 'package:provider/provider.dart';
 
 class FeedPage extends StatelessWidget {
-  const FeedPage({Key key, this.scaffoldKey, this.refreshIndicatorKey})
-      : super(key: key);
+  const FeedPage({Key key, this.scaffoldKey, this.refreshIndicatorKey}) : super(key: key);
 
   final GlobalKey<ScaffoldState> scaffoldKey;
 
@@ -68,8 +67,7 @@ class _FeedPageBody extends StatelessWidget {
 
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const _FeedPageBody({Key key, this.scaffoldKey, this.refreshIndicatorKey})
-      : super(key: key);
+  const _FeedPageBody({Key key, this.scaffoldKey, this.refreshIndicatorKey}) : super(key: key);
   Widget _getUserAvatar(BuildContext context) {
     var authState = Provider.of<AuthState>(context);
     return Padding(
@@ -80,8 +78,7 @@ class _FeedPageBody extends StatelessWidget {
           /// Open up sidebaar drawer on user avatar tap
           scaffoldKey.currentState.openDrawer();
         },
-        child:
-            customImage(context, authState.userModel?.profilePic, height: 30),
+        child: customImage(context, authState.userModel?.profilePic, height: 30),
       ),
     );
   }
@@ -91,7 +88,7 @@ class _FeedPageBody extends StatelessWidget {
     var authstate = Provider.of<AuthState>(context, listen: false);
     return Consumer<FeedState>(
       builder: (context, state, child) {
-        final List<FeedModel> list = state.getTweetList(authstate.userModel);
+        final List<Feed> list = state.getTweetList(authstate.userModel);
         return CustomScrollView(
           slivers: <Widget>[
             child,
@@ -110,8 +107,7 @@ class _FeedPageBody extends StatelessWidget {
                     ? SliverToBoxAdapter(
                         child: EmptyList(
                           'No Tweet added yet',
-                          subTitle:
-                              'When new Tweet added, they\'ll show up here \n Tap tweet button to add new',
+                          subTitle: 'When new Tweet added, they\'ll show up here \n Tap tweet button to add new',
                         ),
                       )
                     : SliverList(

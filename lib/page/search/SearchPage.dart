@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/state/searchState.dart';
 import 'package:twitter/widgets/customAppBar.dart';
 import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/newWidget/customUrlText.dart';
 import 'package:twitter/widgets/newWidget/title_text.dart';
 import 'package:provider/provider.dart';
 
@@ -81,10 +80,7 @@ class _UserTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Flexible(
-            child: TitleText(user.displayName,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                overflow: TextOverflow.ellipsis),
+            child: TitleText(user.displayName, fontSize: 16, fontWeight: FontWeight.w800, overflow: TextOverflow.ellipsis),
           ),
           SizedBox(width: 3),
           user.isVerified

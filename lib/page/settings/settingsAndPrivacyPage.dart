@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/state/authState.dart';
@@ -31,17 +31,14 @@ class SettingsAndPrivacyPage extends StatelessWidget {
             navigateTo: 'AccountSettingsPage',
           ),
           Divider(height: 0),
-          SettingRowWidget("Privacy and Policy",
-              navigateTo: 'PrivacyAndSaftyPage'),
+          SettingRowWidget("Privacy and Policy", navigateTo: 'PrivacyAndSaftyPage'),
           SettingRowWidget("Notification", navigateTo: 'NotificationPage'),
-          SettingRowWidget("Content prefrences",
-              navigateTo: 'ContentPrefrencePage'),
+          SettingRowWidget("Content prefrences", navigateTo: 'ContentPrefrencePage'),
           HeaderWidget(
             'General',
             secondHeader: true,
           ),
-          SettingRowWidget("Display and Sound",
-              navigateTo: 'DisplayAndSoundPage'),
+          SettingRowWidget("Display and Sound", navigateTo: 'DisplayAndSoundPage'),
           SettingRowWidget("Data usage", navigateTo: 'DataUsagePage'),
           SettingRowWidget("Accessibility", navigateTo: 'AccessibilityPage'),
           SettingRowWidget("Proxy", navigateTo: "ProxyPage"),
@@ -53,8 +50,7 @@ class SettingsAndPrivacyPage extends StatelessWidget {
             null,
             showDivider: false,
             vPadding: 10,
-            subtitle:
-                'These settings affect all of your Fwitter accounts on this devce.',
+            subtitle: 'These settings affect all of your Fwitter accounts on this devce.',
           )
         ],
       ),

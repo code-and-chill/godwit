@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsAppbar.dart';
@@ -18,7 +18,10 @@ class AccountSettingsPage extends StatelessWidget {
     var user = Provider.of<AuthState>(context).userModel ?? User();
     return Scaffold(
       backgroundColor: TwitterColor.white,
-      appBar: SettingsAppBar(title: 'Account',subtitle:user?.userName,),
+      appBar: SettingsAppBar(
+        title: 'Account',
+        subtitle: user?.userName,
+      ),
       body: ListView(
         children: <Widget>[
           HeaderWidget('Login and security'),
@@ -39,18 +42,21 @@ class AccountSettingsPage extends StatelessWidget {
           ),
           SettingRowWidget("Password"),
           SettingRowWidget("Security"),
-          HeaderWidget('Data and Permission', secondHeader: true,),
+          HeaderWidget(
+            'Data and Permission',
+            secondHeader: true,
+          ),
           SettingRowWidget("Country"),
           SettingRowWidget("Your Fwitter data"),
           SettingRowWidget("Apps and sessions"),
           SettingRowWidget(
             "Log out",
-             textColor:TwitterColor.ceriseRed,
-              onPressed: (){
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-                final state = Provider.of<AuthState>(context);
-                state.logoutCallback();
-             },
+            textColor: TwitterColor.ceriseRed,
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+              final state = Provider.of<AuthState>(context);
+              state.logoutCallback();
+            },
           ),
         ],
       ),

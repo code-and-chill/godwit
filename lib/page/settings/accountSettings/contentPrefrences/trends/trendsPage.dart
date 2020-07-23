@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/state/searchState.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -13,8 +13,7 @@ class TrendsPage extends StatelessWidget {
 
   TrendsPage({Key key}) : super(key: key);
 
-  void openBottomSheet(
-      BuildContext context, double height, Widget child) async {
+  void openBottomSheet(BuildContext context, double height, Widget child) async {
     await showModalBottomSheet(
       backgroundColor: Colors.transparent,
       context: context,
@@ -119,8 +118,7 @@ class TrendsPage extends StatelessWidget {
           ),
           SettingRowWidget(
             null,
-            subtitle:
-                'You can see what\'s trending in a specfic location by selecting which location appears in your Trending tab.',
+            subtitle: 'You can see what\'s trending in a specfic location by selecting which location appears in your Trending tab.',
             navigateTo: null,
             showDivider: false,
             vPadding: 12,

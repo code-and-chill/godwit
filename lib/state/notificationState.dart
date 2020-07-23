@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:twitter/helper/enum.dart';
+import 'package:twitter/utilities/enum.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:firebase_database/firebase_database.dart' as dabase;
-import 'package:twitter/model/feedModel.dart';
+import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/notificationModel.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/state/appState.dart';
@@ -13,7 +13,7 @@ class NotificationState extends AppState {
   String fcmToken;
   NotificationType _notificationType = NotificationType.NOT_DETERMINED;
   String notificationReciverId, notificationTweetId;
-  FeedModel notificationTweetModel;
+  Feed notificationTweetModel;
   NotificationType get notificationType => _notificationType;
   set setNotificationType(NotificationType type) {
     _notificationType = type;
@@ -52,23 +52,17 @@ class NotificationState extends AppState {
     try {
       loading = true;
       _notificationList = [];
-      kDatabase
-          .child('notification')
-          .child(userId)
-          .once()
-          .then((DataSnapshot snapshot) {
+      kDatabase.child('notification').child(userId).once().then((DataSnapshot snapshot) {
         if (snapshot.value != null) {
           var map = snapshot.value;
           if (map != null) {
             map.forEach((tweetKey, value) {
-              var model = NotificationModel.fromJson(
-                  tweetKey, value["updatedAt"], snapshot.value["type"]);
+              var model = NotificationModel.fromJson(tweetKey, value["updatedAt"], snapshot.value["type"]);
               _notificationList.add(model);
             });
             _notificationList.sort((x, y) {
               if (x.updatedAt != null && y.updatedAt != null) {
-                return DateTime.parse(y.updatedAt)
-                    .compareTo(DateTime.parse(x.updatedAt));
+                return DateTime.parse(y.updatedAt).compareTo(DateTime.parse(x.updatedAt));
               } else if (x.updatedAt != null) {
                 return 1;
               } else
@@ -85,12 +79,12 @@ class NotificationState extends AppState {
   }
 
   /// get `Tweet` present in notification
-  Future<FeedModel> getTweetDetail(String tweetId) async {
-    FeedModel _tweetDetail;
+  Future<Feed> getTweetDetail(String tweetId) async {
+    Feed _tweetDetail;
     var snapshot = await kDatabase.child('tweet').child(tweetId).once();
     if (snapshot.value != null) {
       var map = snapshot.value;
-      _tweetDetail = FeedModel.fromJson(map);
+      _tweetDetail = Feed.fromJson(map);
       _tweetDetail.key = snapshot.key;
       return _tweetDetail;
     } else {
@@ -124,8 +118,7 @@ class NotificationState extends AppState {
   /// Trigger when somneone like your tweet
   void _onNotificationAdded(Event event) {
     if (event.snapshot.value != null) {
-      var model = NotificationModel.fromJson(event.snapshot.key,
-          event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
+      var model = NotificationModel.fromJson(event.snapshot.key, event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
       if (_notificationList == null) {
         _notificationList = List<NotificationModel>();
       }
@@ -139,12 +132,9 @@ class NotificationState extends AppState {
   /// Trigger when someone changed his like preference
   void _onNotificationChanged(Event event) {
     if (event.snapshot.value != null) {
-      var model = NotificationModel.fromJson(event.snapshot.key,
-          event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
+      var model = NotificationModel.fromJson(event.snapshot.key, event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
       //update notification list
-      _notificationList
-          .firstWhere((x) => x.tweetKey == model.tweetKey)
-          .tweetKey = model.tweetKey;
+      _notificationList.firstWhere((x) => x.tweetKey == model.tweetKey).tweetKey = model.tweetKey;
       notifyListeners();
       print("Notification changed");
     }
@@ -153,8 +143,7 @@ class NotificationState extends AppState {
   /// Trigger when someone undo his like on tweet
   void _onNotificationRemoved(Event event) {
     if (event.snapshot.value != null) {
-      var model = NotificationModel.fromJson(event.snapshot.key,
-          event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
+      var model = NotificationModel.fromJson(event.snapshot.key, event.snapshot.value["updatedAt"], event.snapshot.value["type"]);
       // remove notification from list
       _notificationList.removeWhere((x) => x.tweetKey == model.tweetKey);
       notifyListeners();
@@ -198,11 +187,8 @@ class NotificationState extends AppState {
         notifyListeners();
       },
     );
-    _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(
-            sound: true, badge: true, alert: true, provisional: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
+    _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true, provisional: true));
+    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
     });
     _firebaseMessaging.getToken().then((String token) {

@@ -4,8 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:image_picker/image_picker.dart';
 
 Widget customTitleText(String title, {BuildContext context}) {
@@ -20,8 +20,7 @@ Widget customTitleText(String title, {BuildContext context}) {
   );
 }
 
-Widget heading(String heading,
-    {double horizontalPadding = 10, BuildContext context}) {
+Widget heading(String heading, {double horizontalPadding = 10, BuildContext context}) {
   double fontSize = 16;
   if (context != null) {
     fontSize = getDimention(context, 16);
@@ -30,8 +29,7 @@ Widget heading(String heading,
     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
     child: Text(
       heading,
-      style: AppTheme.apptheme.typography.dense.display1
-          .copyWith(fontSize: fontSize),
+      style: AppTheme.apptheme.typography.dense.display1.copyWith(fontSize: fontSize),
     ),
   );
 }
@@ -68,11 +66,7 @@ Widget customIcon(
     padding: EdgeInsets.only(bottom: istwitterIcon ? paddingIcon : 0),
     child: Icon(
       IconData(icon,
-          fontFamily: istwitterIcon
-              ? 'TwitterIcon'
-              : isFontAwesomeRegular
-                  ? 'AwesomeRegular'
-                  : isFontAwesomeSolid ? 'AwesomeSolid' : 'Fontello'),
+          fontFamily: istwitterIcon ? 'TwitterIcon' : isFontAwesomeRegular ? 'AwesomeRegular' : isFontAwesomeSolid ? 'AwesomeSolid' : 'Fontello'),
       size: size,
       color: isEnable ? Theme.of(context).primaryColor : iconColor,
     ),
@@ -134,8 +128,7 @@ Widget customText(String msg,
     );
   } else {
     if (context != null && style != null) {
-      var fontSize =
-          style.fontSize ?? Theme.of(context).textTheme.body1.fontSize;
+      var fontSize = style.fontSize ?? Theme.of(context).textTheme.body1.fontSize;
       style = style.copyWith(
         fontSize: fontSize - (fullWidth(context) <= 375 ? 2 : 0),
       );
@@ -165,7 +158,7 @@ Widget customImage(
     child: CircleAvatar(
       maxRadius: height / 2,
       backgroundColor: Theme.of(context).cardColor,
-      backgroundImage: customAdvanceNetworkImage(path ?? dummyProfilePic),
+      backgroundImage: customAdvanceNetworkImage(path ?? mockProfilePicture),
     ),
   );
 }
@@ -221,7 +214,7 @@ SizedBox sizedBox({double height = 5, String title}) {
 Widget customNetworkImage(String path, {BoxFit fit = BoxFit.contain}) {
   return CachedNetworkImage(
     fit: fit,
-    imageUrl: path ?? dummyProfilePic,
+    imageUrl: path ?? mockProfilePicture,
     imageBuilder: (context, imageProvider) => Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -240,38 +233,26 @@ Widget customNetworkImage(String path, {BoxFit fit = BoxFit.contain}) {
 
 dynamic customAdvanceNetworkImage(String path) {
   if (path == null) {
-    path = dummyProfilePic;
+    path = mockProfilePicture;
   }
   return CachedNetworkImageProvider(
-    path ?? dummyProfilePic,
+    path ?? mockProfilePicture,
   );
 }
 
 void showAlert(BuildContext context,
-    {@required Function onPressedOk,
-    @required String title,
-    String okText = 'OK',
-    String cancelText = 'Cancel'}) async {
+    {@required Function onPressedOk, @required String title, String okText = 'OK', String cancelText = 'Cancel'}) async {
   showDialog(
       context: context,
       builder: (context) {
-        return customAlert(context,
-            onPressedOk: onPressedOk,
-            title: title,
-            okText: okText,
-            cancelText: cancelText);
+        return customAlert(context, onPressedOk: onPressedOk, title: title, okText: okText, cancelText: cancelText);
       });
 }
 
 Widget customAlert(BuildContext context,
-    {@required Function onPressedOk,
-    @required String title,
-    String okText = 'OK',
-    String cancelText = 'Cancel'}) {
+    {@required Function onPressedOk, @required String title, String okText = 'OK', String cancelText = 'Cancel'}) {
   return AlertDialog(
-    title: Text('Alert',
-        style: TextStyle(
-            fontSize: getDimention(context, 25), color: Colors.black54)),
+    title: Text('Alert', style: TextStyle(fontSize: getDimention(context, 25), color: Colors.black54)),
     content: customText(title, style: TextStyle(color: Colors.black45)),
     actions: <Widget>[
       FlatButton(
@@ -293,8 +274,7 @@ Widget customAlert(BuildContext context,
   );
 }
 
-void customSnackBar(GlobalKey<ScaffoldState> _scaffoldKey, String msg,
-    {double height = 30, Color backgroundColor = Colors.black}) {
+void customSnackBar(GlobalKey<ScaffoldState> _scaffoldKey, String msg, {double height = 30, Color backgroundColor = Colors.black}) {
   if (_scaffoldKey == null || _scaffoldKey.currentState == null) {
     return;
   }
@@ -311,8 +291,7 @@ void customSnackBar(GlobalKey<ScaffoldState> _scaffoldKey, String msg,
   _scaffoldKey.currentState.showSnackBar(snackBar);
 }
 
-Widget emptyListWidget(BuildContext context, String title,
-    {String subTitle, String image = 'emptyImage.png'}) {
+Widget emptyListWidget(BuildContext context, String title, {String subTitle, String image = 'emptyImage.png'}) {
   return Container(
     color: Color(0xfffafafa),
     child: Center(
@@ -330,11 +309,7 @@ Widget emptyListWidget(BuildContext context, String title,
                   offset: Offset(0, 0),
                   color: Color(0xffe2e5ed),
                 ),
-                BoxShadow(
-                    blurRadius: 50,
-                    offset: Offset(10, 0),
-                    color: Color(0xffffffff),
-                    spreadRadius: -5),
+                BoxShadow(blurRadius: 50, offset: Offset(10, 0), color: Color(0xffffffff), spreadRadius: -5),
               ],
               shape: BoxShape.circle,
             ),
@@ -348,19 +323,11 @@ Widget emptyListWidget(BuildContext context, String title,
               ),
               customText(
                 title,
-                style: Theme.of(context)
-                    .typography
-                    .dense
-                    .display1
-                    .copyWith(color: Color(0xff9da9c7)),
+                style: Theme.of(context).typography.dense.display1.copyWith(color: Color(0xff9da9c7)),
               ),
               customText(
                 subTitle,
-                style: Theme.of(context)
-                    .typography
-                    .dense
-                    .body2
-                    .copyWith(color: Color(0xffabb8d6)),
+                style: Theme.of(context).typography.dense.body2.copyWith(color: Color(0xffabb8d6)),
               ),
             ],
           )
@@ -384,8 +351,7 @@ Widget loader() {
   }
 }
 
-Widget customSwitcherWidget(
-    {@required child, Duration duraton = const Duration(milliseconds: 500)}) {
+Widget customSwitcherWidget({@required child, Duration duraton = const Duration(milliseconds: 500)}) {
   return AnimatedSwitcher(
     duration: duraton,
     transitionBuilder: (Widget child, Animation<double> animation) {
@@ -411,15 +377,8 @@ Widget customExtendedText(String text, bool isExpanded,
         vsync: provider,
         duration: Duration(milliseconds: (isAnimated ? 500 : 0)),
         child: ConstrainedBox(
-          constraints: isExpanded
-              ? BoxConstraints()
-              : BoxConstraints(maxHeight: wordLimit == 100 ? 100.0 : 260.0),
-          child: customText(text,
-              softwrap: true,
-              overflow: TextOverflow.fade,
-              style: style,
-              context: context,
-              textAlign: TextAlign.start),
+          constraints: isExpanded ? BoxConstraints() : BoxConstraints(maxHeight: wordLimit == 100 ? 100.0 : 260.0),
+          child: customText(text, softwrap: true, overflow: TextOverflow.fade, style: style, context: context, textAlign: TextAlign.start),
         ),
       ),
       text != null && text.length > wordLimit
@@ -449,12 +408,7 @@ double getDimention(context, double unit) {
   }
 }
 
-Widget customListTile(BuildContext context,
-    {Widget title,
-    Widget subtitle,
-    Widget leading,
-    Widget trailing,
-    Function onTap}) {
+Widget customListTile(BuildContext context, {Widget title, Widget subtitle, Widget leading, Widget trailing, Function onTap}) {
   return customInkWell(
     context: context,
     onPressed: () {
@@ -523,8 +477,7 @@ openImagePicker(BuildContext context, Function onImageSelected) {
                     color: Theme.of(context).primaryColor,
                     child: Text(
                       'Use Camera',
-                      style:
-                          TextStyle(color: Theme.of(context).backgroundColor),
+                      style: TextStyle(color: Theme.of(context).backgroundColor),
                     ),
                     onPressed: () {
                       getImage(context, ImageSource.camera, onImageSelected);
@@ -539,8 +492,7 @@ openImagePicker(BuildContext context, Function onImageSelected) {
                     color: Theme.of(context).primaryColor,
                     child: Text(
                       'Use Gallery',
-                      style:
-                          TextStyle(color: Theme.of(context).backgroundColor),
+                      style: TextStyle(color: Theme.of(context).backgroundColor),
                     ),
                     onPressed: () {
                       getImage(context, ImageSource.gallery, onImageSelected);

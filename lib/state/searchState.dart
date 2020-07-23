@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/model/user.dart';
 import 'appState.dart';
 
@@ -35,8 +35,7 @@ class SearchState extends AppState {
                 _userlist.add(model);
                 _userFilterlist.add(model);
               });
-              _userFilterlist
-                  .sort((x, y) => y.followers.compareTo(x.followers));
+              _userFilterlist.sort((x, y) => y.followers.compareTo(x.followers));
             }
           } else {
             _userlist = null;
@@ -64,9 +63,7 @@ class SearchState extends AppState {
   /// This function call when search fiels text change.
   /// User list on  search field get filter by `name` string
   void filterByUsername(String name) {
-    if (name.isEmpty &&
-        _userlist != null &&
-        _userlist.length != _userFilterlist.length) {
+    if (name.isEmpty && _userlist != null && _userlist.length != _userFilterlist.length) {
       _userFilterlist = List.from(_userlist);
     }
     // return if userList is empty or null
@@ -76,11 +73,7 @@ class SearchState extends AppState {
     }
     // sortBy userlist on the basis of username
     else if (name != null) {
-      _userFilterlist = _userlist
-          .where((x) =>
-              x.userName != null &&
-              x.userName.toLowerCase().contains(name.toLowerCase()))
-          .toList();
+      _userFilterlist = _userlist.where((x) => x.userName != null && x.userName.toLowerCase().contains(name.toLowerCase())).toList();
     }
     notifyListeners();
   }
@@ -104,20 +97,17 @@ class SearchState extends AppState {
         return "User with max follower";
 
       case SortUser.ByNewest:
-        _userFilterlist.sort((x, y) =>
-            DateTime.parse(y.createdAt).compareTo(DateTime.parse(x.createdAt)));
+        _userFilterlist.sort((x, y) => DateTime.parse(y.createdAt).compareTo(DateTime.parse(x.createdAt)));
         notifyListeners();
         return "Newest user first";
 
       case SortUser.ByOldest:
-        _userFilterlist.sort((x, y) =>
-            DateTime.parse(x.createdAt).compareTo(DateTime.parse(y.createdAt)));
+        _userFilterlist.sort((x, y) => DateTime.parse(x.createdAt).compareTo(DateTime.parse(y.createdAt)));
         notifyListeners();
         return "Oldest user first";
 
       case SortUser.ByVerified:
-        _userFilterlist.sort((x, y) =>
-            y.isVerified.toString().compareTo(x.isVerified.toString()));
+        _userFilterlist.sort((x, y) => y.isVerified.toString().compareTo(x.isVerified.toString()));
         notifyListeners();
         return "Verified user first";
 
@@ -125,19 +115,18 @@ class SearchState extends AppState {
         return "Unknown";
     }
   }
-  /// Return user list relative to provided `userIds` 
-  /// Method is used on 
+
+  /// Return user list relative to provided `userIds`
+  /// Method is used on
   List<User> userList = [];
-   List<User> getuserDetail(List<String> userIds){
-     final list = _userlist.where((x) {
-       if(userIds.contains(x.key)){
-         return true;
-       }
-       else{
-         return false;
-       }
-     
-     }).toList();
+  List<User> getuserDetail(List<String> userIds) {
+    final list = _userlist.where((x) {
+      if (userIds.contains(x.key)) {
+        return true;
+      } else {
+        return false;
+      }
+    }).toList();
     return list;
   }
 }

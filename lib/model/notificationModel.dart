@@ -7,7 +7,7 @@ class NotificationModel {
     this.tweetKey,
   });
 
-  NotificationModel.fromJson(String tweetId, String updatedAt,String type) {
+  NotificationModel.fromJson(String tweetId, String updatedAt, String type) {
     tweetKey = tweetId;
     this.updatedAt = updatedAt;
     this.type = type;

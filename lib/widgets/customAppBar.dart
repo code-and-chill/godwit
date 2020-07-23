@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:provider/provider.dart';
 
@@ -20,8 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.submitButtonText,
       this.isSubmitDisable = true,
       this.isbootomLine = true,
-      this.onSearchChanged
-      })
+      this.onSearchChanged})
       : super(key: key);
 
   final List<Widget> actions;
@@ -44,26 +43,25 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _searchField() {
     return Container(
-      height: 50,
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: TextField(
-        onChanged: onSearchChanged,
-        controller: textController,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderSide: BorderSide(width: 0, style: BorderStyle.none),
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(25.0),
+        height: 50,
+        padding: EdgeInsets.symmetric(vertical: 5),
+        child: TextField(
+          onChanged: onSearchChanged,
+          controller: textController,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(width: 0, style: BorderStyle.none),
+              borderRadius: const BorderRadius.all(
+                const Radius.circular(25.0),
+              ),
             ),
+            hintText: 'Search..',
+            fillColor: AppColor.extraLightGrey,
+            filled: true,
+            focusColor: Colors.white,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
           ),
-          hintText: 'Search..',
-          fillColor: AppColor.extraLightGrey,
-          filled: true,
-          focusColor: Colors.white,
-          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-         ),
-      )
-    );
+        ));
   }
 
   List<Widget> _getActionButtons(BuildContext context) {
@@ -81,15 +79,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                   decoration: BoxDecoration(
-                    color: !isSubmitDisable
-                        ? Theme.of(context).primaryColor
-                        : Theme.of(context).primaryColor.withAlpha(150),
+                    color: !isSubmitDisable ? Theme.of(context).primaryColor : Theme.of(context).primaryColor.withAlpha(150),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     submitButtonText,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
+                    style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
@@ -100,11 +95,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   onPressed: () {
                     if (onActionPressed != null) onActionPressed();
                   },
-                  icon: customIcon(context,
-                      icon: icon,
-                      istwitterIcon: true,
-                      iconColor: AppColor.primary,
-                      size: 25),
+                  icon: customIcon(context, icon: icon, istwitterIcon: true, iconColor: AppColor.primary, size: 25),
                 )
     ];
   }
@@ -118,8 +109,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: () {
           scaffoldKey.currentState.openDrawer();
         },
-        child:
-            customImage(context, authState.userModel?.profilePic, height: 30),
+        child: customImage(context, authState.userModel?.profilePic, height: 30),
       ),
     );
   }
@@ -143,9 +133,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: _getActionButtons(context),
       bottom: PreferredSize(
         child: Container(
-          color: isbootomLine
-              ? Colors.grey.shade200
-              : Theme.of(context).backgroundColor,
+          color: isbootomLine ? Colors.grey.shade200 : Theme.of(context).backgroundColor,
           height: 1.0,
         ),
         preferredSize: Size.fromHeight(0.0),

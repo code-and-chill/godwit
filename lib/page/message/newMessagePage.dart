@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/model/user.dart';
-import 'package:twitter/state/chats/chatState.dart';
+import 'package:twitter/state/chatState.dart';
 import 'package:twitter/state/searchState.dart';
 import 'package:twitter/widgets/customAppBar.dart';
 import 'package:twitter/widgets/customWidgets.dart';
@@ -40,21 +40,12 @@ class _NewMessagePageState extends State<NewMessagePage> {
       title: Row(
         children: <Widget>[
           ConstrainedBox(
-            constraints:
-                BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) - 104),
-            child: TitleText(user.displayName,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                overflow: TextOverflow.ellipsis),
+            constraints: BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) - 104),
+            child: TitleText(user.displayName, fontSize: 16, fontWeight: FontWeight.w800, overflow: TextOverflow.ellipsis),
           ),
           SizedBox(width: 3),
           user.isVerified
-              ? customIcon(context,
-                  icon: AppIcon.blueTick,
-                  istwitterIcon: true,
-                  iconColor: AppColor.primary,
-                  size: 13,
-                  paddingIcon: 3)
+              ? customIcon(context, icon: AppIcon.blueTick, istwitterIcon: true, iconColor: AppColor.primary, size: 13, paddingIcon: 3)
               : SizedBox(width: 0),
         ],
       ),

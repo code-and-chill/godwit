@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 
 class RippleButton extends StatelessWidget {
   final Widget child;
@@ -20,10 +20,8 @@ class RippleButton extends StatelessWidget {
           top: 0,
           bottom: 0,
           child: FlatButton(
-            splashColor: splashColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: borderRadius
-            ),
+              splashColor: splashColor,
+              shape: RoundedRectangleBorder(borderRadius: borderRadius),
               onPressed: () {
                 if (onPressed != null) {
                   onPressed();

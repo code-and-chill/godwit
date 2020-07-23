@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsAppbar.dart';
@@ -39,8 +39,7 @@ class NotificationPage extends StatelessWidget {
           SettingRowWidget(
             "Unread notification count badge",
             showCheckBox: false,
-            subtitle:
-                'Display a badge with the number of notifications waiting for you inside the Fwitter app.',
+            subtitle: 'Display a badge with the number of notifications waiting for you inside the Fwitter app.',
           ),
           SettingRowWidget("Push notifications"),
           SettingRowWidget("SMS notifications"),

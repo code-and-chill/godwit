@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/widgets/newWidget/customUrlText.dart';
 
 class HeaderWidget extends StatelessWidget {
   final String title;
   final bool secondHeader;
-  const HeaderWidget(this.title,{Key key, this.secondHeader = false}) : super(key: key);
+  const HeaderWidget(this.title, {Key key, this.secondHeader = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +15,7 @@ class HeaderWidget extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: UrlText(
         text: title ?? '',
-        style: TextStyle(
-            fontSize: 20,
-            color: AppColor.darkGrey,
-            fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: 20, color: AppColor.darkGrey, fontWeight: FontWeight.w700),
       ),
     );
   }

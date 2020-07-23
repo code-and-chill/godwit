@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -126,8 +126,7 @@ class AccessibilityPage extends StatelessWidget {
           HeaderWidget('Vision'),
           SettingRowWidget(
             "Compose image descriptions",
-            subtitle:
-                'Adds the ability to describe images for the visually impaired.',
+            subtitle: 'Adds the ability to describe images for the visually impaired.',
             vPadding: 15,
             showCheckBox: false,
             onPressed: () {
@@ -141,8 +140,7 @@ class AccessibilityPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Reduce Motion",
-            subtitle:
-                'Limit the amount of in-app animations, including live engagement counts.',
+            subtitle: 'Limit the amount of in-app animations, including live engagement counts.',
             vPadding: 15,
             showCheckBox: false,
             onPressed: () {

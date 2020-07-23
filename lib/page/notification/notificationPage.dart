@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
-import 'package:twitter/model/feedModel.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/notificationModel.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/state/authState.dart';
@@ -63,13 +63,12 @@ class NotificationPageBody extends StatelessWidget {
     var state = Provider.of<NotificationState>(context);
     return FutureBuilder(
       future: state.getTweetDetail(model.tweetKey),
-      builder: (BuildContext context, AsyncSnapshot<FeedModel> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Feed> snapshot) {
         if (snapshot.hasData) {
           return NotificationTile(
             model: snapshot.data,
           );
-        } else if (snapshot.connectionState == ConnectionState.waiting ||
-            snapshot.connectionState == ConnectionState.active) {
+        } else if (snapshot.connectionState == ConnectionState.waiting || snapshot.connectionState == ConnectionState.active) {
           return SizedBox(
             height: 4,
             child: LinearProgressIndicator(),
@@ -111,7 +110,7 @@ class NotificationPageBody extends StatelessWidget {
 }
 
 class NotificationTile extends StatelessWidget {
-  final FeedModel model;
+  final Feed model;
   const NotificationTile({Key key, this.model}) : super(key: key);
   Widget _userList(BuildContext context, List<String> list) {
     // List<String> names = [];
@@ -142,11 +141,7 @@ class NotificationTile extends StatelessWidget {
         Row(
           children: <Widget>[
             SizedBox(width: 20),
-            customIcon(context,
-                icon: AppIcon.heartFill,
-                iconColor: TwitterColor.ceriseRed,
-                istwitterIcon: true,
-                size: 25),
+            customIcon(context, icon: AppIcon.heartFill, iconColor: TwitterColor.ceriseRed, istwitterIcon: true, size: 25),
             SizedBox(width: 10),
             Row(children: avaterList),
           ],
@@ -166,8 +161,7 @@ class NotificationTile extends StatelessWidget {
     return col;
   }
 
-  Widget _userAvater(
-      String userId, NotificationState state, ValueChanged<String> name) {
+  Widget _userAvater(String userId, NotificationState state, ValueChanged<String> name) {
     return FutureBuilder(
       future: state.getuserDetail(userId),
       //  initialData: InitialData,
@@ -178,8 +172,7 @@ class NotificationTile extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 3),
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context)
-                    .pushNamed('/ProfilePage/' + snapshot.data?.userId);
+                Navigator.of(context).pushNamed('/ProfilePage/' + snapshot.data?.userId);
               },
               child: customImage(context, snapshot.data.profilePic, height: 30),
             ),
@@ -193,9 +186,7 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var description = model.description.length > 150
-        ? model.description.substring(0, 150) + '...'
-        : model.description;
+    var description = model.description.length > 150 ? model.description.substring(0, 150) + '...' : model.description;
     return Column(
       children: <Widget>[
         Container(
@@ -207,7 +198,7 @@ class NotificationTile extends StatelessWidget {
               state.getpostDetailFromDatabase(null, model: model);
               Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
             },
-            title: _userList(context, model.likeList),
+            title: _userList(context, model.likes),
             subtitle: Padding(
               padding: EdgeInsets.only(left: 60),
               child: UrlText(

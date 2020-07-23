@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/page/feed/feedPage.dart';
 import 'package:twitter/page/message/chatListPage.dart';
 import 'package:twitter/state/appState.dart';
 import 'package:twitter/state/authState.dart';
-import 'package:twitter/state/chats/chatState.dart';
+import 'package:twitter/state/chatState.dart';
 import 'package:twitter/state/feedState.dart';
 import 'package:twitter/state/notificationState.dart';
 import 'package:twitter/state/searchState.dart';
@@ -66,10 +66,12 @@ class _HomePageState extends State<HomePage> {
     final chatState = Provider.of<ChatState>(context, listen: false);
     final state = Provider.of<AuthState>(context, listen: false);
     chatState.databaseInit(state.userId, state.userId);
-    /// It will update fcm token in database 
+
+    /// It will update fcm token in database
     /// fcm token is required to send firebase notification
     state.updateFCMToken();
-    /// It get fcm server key 
+
+    /// It get fcm server key
     /// Server key is required to configure firebase notification
     /// Without fcm server notification can not be sent
     chatState.getFCMServerKey();
@@ -89,8 +91,7 @@ class _HomePageState extends State<HomePage> {
       /// Redirect to chat screen
       /// `notificationSenderId` is a user id who sends you a message
       /// `notificationReciverId` is a your user id.
-      if (state.notificationType == NotificationType.Message &&
-          state.notificationReciverId == authstate.userModel.userId) {
+      if (state.notificationType == NotificationType.Message && state.notificationReciverId == authstate.userModel.userId) {
         state.setNotificationType = null;
         state.getuserDetail(state.notificationSenderId).then((user) {
           cprint("Opening user chat screen");
@@ -104,11 +105,9 @@ class _HomePageState extends State<HomePage> {
       /// If you are mentioned in tweet then it redirect to user profile who mentioed you in a tweet
       /// You can check that tweet on his profile timeline
       /// `notificationSenderId` is user id who tagged you in a tweet
-      else if (state.notificationType == NotificationType.Mention &&
-          state.notificationReciverId == authstate.userModel.userId) {
+      else if (state.notificationType == NotificationType.Mention && state.notificationReciverId == authstate.userModel.userId) {
         state.setNotificationType = null;
-        Navigator.of(context)
-            .pushNamed('/ProfilePage/' + state.notificationSenderId);
+        Navigator.of(context).pushNamed('/ProfilePage/' + state.notificationSenderId);
       }
     });
   }

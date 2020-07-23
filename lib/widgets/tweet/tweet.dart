@@ -1,33 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
-import 'package:twitter/model/feedModel.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/model/feed.dart';
 import 'package:twitter/state/feedState.dart';
 import 'package:twitter/widgets/newWidget/customUrlText.dart';
 import 'package:twitter/widgets/newWidget/title_text.dart';
-import 'package:twitter/widgets/tweet/widgets/parentTweet.dart';
-import 'package:twitter/widgets/tweet/widgets/tweetIconsRow.dart';
+import 'package:twitter/widgets/tweet/parentTweet.dart';
+import 'package:twitter/widgets/tweet/tweetIconsRow.dart';
 import 'package:provider/provider.dart';
 
 import '../customWidgets.dart';
-import 'widgets/retweetWidget.dart';
-import 'widgets/tweetImage.dart';
+import 'retweetWidget.dart';
+import 'tweetImage.dart';
 
 class Tweet extends StatelessWidget {
-  final FeedModel model;
+  final Feed model;
   final Widget trailing;
   final TweetType type;
   final bool isDisplayOnProfile;
-  const Tweet(
-      {Key key,
-      this.model,
-      this.trailing,
-      this.type = TweetType.Tweet,
-      this.isDisplayOnProfile = false})
-      : super(key: key);
+  const Tweet({Key key, this.model, this.trailing, this.type = TweetType.Tweet, this.isDisplayOnProfile = false}) : super(key: key);
 
   void onLongPressedTweet(BuildContext context) {
     if (type == TweetType.Detail || type == TweetType.ParentTweet) {
@@ -89,9 +83,7 @@ class Tweet extends StatelessWidget {
             children: <Widget>[
               Container(
                 padding: EdgeInsets.only(
-                  top: type == TweetType.Tweet || type == TweetType.Reply
-                      ? 12
-                      : 0,
+                  top: type == TweetType.Tweet || type == TweetType.Reply ? 12 : 0,
                 ),
                 child: type == TweetType.Tweet || type == TweetType.Reply
                     ? _TweetBody(
@@ -114,17 +106,15 @@ class Tweet extends StatelessWidget {
                   type: type,
                 ),
               ),
-              model.childRetwetkey == null
+              model.childRetweetKey == null
                   ? SizedBox.shrink()
                   : RetweetWidget(
-                      childRetwetkey: model.childRetwetkey,
+                      childRetwetkey: model.childRetweetKey,
                       type: type,
-                      isImageAvailable:
-                          model.imagePath != null && model.imagePath.isNotEmpty,
+                      isImageAvailable: model.imagePath != null && model.imagePath.isNotEmpty,
                     ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: type == TweetType.Detail ? 10 : 60),
+                padding: EdgeInsets.only(left: type == TweetType.Detail ? 10 : 60),
                 child: TweetIconsRow(
                   type: type,
                   model: model,
@@ -134,9 +124,7 @@ class Tweet extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              type == TweetType.ParentTweet
-                  ? SizedBox.shrink()
-                  : Divider(height: .5, thickness: .5)
+              type == TweetType.ParentTweet ? SizedBox.shrink() : Divider(height: .5, thickness: .5)
             ],
           ),
         ),
@@ -146,23 +134,16 @@ class Tweet extends StatelessWidget {
 }
 
 class _TweetBody extends StatelessWidget {
-  final FeedModel model;
+  final Feed model;
   final Widget trailing;
   final TweetType type;
   final bool isDisplayOnProfile;
-  const _TweetBody(
-      {Key key, this.model, this.trailing, this.type, this.isDisplayOnProfile})
-      : super(key: key);
+  const _TweetBody({Key key, this.model, this.trailing, this.type, this.isDisplayOnProfile}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    double descriptionFontSize = type == TweetType.Tweet
-        ? 15
-        : type == TweetType.Detail || type == TweetType.ParentTweet ? 18 : 14;
-    FontWeight descriptionFontWeight =
-        type == TweetType.Tweet || type == TweetType.Tweet
-            ? FontWeight.w400
-            : FontWeight.w400;
+    double descriptionFontSize = type == TweetType.Tweet ? 15 : type == TweetType.Detail || type == TweetType.ParentTweet ? 18 : 14;
+    FontWeight descriptionFontWeight = type == TweetType.Tweet || type == TweetType.Tweet ? FontWeight.w400 : FontWeight.w400;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -195,12 +176,8 @@ class _TweetBody extends StatelessWidget {
                     child: Row(
                       children: <Widget>[
                         ConstrainedBox(
-                          constraints: BoxConstraints(
-                              minWidth: 0, maxWidth: fullWidth(context) * .5),
-                          child: TitleText(model.user.displayName,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              overflow: TextOverflow.ellipsis),
+                          constraints: BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) * .5),
+                          child: TitleText(model.user.displayName, fontSize: 16, fontWeight: FontWeight.w800, overflow: TextOverflow.ellipsis),
                         ),
                         SizedBox(width: 3),
                         model.user.isVerified
@@ -224,8 +201,7 @@ class _TweetBody extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 4),
-                        customText('· ${getChatTime(model.createdAt)}',
-                            style: userNameStyle),
+                        customText('· ${getChatTime(model.createdAt)}', style: userNameStyle),
                       ],
                     ),
                   ),
@@ -237,14 +213,8 @@ class _TweetBody extends StatelessWidget {
                 onHashTagPressed: (tag) {
                   cprint(tag);
                 },
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: descriptionFontSize,
-                    fontWeight: descriptionFontWeight),
-                urlStyle: TextStyle(
-                    color: Colors.blue,
-                    fontSize: descriptionFontSize,
-                    fontWeight: descriptionFontWeight),
+                style: TextStyle(color: Colors.black, fontSize: descriptionFontSize, fontWeight: descriptionFontWeight),
+                urlStyle: TextStyle(color: Colors.blue, fontSize: descriptionFontSize, fontWeight: descriptionFontWeight),
               ),
             ],
           ),
@@ -256,37 +226,25 @@ class _TweetBody extends StatelessWidget {
 }
 
 class _TweetDetailBody extends StatelessWidget {
-  final FeedModel model;
+  final Feed model;
   final Widget trailing;
   final TweetType type;
   final bool isDisplayOnProfile;
-  const _TweetDetailBody(
-      {Key key, this.model, this.trailing, this.type, this.isDisplayOnProfile})
-      : super(key: key);
+  const _TweetDetailBody({Key key, this.model, this.trailing, this.type, this.isDisplayOnProfile}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double descriptionFontSize = type == TweetType.Tweet
         ? getDimention(context, 15)
-        : type == TweetType.Detail
-            ? getDimention(context, 18)
-            : type == TweetType.ParentTweet ? getDimention(context, 14) : 10;
+        : type == TweetType.Detail ? getDimention(context, 18) : type == TweetType.ParentTweet ? getDimention(context, 14) : 10;
 
-    FontWeight descriptionFontWeight =
-        type == TweetType.Tweet || type == TweetType.Tweet
-            ? FontWeight.w300
-            : FontWeight.w400;
+    FontWeight descriptionFontWeight = type == TweetType.Tweet || type == TweetType.Tweet ? FontWeight.w300 : FontWeight.w400;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        model.parentkey != null &&
-                model.childRetwetkey == null &&
-                type != TweetType.ParentTweet
-            ? ParentTweetWidget(
-                childRetwetkey: model.parentkey,
-                isImageAvailable: false,
-                trailing: trailing)
+        model.parentKey != null && model.childRetweetKey == null && type != TweetType.ParentTweet
+            ? ParentTweetWidget(childRetwetkey: model.parentKey, isImageAvailable: false, trailing: trailing)
             : SizedBox.shrink(),
         Container(
           width: fullWidth(context),
@@ -297,20 +255,15 @@ class _TweetDetailBody extends StatelessWidget {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 leading: GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('/ProfilePage/' + model?.userId);
+                    Navigator.of(context).pushNamed('/ProfilePage/' + model?.userId);
                   },
                   child: customImage(context, model.user.profilePic),
                 ),
                 title: Row(
                   children: <Widget>[
                     ConstrainedBox(
-                      constraints: BoxConstraints(
-                          minWidth: 0, maxWidth: fullWidth(context) * .5),
-                      child: TitleText(model.user.displayName,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          overflow: TextOverflow.ellipsis),
+                      constraints: BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) * .5),
+                      child: TitleText(model.user.displayName, fontSize: 16, fontWeight: FontWeight.w800, overflow: TextOverflow.ellipsis),
                     ),
                     SizedBox(width: 3),
                     model.user.isVerified
@@ -328,14 +281,11 @@ class _TweetDetailBody extends StatelessWidget {
                     ),
                   ],
                 ),
-                subtitle:
-                    customText('${model.user.userName}', style: userNameStyle),
+                subtitle: customText('${model.user.userName}', style: userNameStyle),
                 trailing: trailing,
               ),
               Padding(
-                padding: type == TweetType.ParentTweet
-                    ? EdgeInsets.only(left: 80, right: 16)
-                    : EdgeInsets.symmetric(horizontal: 16),
+                padding: type == TweetType.ParentTweet ? EdgeInsets.only(left: 80, right: 16) : EdgeInsets.symmetric(horizontal: 16),
                 child: UrlText(
                   text: model.description,
                   onHashTagPressed: (tag) {

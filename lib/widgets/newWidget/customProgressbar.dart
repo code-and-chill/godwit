@@ -23,17 +23,14 @@ class CustomProgressbar extends StatefulWidget {
   _CustomProgressbarState createState() => _CustomProgressbarState();
 }
 
-class _CustomProgressbarState extends State<CustomProgressbar>
-    with SingleTickerProviderStateMixin {
+class _CustomProgressbarState extends State<CustomProgressbar> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation<double> _progressTween;
 
   @override
   void initState() {
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 500));
-    _progressTween = Tween<double>(begin: widget.progress, end: widget.progress)
-        .animate(_animationController);
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _progressTween = Tween<double>(begin: widget.progress, end: widget.progress).animate(_animationController);
     super.initState();
   }
 
@@ -46,9 +43,7 @@ class _CustomProgressbarState extends State<CustomProgressbar>
   @override
   void didUpdateWidget(CustomProgressbar oldWidget) {
     setState(() {
-      _progressTween =
-          Tween<double>(begin: _progressTween.value, end: widget.progress)
-              .animate(_animationController);
+      _progressTween = Tween<double>(begin: _progressTween.value, end: widget.progress).animate(_animationController);
       _animationController.reset();
       _animationController.forward();
     });
@@ -64,25 +59,19 @@ class _CustomProgressbarState extends State<CustomProgressbar>
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: double.infinity),
             child: Container(
-              decoration: BoxDecoration(
-                  color: widget.background, borderRadius: widget.borderRadius),
+              decoration: BoxDecoration(color: widget.background, borderRadius: widget.borderRadius),
             ),
           ),
           AnimatedBuilder(
             animation: _animationController,
-            builder: (BuildContext context,Widget child) => FractionallySizedBox(
-                  widthFactor: _progressTween.value,
-                  child: Padding(
-                    padding: widget.innerPadding,
-                    child: child
-                  ),
-                ),
-              child: Container(
-                      height: widget.height,
-                      decoration: BoxDecoration(
-                          color: widget.color,
-                          borderRadius: widget.borderRadius),
-                    ),                
+            builder: (BuildContext context, Widget child) => FractionallySizedBox(
+              widthFactor: _progressTween.value,
+              child: Padding(padding: widget.innerPadding, child: child),
+            ),
+            child: Container(
+              height: widget.height,
+              decoration: BoxDecoration(color: widget.color, borderRadius: widget.borderRadius),
+            ),
           )
         ],
       ),

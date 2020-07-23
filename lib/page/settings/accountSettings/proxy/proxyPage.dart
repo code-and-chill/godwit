@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -27,8 +27,7 @@ class ProxyPage extends StatelessWidget {
             showCheckBox: false,
             vPadding: 15,
             showDivider: true,
-            subtitle:
-                'Configure HTTP proxy for network request (note: this does not apply to browser).',
+            subtitle: 'Configure HTTP proxy for network request (note: this does not apply to browser).',
           ),
           SettingRowWidget(
             "Proxy Host",

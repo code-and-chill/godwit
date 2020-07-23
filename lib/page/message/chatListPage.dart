@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
-import 'package:twitter/model/chatModel.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/model/chat_message.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/state/authState.dart';
-import 'package:twitter/state/chats/chatState.dart';
+import 'package:twitter/state/chatState.dart';
 import 'package:twitter/state/searchState.dart';
 import 'package:twitter/widgets/customAppBar.dart';
 import 'package:twitter/widgets/customWidgets.dart';
@@ -41,12 +41,11 @@ class _ChatListPageState extends State<ChatListPage> {
         padding: EdgeInsets.symmetric(horizontal: 30),
         child: EmptyList(
           'No message available ',
-          subTitle:
-              'When someone sends you message,User list\'ll show up here \n  To send message tap message button.',
+          subTitle: 'When someone sends you message,User list\'ll show up here \n  To send message tap message button.',
         ),
       );
     } else {
-      if(searchState.userList.isEmpty){
+      if (searchState.userList.isEmpty) {
         searchState.resetFilterList();
       }
       return ListView.separated(
@@ -77,9 +76,7 @@ class _ChatListPageState extends State<ChatListPage> {
           final searchState = Provider.of<SearchState>(context, listen: false);
           chatState.setChatUser = model;
           if (searchState.userlist.any((x) => x.userId == model.userId)) {
-            chatState.setChatUser = searchState.userlist
-                .where((x) => x.userId == model.userId)
-                .first;
+            chatState.setChatUser = searchState.userlist.where((x) => x.userId == model.userId).first;
           }
           Navigator.pushNamed(context, '/ChatScreenPage');
         },
@@ -96,7 +93,7 @@ class _ChatListPageState extends State<ChatListPage> {
               borderRadius: BorderRadius.circular(28),
               image: DecorationImage(
                   image: customAdvanceNetworkImage(
-                    model.profilePic ?? dummyProfilePic,
+                    model.profilePic ?? mockProfilePicture,
                   ),
                   fit: BoxFit.cover),
             ),

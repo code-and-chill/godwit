@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -130,8 +130,7 @@ class DataUsagePage extends StatelessWidget {
           HeaderWidget('Images'),
           SettingRowWidget(
             "High quality images",
-            subtitle:
-                'Mobile data & Wi-Fi \n\nSelect when high quality images should load.',
+            subtitle: 'Mobile data & Wi-Fi \n\nSelect when high quality images should load.',
             vPadding: 15,
             onPressed: () {
               openDarkModeSettings(context);
@@ -144,8 +143,7 @@ class DataUsagePage extends StatelessWidget {
           ),
           SettingRowWidget(
             "High-quality video",
-            subtitle:
-                'Wi-Fi only \n\nSelect when the highest quality available should play.',
+            subtitle: 'Wi-Fi only \n\nSelect when the highest quality available should play.',
             vPadding: 15,
             onPressed: () {
               openDarkModeSettings(context);
@@ -153,8 +151,7 @@ class DataUsagePage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Video autoplay",
-            subtitle:
-                'Wi-Fi only \n\nSelect when video should play automatically.',
+            subtitle: 'Wi-Fi only \n\nSelect when video should play automatically.',
             vPadding: 15,
             onPressed: () {
               openDarkModeSettings(context);
@@ -174,8 +171,7 @@ class DataUsagePage extends StatelessWidget {
           ),
           SettingRowWidget(
             null,
-            subtitle:
-                'Allow Fwitter to sync data in the background to enhance your experience.',
+            subtitle: 'Allow Fwitter to sync data in the background to enhance your experience.',
             vPadding: 10,
           ),
         ],

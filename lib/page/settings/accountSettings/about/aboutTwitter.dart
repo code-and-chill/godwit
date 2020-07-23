@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -31,7 +31,7 @@ class AboutPage extends StatelessWidget {
             "Help Centre",
             vPadding: 0,
             showDivider: false,
-            onPressed: (){
+            onPressed: () {
               launchURL("https://github.com/TheAlphamerc/twitter/issues");
             },
           ),
@@ -61,34 +61,18 @@ class AboutPage extends StatelessWidget {
             },
           ),
           HeaderWidget('Developer'),
-          SettingRowWidget(
-            "Github",
-            showDivider: true,
-            onPressed: (){
-              launchURL("https://github.com/TheAlphamerc");
-            }
-          ),
-          SettingRowWidget(
-            "LinkidIn",
-            showDivider: true,
-            onPressed: (){
-              launchURL("https://www.linkedin.com/in/thealphamerc/");
-            }
-          ),
-          SettingRowWidget(
-            "Twitter",
-            showDivider: true,
-            onPressed: (){
-              launchURL("https://twitter.com/TheAlphaMerc");
-            }
-          ),
-          SettingRowWidget(
-            "Blog",
-            showDivider: true,
-            onPressed: (){
-              launchURL("https://dev.to/thealphamerc");
-            }
-          ),
+          SettingRowWidget("Github", showDivider: true, onPressed: () {
+            launchURL("https://github.com/TheAlphamerc");
+          }),
+          SettingRowWidget("LinkidIn", showDivider: true, onPressed: () {
+            launchURL("https://www.linkedin.com/in/thealphamerc/");
+          }),
+          SettingRowWidget("Twitter", showDivider: true, onPressed: () {
+            launchURL("https://twitter.com/TheAlphaMerc");
+          }),
+          SettingRowWidget("Blog", showDivider: true, onPressed: () {
+            launchURL("https://dev.to/thealphamerc");
+          }),
         ],
       ),
     );

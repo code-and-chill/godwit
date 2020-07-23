@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:twitter/widgets/newWidget/customUrlText.dart';
@@ -49,7 +49,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
                   image: customAdvanceNetworkImage(
-                    state.userModel.profilePic ?? dummyProfilePic,
+                    state.userModel.profilePic ?? mockProfilePicture,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -62,21 +62,14 @@ class _SidebarMenuState extends State<SidebarMenu> {
               title: Row(
                 children: <Widget>[
                   UrlText(
-                    text: state.userModel.displayName ??
-                        "",
-                    style: onPrimaryTitleText.copyWith(
-                        color: Colors.black, fontSize: 20),
+                    text: state.userModel.displayName ?? "",
+                    style: onPrimaryTitleText.copyWith(color: Colors.black, fontSize: 20),
                   ),
                   SizedBox(
                     width: 3,
                   ),
                   state.userModel.isVerified ?? false
-                      ? customIcon(context,
-                          icon: AppIcon.blueTick,
-                          istwitterIcon: true,
-                          iconColor: AppColor.primary,
-                          size: 18,
-                          paddingIcon: 3)
+                      ? customIcon(context, icon: AppIcon.blueTick, istwitterIcon: true, iconColor: AppColor.primary, size: 18, paddingIcon: 3)
                       : SizedBox(
                           width: 0,
                         ),
@@ -84,13 +77,9 @@ class _SidebarMenuState extends State<SidebarMenu> {
               ),
               subtitle: customText(
                 state.userModel.userName,
-                style: onPrimarySubTitleText.copyWith(
-                    color: Colors.black54, fontSize: 15),
+                style: onPrimarySubTitleText.copyWith(color: Colors.black54, fontSize: 15),
               ),
-              trailing: customIcon(context,
-                  icon: AppIcon.arrowDown,
-                  iconColor: AppColor.primary,
-                  paddingIcon: 20),
+              trailing: customIcon(context, icon: AppIcon.arrowDown, iconColor: AppColor.primary, paddingIcon: 20),
             ),
             Container(
               alignment: Alignment.center,
@@ -99,11 +88,9 @@ class _SidebarMenuState extends State<SidebarMenu> {
                   SizedBox(
                     width: 17,
                   ),
-                  _tappbleText(context, '${state.userModel.getFollower()}',
-                      ' Followers', 'FollowerListPage'),
+                  _tappbleText(context, '${state.userModel.getFollower()}', ' Followers', 'FollowerListPage'),
                   SizedBox(width: 10),
-                  _tappbleText(context, '${state.userModel.getFollowing()}',
-                      ' Following', 'FollowingListPage'),
+                  _tappbleText(context, '${state.userModel.getFollowing()}', ' Following', 'FollowingListPage'),
                 ],
               ),
             ),
@@ -113,11 +100,10 @@ class _SidebarMenuState extends State<SidebarMenu> {
     }
   }
 
-  Widget _tappbleText(
-      BuildContext context, String count, String text, String navigateTo) {
+  Widget _tappbleText(BuildContext context, String count, String text, String navigateTo) {
     return InkWell(
       onTap: () {
-        var authstate = Provider.of<AuthState>(context,listen: false);
+        var authstate = Provider.of<AuthState>(context, listen: false);
         // authstate.profileFollowingList = [];
         authstate.getProfileUser();
         _navigateTo(navigateTo);
@@ -137,8 +123,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
     );
   }
 
-  ListTile _menuListRowButton(String title,
-      {Function onPressed, int icon, bool isEnable = false}) {
+  ListTile _menuListRowButton(String title, {Function onPressed, int icon, bool isEnable = false}) {
     return ListTile(
       onTap: () {
         if (onPressed != null) {
@@ -180,11 +165,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 width: 10,
                 height: 45,
               ),
-              customIcon(context,
-                  icon: AppIcon.bulbOn,
-                  istwitterIcon: true,
-                  size: 25,
-                  iconColor: TwitterColor.dodgetBlue),
+              customIcon(context, icon: AppIcon.bulbOn, istwitterIcon: true, size: 25, iconColor: TwitterColor.dodgetBlue),
               Spacer(),
               Image.asset(
                 "assets/images/qr.png",
@@ -202,7 +183,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
   }
 
   void _logOut() {
-    final state = Provider.of<AuthState>(context,listen: false);
+    final state = Provider.of<AuthState>(context, listen: false);
     Navigator.pop(context);
     state.logoutCallback();
   }
@@ -227,8 +208,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                     child: _menuHeader(),
                   ),
                   Divider(),
-                  _menuListRowButton('Profile',
-                      icon: AppIcon.profile, isEnable: true, onPressed: () {
+                  _menuListRowButton('Profile', icon: AppIcon.profile, isEnable: true, onPressed: () {
                     _navigateTo('ProfilePage');
                   }),
                   _menuListRowButton('Lists', icon: AppIcon.lists),
@@ -236,14 +216,12 @@ class _SidebarMenuState extends State<SidebarMenu> {
                   _menuListRowButton('Moments', icon: AppIcon.moments),
                   _menuListRowButton('Fwitter ads', icon: AppIcon.twitterAds),
                   Divider(),
-                  _menuListRowButton('Settings and privacy', isEnable: true,
-                      onPressed: () {
+                  _menuListRowButton('Settings and privacy', isEnable: true, onPressed: () {
                     _navigateTo('SettingsAndPrivacyPage');
                   }),
                   _menuListRowButton('Help Center'),
                   Divider(),
-                  _menuListRowButton('Logout',
-                      icon: null, onPressed: _logOut, isEnable: true),
+                  _menuListRowButton('Logout', icon: null, onPressed: _logOut, isEnable: true),
                 ],
               ),
             ),

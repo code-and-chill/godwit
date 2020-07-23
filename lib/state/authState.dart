@@ -6,8 +6,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -75,12 +75,10 @@ class AuthState extends AppState {
   }
 
   /// Verify user's credentials for login
-  Future<String> signIn(String email, String password,
-      {GlobalKey<ScaffoldState> scaffoldKey}) async {
+  Future<String> signIn(String email, String password, {GlobalKey<ScaffoldState> scaffoldKey}) async {
     try {
       loading = true;
-      var result = await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
+      var result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       user = result.user;
       userId = user.uid;
       return user.uid;
@@ -105,8 +103,7 @@ class AuthState extends AppState {
       if (googleUser == null) {
         throw Exception('Google login cancelled by user');
       }
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken,
@@ -145,8 +142,7 @@ class AuthState extends AppState {
     if (diff < Duration(seconds: 15)) {
       User model = User(
         bio: 'Edit profile to update bio',
-        dob: DateTime(1950, DateTime.now().month, DateTime.now().day + 3)
-            .toString(),
+        dob: DateTime(1950, DateTime.now().month, DateTime.now().day + 3).toString(),
         location: 'Somewhere in universe',
         profilePic: user.photoUrl,
         displayName: user.displayName,
@@ -163,8 +159,7 @@ class AuthState extends AppState {
   }
 
   /// Create new user's profile in db
-  Future<String> signUp(User userModel,
-      {GlobalKey<ScaffoldState> scaffoldKey, String password}) async {
+  Future<String> signUp(User userModel, {GlobalKey<ScaffoldState> scaffoldKey, String password}) async {
     try {
       loading = true;
       var result = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -245,26 +240,22 @@ class AuthState extends AppState {
       // Update user in firebase realtime kDatabase
       createUser(userModel);
       cprint('User email verification complete');
-      logEvent('email_verification_complete',
-          parameter: {userModel.userName: user.email});
+      logEvent('email_verification_complete', parameter: {userModel.userName: user.email});
     }
   }
 
   /// Send email verification link to email2
-  Future<void> sendEmailVerification(
-      GlobalKey<ScaffoldState> scaffoldKey) async {
+  Future<void> sendEmailVerification(GlobalKey<ScaffoldState> scaffoldKey) async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     user.sendEmailVerification().then((_) {
-      logEvent('email_verifcation_sent',
-          parameter: {userModel.displayName: user.email});
+      logEvent('email_verifcation_sent', parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         'An email verification link is send to your email.',
       );
     }).catchError((error) {
       cprint(error.message, errorIn: 'sendEmailVerification');
-      logEvent('email_verifcation_block',
-          parameter: {userModel.displayName: user.email});
+      logEvent('email_verifcation_block', parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         error.message,
@@ -279,12 +270,10 @@ class AuthState extends AppState {
   }
 
   /// Send password reset link to email
-  Future<void> forgetPassword(String email,
-      {GlobalKey<ScaffoldState> scaffoldKey}) async {
+  Future<void> forgetPassword(String email, {GlobalKey<ScaffoldState> scaffoldKey}) async {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email).then((value) {
-        customSnackBar(scaffoldKey,
-            'A reset password link is sent yo your mail.You can reset your password from there');
+        customSnackBar(scaffoldKey, 'A reset password link is sent yo your mail.You can reset your password from there');
         logEvent('forgot+password');
       }).catchError((error) {
         cprint(error.message);
@@ -302,9 +291,7 @@ class AuthState extends AppState {
       if (image == null) {
         createUser(userModel);
       } else {
-        StorageReference storageReference = FirebaseStorage.instance
-            .ref()
-            .child('user/profile/${Path.basename(image.path)}');
+        StorageReference storageReference = FirebaseStorage.instance.ref().child('user/profile/${Path.basename(image.path)}');
         StorageUploadTask uploadTask = storageReference.putFile(image);
         await uploadTask.onComplete.then((value) {
           storageReference.getDownloadURL().then((fileURL) async {
@@ -344,20 +331,16 @@ class AuthState extends AppState {
   }
 
   /// Fetch user profile
- /// If `userProfileId` is null then logged in user's profile will fetched
+  /// If `userProfileId` is null then logged in user's profile will fetched
   getProfileUser({String userProfileId}) {
     try {
       loading = true;
       if (_profileUserModelList == null) {
         _profileUserModelList = [];
       }
-      
+
       userProfileId = userProfileId == null ? user.uid : userProfileId;
-      kDatabase
-          .child("profile")
-          .child(userProfileId)
-          .once()
-          .then((DataSnapshot snapshot) {
+      kDatabase.child("profile").child(userProfileId).once().then((DataSnapshot snapshot) {
         if (snapshot.value != null) {
           var map = snapshot.value;
           if (map != null) {
@@ -436,16 +419,8 @@ class AuthState extends AppState {
       profileUserModel.followers = profileUserModel.followersList.length;
       // update logged-in user's following count
       userModel.following = userModel.followingList.length;
-      kDatabase
-          .child('profile')
-          .child(profileUserModel.userId)
-          .child('followerList')
-          .set(profileUserModel.followersList);
-      kDatabase
-          .child('profile')
-          .child(userModel.userId)
-          .child('followingList')
-          .set(userModel.followingList);
+      kDatabase.child('profile').child(profileUserModel.userId).child('followerList').set(profileUserModel.followersList);
+      kDatabase.child('profile').child(userModel.userId).child('followingList').set(userModel.followingList);
       cprint('user added to following list', event: 'add_follow');
       notifyListeners();
     } catch (error) {
@@ -458,7 +433,7 @@ class AuthState extends AppState {
   void _onProfileChanged(Event event) {
     if (event.snapshot != null) {
       final updatedUser = User.fromJson(event.snapshot.value);
-      if(updatedUser.userId == user.uid){
+      if (updatedUser.userId == user.uid) {
         _userModel = updatedUser;
       }
       cprint('User Updated');

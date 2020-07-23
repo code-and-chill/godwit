@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/constant.dart';
-import 'package:twitter/helper/enum.dart';
-import 'package:twitter/helper/utility.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/model/feedModel.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/profile/widgets/tabPainter.dart';
 import 'package:twitter/state/authState.dart';
-import 'package:twitter/state/chats/chatState.dart';
+import 'package:twitter/state/chatState.dart';
 import 'package:twitter/state/feedState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:twitter/widgets/newWidget/customLoader.dart';
@@ -15,7 +15,7 @@ import 'package:twitter/widgets/newWidget/customUrlText.dart';
 import 'package:twitter/widgets/newWidget/emptyList.dart';
 import 'package:twitter/widgets/newWidget/rippleButton.dart';
 import 'package:twitter/widgets/tweet/tweet.dart';
-import 'package:twitter/widgets/tweet/widgets/tweetBottomSheet.dart';
+import 'package:twitter/widgets/tweet/tweetBottomSheet.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -26,8 +26,7 @@ class ProfilePage extends StatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   bool isMyProfile = false;
   int pageIndex = 0;
 
@@ -36,8 +35,7 @@ class _ProfilePageState extends State<ProfilePage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var authstate = Provider.of<AuthState>(context, listen: false);
       authstate.getProfileUser(userProfileId: widget.profileId);
-      isMyProfile =
-          widget.profileId == null || widget.profileId == authstate.userId;
+      isMyProfile = widget.profileId == null || widget.profileId == authstate.userId;
     });
     _tabController = TabController(length: 3, vsync: this);
     super.initState();
@@ -78,7 +76,7 @@ class _ProfilePageState extends State<ProfilePage>
         background: authstate.isbusy
             ? SizedBox.shrink()
             : Stack(
-              alignment: Alignment.topCenter,
+                alignment: Alignment.topCenter,
                 children: <Widget>[
                   SizedBox.expand(
                     child: Container(
@@ -109,9 +107,7 @@ class _ProfilePageState extends State<ProfilePage>
                         AnimatedContainer(
                           duration: Duration(milliseconds: 500),
                           padding: EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.white, width: 5),
-                              shape: BoxShape.circle),
+                          decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 5), shape: BoxShape.circle),
                           child: RippleButton(
                             child: customImage(
                               context,
@@ -131,42 +127,26 @@ class _ProfilePageState extends State<ProfilePage>
                               isMyProfile
                                   ? Container(height: 40)
                                   : RippleButton(
-                                      splashColor: TwitterColor.dodgetBlue_50
-                                          .withAlpha(100),
+                                      splashColor: TwitterColor.dodgetBlue_50.withAlpha(100),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(20),
                                       ),
                                       onPressed: () {
                                         if (!isMyProfile) {
-                                          final chatState =
-                                              Provider.of<ChatState>(
-                                                  context,
-                                                  listen: false);
-                                          chatState.setChatUser =
-                                              authstate.profileUserModel;
-                                          Navigator.pushNamed(
-                                              context, '/ChatScreenPage');
+                                          final chatState = Provider.of<ChatState>(context, listen: false);
+                                          chatState.setChatUser = authstate.profileUserModel;
+                                          Navigator.pushNamed(context, '/ChatScreenPage');
                                         }
                                       },
                                       child: Container(
                                         height: 35,
                                         width: 35,
-                                        padding: EdgeInsets.only(
-                                            bottom: 5,
-                                            top: 0,
-                                            right: 0,
-                                            left: 0),
+                                        padding: EdgeInsets.only(bottom: 5, top: 0, right: 0, left: 0),
                                         decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: isMyProfile
-                                                    ? Colors.black87
-                                                        .withAlpha(180)
-                                                    : Colors.blue,
-                                                width: 1),
+                                            border: Border.all(color: isMyProfile ? Colors.black87.withAlpha(180) : Colors.blue, width: 1),
                                             shape: BoxShape.circle),
                                         child: Icon(
-                                          IconData(AppIcon.messageEmpty,
-                                              fontFamily: 'TwitterIcon'),
+                                          IconData(AppIcon.messageEmpty, fontFamily: 'TwitterIcon'),
                                           color: Colors.blue,
                                           size: 20,
                                         ),
@@ -176,14 +156,11 @@ class _ProfilePageState extends State<ProfilePage>
                                     ),
                               SizedBox(width: 10),
                               RippleButton(
-                                splashColor:
-                                    TwitterColor.dodgetBlue_50.withAlpha(100),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(60)),
+                                splashColor: TwitterColor.dodgetBlue_50.withAlpha(100),
+                                borderRadius: BorderRadius.all(Radius.circular(60)),
                                 onPressed: () {
                                   if (isMyProfile) {
-                                    Navigator.pushNamed(
-                                        context, '/EditProfile');
+                                    Navigator.pushNamed(context, '/EditProfile');
                                   } else {
                                     authstate.followUser(
                                       removeFollower: isFollower(),
@@ -196,29 +173,17 @@ class _ProfilePageState extends State<ProfilePage>
                                     vertical: 5,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isFollower()
-                                        ? TwitterColor.dodgetBlue
-                                        : TwitterColor.white,
-                                    border: Border.all(
-                                        color: isMyProfile
-                                            ? Colors.black87.withAlpha(180)
-                                            : Colors.blue,
-                                        width: 1),
+                                    color: isFollower() ? TwitterColor.dodgetBlue : TwitterColor.white,
+                                    border: Border.all(color: isMyProfile ? Colors.black87.withAlpha(180) : Colors.blue, width: 1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
 
                                   /// If [isMyProfile] is true then Edit profile button will display
                                   // Otherwise Follow/Following button will be display
                                   child: Text(
-                                    isMyProfile
-                                        ? 'Edit Profile'
-                                        : isFollower() ? 'Following' : 'Follow',
+                                    isMyProfile ? 'Edit Profile' : isFollower() ? 'Following' : 'Follow',
                                     style: TextStyle(
-                                      color: isMyProfile
-                                          ? Colors.black87.withAlpha(180)
-                                          : isFollower()
-                                              ? TwitterColor.white
-                                              : Colors.blue,
+                                      color: isMyProfile ? Colors.black87.withAlpha(180) : isFollower() ? TwitterColor.white : Colors.blue,
                                       fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -258,10 +223,8 @@ class _ProfilePageState extends State<ProfilePage>
 
   isFollower() {
     var authstate = Provider.of<AuthState>(context);
-    if (authstate.profileUserModel.followersList != null &&
-        authstate.profileUserModel.followersList.isNotEmpty) {
-      return (authstate.profileUserModel.followersList
-          .any((x) => x == authstate.userModel.userId));
+    if (authstate.profileUserModel.followersList != null && authstate.profileUserModel.followersList.isNotEmpty) {
+      return (authstate.profileUserModel.followersList.any((x) => x == authstate.userModel.userId));
     } else {
       return false;
     }
@@ -284,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage>
   build(BuildContext context) {
     var state = Provider.of<FeedState>(context);
     var authstate = Provider.of<AuthState>(context);
-    List<FeedModel> list;
+    List<Feed> list;
     String id = widget.profileId ?? authstate.userId;
 
     /// Filter user's tweet among all tweets available in home page tweets list
@@ -322,11 +285,7 @@ class _ProfilePageState extends State<ProfilePage>
                       child: TabBar(
                         indicator: TabIndicator(),
                         controller: _tabController,
-                        tabs: <Widget>[
-                          Text("Tweets"),
-                          Text("Tweets & replies"),
-                          Text("Media")
-                        ],
+                        tabs: <Widget>[Text("Tweets"), Text("Tweets & replies"), Text("Media")],
                       ),
                     )
                   ],
@@ -352,9 +311,8 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _tweetList(BuildContext context, AuthState authstate,
-      List<FeedModel> tweetsList, bool isreply, bool isMedia) {
-    List<FeedModel> list;
+  Widget _tweetList(BuildContext context, AuthState authstate, List<Feed> tweetsList, bool isreply, bool isMedia) {
+    List<Feed> list;
 
     /// If user hasn't tweeted yet
     if (tweetsList == null) {
@@ -367,15 +325,11 @@ class _ProfilePageState extends State<ProfilePage>
       /// Display all independent Tweets
       /// No comments Tweet will display
 
-      list = tweetsList
-          .where((x) => x.parentkey == null || x.childRetwetkey != null)
-          .toList();
+      list = tweetsList.where((x) => x.parentKey == null || x.childRetweetKey != null).toList();
     } else {
       /// Display all reply Tweets
       /// No intependent tweet will display
-      list = tweetsList
-          .where((x) => x.parentkey != null && x.childRetwetkey == null)
-          .toList();
+      list = tweetsList.where((x) => x.parentKey != null && x.childRetweetKey == null).toList();
     }
 
     /// if [authState.isbusy] is true then an loading indicator will be displayed on screen.
@@ -397,9 +351,7 @@ class _ProfilePageState extends State<ProfilePage>
                   title: isMyProfile
                       ? 'You haven\'t ${isreply ? 'reply to any Tweet' : isMedia ? 'post any media Tweet yet' : 'post any Tweet yet'}'
                       : '${authstate.profileUserModel.userName} hasn\'t ${isreply ? 'reply to any Tweet' : isMedia ? 'post any media Tweet yet' : 'post any Tweet yet'}',
-                  subTitle: isMyProfile
-                      ? 'Tap tweet button to add new'
-                      : 'Once he\'ll do, they will be shown up here',
+                  subTitle: isMyProfile ? 'Tap tweet button to add new' : 'Once he\'ll do, they will be shown up here',
                 ),
               )
 
@@ -443,8 +395,7 @@ class UserNameRowWidget extends StatelessWidget {
     }
   }
 
-  Widget _tappbleText(
-      BuildContext context, String count, String text, String navigateTo) {
+  Widget _tappbleText(BuildContext context, String count, String text, String navigateTo) {
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, '/$navigateTo');
@@ -488,12 +439,7 @@ class UserNameRowWidget extends StatelessWidget {
                 width: 3,
               ),
               user.isVerified
-                  ? customIcon(context,
-                      icon: AppIcon.blueTick,
-                      istwitterIcon: true,
-                      iconColor: AppColor.primary,
-                      size: 13,
-                      paddingIcon: 3)
+                  ? customIcon(context, icon: AppIcon.blueTick, istwitterIcon: true, iconColor: AppColor.primary, size: 13, paddingIcon: 3)
                   : SizedBox(width: 0),
             ],
           ),
@@ -516,18 +462,13 @@ class UserNameRowWidget extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              customIcon(context,
-                  icon: AppIcon.locationPin,
-                  size: 14,
-                  istwitterIcon: true,
-                  paddingIcon: 5,
-                  iconColor: AppColor.darkGrey),
+              customIcon(context, icon: AppIcon.locationPin, size: 14, istwitterIcon: true, paddingIcon: 5, iconColor: AppColor.darkGrey),
               SizedBox(width: 10),
               Expanded(
-                child:customText(
-                user.location,
-                style: TextStyle(color: AppColor.darkGrey),
-              ),
+                child: customText(
+                  user.location,
+                  style: TextStyle(color: AppColor.darkGrey),
+                ),
               )
             ],
           ),
@@ -536,12 +477,7 @@ class UserNameRowWidget extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Row(
             children: <Widget>[
-              customIcon(context,
-                  icon: AppIcon.calender,
-                  size: 14,
-                  istwitterIcon: true,
-                  paddingIcon: 5,
-                  iconColor: AppColor.darkGrey),
+              customIcon(context, icon: AppIcon.calender, size: 14, istwitterIcon: true, paddingIcon: 5, iconColor: AppColor.darkGrey),
               SizedBox(width: 10),
               customText(
                 getJoiningDate(user.createdAt),
@@ -558,11 +494,9 @@ class UserNameRowWidget extends StatelessWidget {
                 width: 10,
                 height: 30,
               ),
-              _tappbleText(context, '${user.getFollower()}', ' Followers',
-                  'FollowerListPage'),
+              _tappbleText(context, '${user.getFollower()}', ' Followers', 'FollowerListPage'),
               SizedBox(width: 40),
-              _tappbleText(context, '${user.getFollowing()}', ' Following',
-                  'FollowingListPage'),
+              _tappbleText(context, '${user.getFollowing()}', ' Following', 'FollowingListPage'),
             ],
           ),
         ),

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +28,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _name.text = state?.userModel?.displayName;
     _bio.text = state?.userModel?.bio;
     _location.text = state?.userModel?.location;
-    _dob.text = getdob(state?.userModel?.dob);
+    _dob.text = getDateOfBirth(state?.userModel?.dob);
     super.initState();
   }
 
@@ -50,11 +50,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child: Stack(
             children: <Widget>[
               Container(
-                    height: 180,
-                    padding: EdgeInsets.only(bottom: 50),
-                child: customNetworkImage(
-                    'https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500',
-                    fit: BoxFit.fill),
+                height: 180,
+                padding: EdgeInsets.only(bottom: 50),
+                child: customNetworkImage('https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500', fit: BoxFit.fill),
               ),
               Align(
                 alignment: Alignment.bottomLeft,
@@ -82,15 +80,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.white, width: 5),
         shape: BoxShape.circle,
-        image: DecorationImage(
-            image: customAdvanceNetworkImage(authstate.userModel.profilePic),
-            fit: BoxFit.cover),
+        image: DecorationImage(image: customAdvanceNetworkImage(authstate.userModel.profilePic), fit: BoxFit.cover),
       ),
       child: CircleAvatar(
         radius: 40,
-        backgroundImage: _image != null
-            ? FileImage(_image)
-            : customAdvanceNetworkImage(authstate.userModel.profilePic),
+        backgroundImage: _image != null ? FileImage(_image) : customAdvanceNetworkImage(authstate.userModel.profilePic),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -107,10 +101,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _entry(String title,
-      {TextEditingController controller,
-      int maxLine = 1,
-      bool isenable = true}) {
+  Widget _entry(String title, {TextEditingController controller, int maxLine = 1, bool isenable = true}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       child: Column(
@@ -140,7 +131,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     setState(() {
       if (picked != null) {
         dob = picked.toString();
-        _dob.text = getdob(dob);
+        _dob.text = getDateOfBirth(dob);
       }
     });
   }

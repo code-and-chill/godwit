@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsAppbar.dart';
@@ -24,7 +24,10 @@ class DirectMessagesPage extends StatelessWidget {
       body: ListView(
         physics: BouncingScrollPhysics(),
         children: <Widget>[
-          HeaderWidget('Direct Messages', secondHeader: true,),
+          HeaderWidget(
+            'Direct Messages',
+            secondHeader: true,
+          ),
           SettingRowWidget(
             "Receive message requests",
             navigateTo: null,
@@ -35,11 +38,12 @@ class DirectMessagesPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Show read receipts",
-            navigateTo:null,
+            navigateTo: null,
             showDivider: false,
             visibleSwitch: true,
-            subtitle: 'When someone sends you a message, people in the conversation will know you\'ve seen it. If you turn off this setting, you won\'t be able to see read receipt from others.',
-            ),
+            subtitle:
+                'When someone sends you a message, people in the conversation will know you\'ve seen it. If you turn off this setting, you won\'t be able to see read receipt from others.',
+          ),
         ],
       ),
     );

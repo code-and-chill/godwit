@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/common.dart';
+
 class UrlText extends StatelessWidget {
   final String text;
   final TextStyle style;
@@ -11,8 +12,7 @@ class UrlText extends StatelessWidget {
 
   List<InlineSpan> getTextSpans() {
     List<InlineSpan> widgets = List<InlineSpan>();
-    RegExp reg = RegExp(
-        r"([#])\w+| [@]\w+|(https?|ftp|file|#)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]*");
+    RegExp reg = RegExp(r"([#])\w+| [@]\w+|(https?|ftp|file|#)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]*");
     Iterable<Match> _matches = reg.allMatches(text);
     List<_ResultMatch> resultMatches = List<_ResultMatch>();
     int start = 0;
@@ -40,15 +40,10 @@ class UrlText extends StatelessWidget {
     }
     for (var result in resultMatches) {
       if (result.isUrl) {
-        widgets.add(_LinkTextSpan(
-            onHashTagPressed: onHashTagPressed,
-            text: result.text,
-            style:
-                urlStyle != null ? urlStyle : TextStyle(color: Colors.blue)));
+        widgets.add(
+            _LinkTextSpan(onHashTagPressed: onHashTagPressed, text: result.text, style: urlStyle != null ? urlStyle : TextStyle(color: Colors.blue)));
       } else {
-        widgets.add(TextSpan(
-            text: result.text,
-            style: style != null ? style : TextStyle(color: Colors.black)));
+        widgets.add(TextSpan(text: result.text, style: style != null ? style : TextStyle(color: Colors.black)));
       }
     }
     return widgets;
@@ -70,10 +65,9 @@ class _LinkTextSpan extends TextSpan {
             text: text,
             recognizer: TapGestureRecognizer()
               ..onTap = () {
-                if(onHashTagPressed != null && (text.substring(0,1).contains("#") || text.substring(0,1).contains("#"))){
+                if (onHashTagPressed != null && (text.substring(0, 1).contains("#") || text.substring(0, 1).contains("#"))) {
                   onHashTagPressed(text);
-                }
-                else{
+                } else {
                   launchURL(text);
                 }
               });

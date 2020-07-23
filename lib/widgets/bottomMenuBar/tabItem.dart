@@ -13,14 +13,14 @@ const int ANIM_DURATION = 300;
 class TabItem extends StatelessWidget {
   TabItem(
       {@required this.uniqueKey,
-        @required this.selected,
-        @required this.iconData,
-        @required this.title,
-        @required this.callbackFunction,
-        @required this.textColor,
-        @required this.iconColor,
-        this.isCustomIcon,
-        this.customIconCode});
+      @required this.selected,
+      @required this.iconData,
+      @required this.title,
+      @required this.callbackFunction,
+      @required this.textColor,
+      @required this.iconColor,
+      this.isCustomIcon,
+      this.customIconCode});
 
   final UniqueKey uniqueKey;
   final String title;
@@ -54,8 +54,7 @@ class TabItem extends StatelessWidget {
                     title,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600, color: textColor,fontSize: getDimention(context,12)),
+                    style: TextStyle(fontWeight: FontWeight.w600, color: textColor, fontSize: getDimention(context, 12)),
                   ),
                 )),
           ),
@@ -74,8 +73,12 @@ class TabItem extends StatelessWidget {
                   splashColor: Colors.transparent,
                   padding: EdgeInsets.all(0),
                   alignment: Alignment(0, 0),
-                  icon: isCustomIcon ? customIcon(context,icon:customIconCode) :
-                  Icon(iconData,color: iconColor,),
+                  icon: isCustomIcon
+                      ? customIcon(context, icon: customIconCode)
+                      : Icon(
+                          iconData,
+                          color: iconColor,
+                        ),
                   onPressed: () {
                     callbackFunction(uniqueKey);
                   },

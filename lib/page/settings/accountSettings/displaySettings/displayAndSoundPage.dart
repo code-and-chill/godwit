@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsRowWidget.dart';
 import 'package:twitter/widgets/customAppBar.dart';
@@ -142,8 +142,7 @@ class DisplayAndSoundPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Emoji",
-            subtitle:
-                'Use the Fwitter set instead of your device\'s default set',
+            subtitle: 'Use the Fwitter set instead of your device\'s default set',
             showDivider: false,
             showCheckBox: false,
           ),

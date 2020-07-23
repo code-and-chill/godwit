@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/page/settings/widgets/headerWidget.dart';
 import 'package:twitter/page/settings/widgets/settingsAppbar.dart';
@@ -25,8 +25,7 @@ class PrivacyAndSaftyPage extends StatelessWidget {
           HeaderWidget('Tweets'),
           SettingRowWidget(
             "Protect your tweet",
-            subtitle:
-                'Only current followers and people you approve in future will be able to see your tweets.',
+            subtitle: 'Only current followers and people you approve in future will be able to see your tweets.',
             vPadding: 15,
             showDivider: false,
             visibleSwitch: true,
@@ -41,8 +40,8 @@ class PrivacyAndSaftyPage extends StatelessWidget {
           ),
           SettingRowWidget(
             'Direct Message',
-             navigateTo: 'DirectMessagesPage',
-            ),
+            navigateTo: 'DirectMessagesPage',
+          ),
           HeaderWidget(
             'Live Video',
             secondHeader: true,
@@ -66,8 +65,7 @@ class PrivacyAndSaftyPage extends StatelessWidget {
           ),
           SettingRowWidget(
             null,
-            subtitle:
-                'Learn more about how this data is used to connect you with people',
+            subtitle: 'Learn more about how this data is used to connect you with people',
             vPadding: 15,
             showDivider: false,
           ),
@@ -118,8 +116,7 @@ class PrivacyAndSaftyPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "See your Fwitter data",
-            subtitle:
-                "Review and edit your profile information and data associated with your account.",
+            subtitle: "Review and edit your profile information and data associated with your account.",
           ),
         ],
       ),

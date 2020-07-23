@@ -1,12 +1,11 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
+import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/state/searchState.dart';
-import 'helper/routes.dart';
+import 'utilities/routes.dart';
 import 'state/appState.dart';
 import 'package:provider/provider.dart';
 import 'state/authState.dart';
-import 'state/chats/chatState.dart';
+import 'state/chatState.dart';
 import 'state/feedState.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,7 +17,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<NotificationState>(create: (_) => NotificationState()),
       ],
       child: MaterialApp(
-        title: 'Fwitter',
+        title: 'Twitter',
         theme: AppTheme.apptheme.copyWith(
           textTheme: GoogleFonts.muliTextTheme(
             Theme.of(context).textTheme,

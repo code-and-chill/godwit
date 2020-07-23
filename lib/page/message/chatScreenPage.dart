@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/model/chatModel.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/model/chat_message.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/state/authState.dart';
-import 'package:twitter/state/chats/chatState.dart';
+import 'package:twitter/state/chatState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
 import 'package:twitter/widgets/newWidget/customUrlText.dart';
 import 'package:provider/provider.dart';
@@ -77,10 +77,8 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
 
   Widget _message(ChatMessage chat, bool myMessage) {
     return Column(
-      crossAxisAlignment:
-          myMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      mainAxisAlignment:
-          myMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: myMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      mainAxisAlignment: myMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -96,8 +94,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
                   ),
             Expanded(
               child: Container(
-                alignment:
-                    myMessage ? Alignment.centerRight : Alignment.centerLeft,
+                alignment: myMessage ? Alignment.centerRight : Alignment.centerLeft,
                 margin: EdgeInsets.only(
                   right: myMessage ? 10 : (fullWidth(context) / 4),
                   top: 20,
@@ -109,9 +106,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         borderRadius: getBorder(myMessage),
-                        color: myMessage
-                            ? TwitterColor.dodgetBlue
-                            : TwitterColor.mystic,
+                        color: myMessage ? TwitterColor.dodgetBlue : TwitterColor.mystic,
                       ),
                       child: UrlText(
                         text: chat.message,
@@ -121,9 +116,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
                         ),
                         urlStyle: TextStyle(
                           fontSize: 16,
-                          color: myMessage
-                              ? TwitterColor.white
-                              : TwitterColor.dodgetBlue,
+                          color: myMessage ? TwitterColor.white : TwitterColor.dodgetBlue,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -194,12 +187,10 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
             },
             controller: messageController,
             decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 13),
               alignLabelWithHint: true,
               hintText: 'Start with a message...',
-              suffixIcon:
-                  IconButton(icon: Icon(Icons.send), onPressed: submitMessage),
+              suffixIcon: IconButton(icon: Icon(Icons.send), onPressed: submitMessage),
               // fillColor: Colors.black12, filled: true
             ),
           ),
@@ -225,7 +216,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
         senderId: authstate.userModel.userId,
         receiverId: state.chatUser.userId,
         seen: false,
-        timeStamp: DateTime.now().toUtc().millisecondsSinceEpoch.toString(),
+        timestamp: DateTime.now().toUtc().millisecondsSinceEpoch.toString(),
         senderName: authstate.user.displayName);
     if (messageController.text == null || messageController.text.isEmpty) {
       return;
@@ -247,9 +238,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
     });
     try {
       // final state = Provider.of<ChatState>(context,listen: false);
-      if (state.messageList != null &&
-          state.messageList.length > 1 &&
-          _controller.offset > 0) {
+      if (state.messageList != null && state.messageList.length > 1 && _controller.offset > 0) {
         _controller.animateTo(
           0.0,
           curve: Curves.easeOut,
@@ -261,7 +250,6 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
     }
   }
 
-  
   @override
   Widget build(BuildContext context) {
     state = Provider.of<ChatState>(context, listen: false);
@@ -276,10 +264,7 @@ class _ChatScreenPageState extends State<ChatScreenPage> {
             children: <Widget>[
               UrlText(
                 text: state.chatUser.displayName,
-                style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.black87, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Text(
                 state.chatUser.userName,

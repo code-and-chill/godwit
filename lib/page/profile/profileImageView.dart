@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/helper/theme.dart';
-import 'package:twitter/helper/utility.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/page/profile/profilePage.dart';
 import 'package:twitter/state/authState.dart';
 import 'package:twitter/widgets/customWidgets.dart';
@@ -23,12 +23,16 @@ class ProfileImageView extends StatelessWidget {
         actions: <Widget>[
           PopupMenuButton<Choice>(
             onSelected: (d) {
-                switch (d.title) {
-                  case "Share image link": share(authstate.profileUserModel.profilePic); break;
-                  case "Open in browser": launchURL(authstate.profileUserModel.profilePic); break;
-                  case "Save":  break;
-                }
-                
+              switch (d.title) {
+                case "Share image link":
+                  share(authstate.profileUserModel.profilePic);
+                  break;
+                case "Open in browser":
+                  launchURL(authstate.profileUserModel.profilePic);
+                  break;
+                case "Save":
+                  break;
+              }
             },
             itemBuilder: (BuildContext context) {
               return choices.map((Choice choice) {
@@ -48,8 +52,7 @@ class ProfileImageView extends StatelessWidget {
           // height: fullWidth(context),
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: customAdvanceNetworkImage(
-                  authstate.profileUserModel.profilePic),
+              image: customAdvanceNetworkImage(authstate.profileUserModel.profilePic),
               fit: BoxFit.contain,
             ),
           ),
