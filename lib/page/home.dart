@@ -12,7 +12,7 @@ import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/widgets/navigation/bottomMenuBar.dart';
 
-import 'common/sidebar.dart';
+import '../widgets/navigation/sidebar.dart';
 import 'notification/notification.dart';
 import 'search/search.dart';
 

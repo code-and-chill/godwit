@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twitter/page/common/user_list.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/widgets/list/user_list.dart';
 
 class FollowerListPage extends StatelessWidget {
   FollowerListPage({Key key}) : super(key: key);

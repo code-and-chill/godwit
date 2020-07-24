@@ -4,7 +4,6 @@ import 'package:twitter/page/Auth/select_auth_method.dart';
 import 'package:twitter/page/Auth/verify_email.dart';
 import 'package:twitter/page/auth/signin.dart';
 import 'package:twitter/page/auth/signup.dart';
-import 'package:twitter/page/common/splash.dart';
 import 'package:twitter/page/feed/compose_tweet.dart';
 import 'package:twitter/page/message/conversation.dart';
 import 'package:twitter/page/message/new_message.dart';
@@ -25,6 +24,7 @@ import 'package:twitter/page/settings/account/sound_page.dart';
 import 'package:twitter/page/settings/privacy.dart';
 import 'package:twitter/page/settings/proxy.dart';
 import 'package:twitter/states/tweet.dart';
+import 'package:twitter/widgets/label/splash.dart';
 
 import '../page/Auth/forgot_password.dart';
 import '../page/feed/feed_post_detail.dart';

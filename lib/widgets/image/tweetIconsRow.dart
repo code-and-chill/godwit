@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/page/common/user_list.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/states/feed.dart';
 import 'package:twitter/utilities/common.dart';
@@ -10,6 +9,7 @@ import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/routes.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/list/user_list.dart';
 import 'package:twitter/widgets/navigation/tweetBottomSheet.dart';
 
 class TweetIconsRow extends StatelessWidget {
