@@ -1,3 +1,5 @@
+![Dart CI](https://github.com/code-and-chill/godwit/workflows/Dart%20CI/badge.svg)
+
 # twitter
 
 A new Flutter application.
