@@ -5,11 +5,11 @@ class User {
   String displayName;
   String userName;
   String webSite;
-  String profilePic;
+  String profilePict;
   String contact;
   String bio;
   String location;
-  String dob;
+  String dateOfBirth;
   String createdAt;
   bool isVerified;
   int followers;
@@ -22,11 +22,11 @@ class User {
     this.email,
     this.userId,
     this.displayName,
-    this.profilePic,
+    this.profilePict,
     this.key,
     this.contact,
     this.bio,
-    this.dob,
+    this.dateOfBirth,
     this.location,
     this.createdAt,
     this.userName,
@@ -48,9 +48,9 @@ class User {
     email = map['email'];
     userId = map['userId'];
     displayName = map['displayName'];
-    profilePic = map['profilePic'];
+    profilePict = map['profilePic'];
     key = map['key'];
-    dob = map['dob'];
+    dateOfBirth = map['dateOfBirth'];
     bio = map['bio'];
     location = map['location'];
     contact = map['contact'];
@@ -76,6 +76,7 @@ class User {
     }
     following = followingList != null ? followingList.length : null;
   }
+
   toJson() {
     return {
       'key': key,
@@ -83,9 +84,9 @@ class User {
       "email": email,
       'displayName': displayName,
       'userId': userId,
-      'profilePic': profilePic,
+      'profilePic': profilePict,
       'contact': contact,
-      'dob': dob,
+      'dateOfBirth': dateOfBirth,
       'bio': bio,
       'location': location,
       'createdAt': createdAt,
@@ -125,13 +126,13 @@ class User {
       contact: contact ?? this.contact,
       createdAt: createdAt ?? this.createdAt,
       displayName: displayName ?? this.displayName,
-      dob: dob ?? this.dob,
+      dateOfBirth: dob ?? this.dateOfBirth,
       followers: followersList != null ? followersList.length : null,
       following: following ?? this.following,
       isVerified: isVerified ?? this.isVerified,
       key: key ?? this.key,
       location: location ?? this.location,
-      profilePic: profilePic ?? this.profilePic,
+      profilePict: profilePic ?? this.profilePict,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
       webSite: webSite ?? this.webSite,

@@ -5,6 +5,21 @@ enum AuthStatus {
 }
 enum TweetType { Tweet, Detail, Reply, ParentTweet }
 
-enum SortUser { ByVerified, ByAlphabetically, ByNewest, ByOldest, ByMaxFollower }
+enum SortUser {
+  ByVerified,
+  ByAlphabetically,
+  ByNewest,
+  ByOldest,
+  ByMaxFollower
+}
 
-enum NotificationType { NOT_DETERMINED, Message, Tweet, Reply, Retweet, Follow, Mention, Like }
+enum NotificationType {
+  NOT_DETERMINED,
+  Message,
+  Tweet,
+  Reply,
+  Retweet,
+  Follow,
+  Mention,
+  Like
+}

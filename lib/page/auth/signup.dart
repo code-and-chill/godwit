@@ -1,21 +1,22 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/model/user.dart';
+import 'package:twitter/states/auth.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/common.dart';
-import 'package:twitter/model/user.dart';
-import 'package:twitter/state/authState.dart';
-import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/googleLoginButton.dart';
-import 'package:twitter/widgets/newWidget/customLoader.dart';
-import 'package:provider/provider.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/button/googleLoginButton.dart';
+import 'package:twitter/widgets/layout/customLoader.dart';
 
 class SignUp extends StatefulWidget {
   final VoidCallback loginCallback;
 
   const SignUp({Key key, this.loginCallback}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _SignUpState();
 }
@@ -171,9 +172,10 @@ class _SignUpState extends State<SignUp> {
       bio: 'Edit profile to update bio',
       // contact:  _mobileController.text,
       displayName: _nameController.text,
-      dob: DateTime(1950, DateTime.now().month, DateTime.now().day + 3).toString(),
+      dateOfBirth: DateTime(1950, DateTime.now().month, DateTime.now().day + 3)
+          .toString(),
       location: 'Somewhere in universe',
-      profilePic: mockProfilePictures[randomNumber],
+      profilePict: mockProfilePictures[randomNumber],
       isVerified: false,
     );
     state

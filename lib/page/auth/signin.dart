@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/common.dart';
-import 'package:twitter/state/authState.dart';
-import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/googleLoginButton.dart';
-import 'package:twitter/widgets/newWidget/customLoader.dart';
-import 'package:twitter/widgets/newWidget/title_text.dart';
 import 'package:provider/provider.dart';
+import 'package:twitter/states/auth.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/button/googleLoginButton.dart';
+import 'package:twitter/widgets/label/title_text.dart';
+import 'package:twitter/widgets/layout/customLoader.dart';
 
 class SignIn extends StatefulWidget {
   final VoidCallback loginCallback;
 
   const SignIn({Key key, this.loginCallback}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _SignInState();
 }

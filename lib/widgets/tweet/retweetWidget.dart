@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/model/feed.dart';
+import 'package:twitter/states/feed.dart';
+import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/common.dart';
-import 'package:twitter/model/feed.dart';
-import 'package:twitter/state/feedState.dart';
-import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/newWidget/customUrlText.dart';
-import 'package:twitter/widgets/newWidget/rippleButton.dart';
-import 'package:twitter/widgets/newWidget/title_text.dart';
-import 'package:twitter/widgets/tweet/tweetImage.dart';
-import 'package:twitter/widgets/tweet/unavailableTweet.dart';
-import 'package:provider/provider.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/button/rippleButton.dart';
+import 'package:twitter/widgets/empty/unavailableTweet.dart';
+import 'package:twitter/widgets/image/tweetImage.dart';
+import 'package:twitter/widgets/label/customUrlText.dart';
+import 'package:twitter/widgets/label/title_text.dart';
 
 class RetweetWidget extends StatelessWidget {
-  const RetweetWidget({Key key, this.childRetwetkey, this.type, this.isImageAvailable = false}) : super(key: key);
+  const RetweetWidget(
+      {Key key, this.childRetwetkey, this.type, this.isImageAvailable = false})
+      : super(key: key);
 
   final String childRetwetkey;
   final bool isImageAvailable;
@@ -34,11 +36,12 @@ class RetweetWidget extends StatelessWidget {
               Container(
                 width: 25,
                 height: 25,
-                child: customImage(context, model.user.profilePic),
+                child: customImage(context, model.user.profilePict),
               ),
               SizedBox(width: 10),
               ConstrainedBox(
-                constraints: BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) * .5),
+                constraints: BoxConstraints(
+                    minWidth: 0, maxWidth: fullWidth(context) * .5),
                 child: TitleText(
                   model.user.displayName,
                   fontSize: 16,
@@ -68,7 +71,8 @@ class RetweetWidget extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 4),
-              customText('· ${getChatTime(model.createdAt)}', style: userNameStyle),
+              customText('· ${getChatTime(model.createdAt)}',
+                  style: userNameStyle),
             ],
           ),
         ),
@@ -81,7 +85,8 @@ class RetweetWidget extends StatelessWidget {
               fontSize: 14,
               fontWeight: FontWeight.w400,
             ),
-            urlStyle: TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
+            urlStyle:
+                TextStyle(color: Colors.blue, fontWeight: FontWeight.w400),
           ),
         ),
         SizedBox(height: model.imagePath == null ? 8 : 0),
@@ -98,8 +103,12 @@ class RetweetWidget extends StatelessWidget {
       builder: (context, AsyncSnapshot<Feed> snapshot) {
         if (snapshot.hasData) {
           return Container(
-            margin:
-                EdgeInsets.only(left: type == TweetType.Tweet || type == TweetType.ParentTweet ? 70 : 12, right: 16, top: isImageAvailable ? 8 : 5),
+            margin: EdgeInsets.only(
+                left: type == TweetType.Tweet || type == TweetType.ParentTweet
+                    ? 70
+                    : 12,
+                right: 16,
+                top: isImageAvailable ? 8 : 5),
             alignment: Alignment.topCenter,
             decoration: BoxDecoration(
               border: Border.all(color: AppColor.extraLightGrey, width: .5),
@@ -109,7 +118,8 @@ class RetweetWidget extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(15)),
               onPressed: () {
                 feedstate.getpostDetailFromDatabase(null, model: snapshot.data);
-                Navigator.of(context).pushNamed('/FeedPostDetail/' + snapshot.data.key);
+                Navigator.of(context)
+                    .pushNamed('/FeedPostDetail/' + snapshot.data.key);
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -118,7 +128,9 @@ class RetweetWidget extends StatelessWidget {
             ),
           );
         }
-        if ((snapshot.connectionState == ConnectionState.done || snapshot.connectionState == ConnectionState.waiting) && !snapshot.hasData) {
+        if ((snapshot.connectionState == ConnectionState.done ||
+            snapshot.connectionState == ConnectionState.waiting) &&
+            !snapshot.hasData) {
           return UnavailableTweet(
             snapshot: snapshot,
             type: type,

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-List<BoxShadow> shadow = <BoxShadow>[BoxShadow(blurRadius: 10, offset: Offset(5, 5), color: AppTheme.apptheme.accentColor, spreadRadius: 1)];
+List<BoxShadow> shadow = <BoxShadow>[
+  BoxShadow(
+      blurRadius: 10,
+      offset: Offset(5, 5),
+      color: AppTheme.apptheme.accentColor,
+      spreadRadius: 1)
+];
+
 String get description {
   return '';
 }
@@ -16,9 +23,18 @@ TextStyle get onPrimarySubTitleText {
 }
 
 BoxDecoration softDecoration = BoxDecoration(boxShadow: <BoxShadow>[
-  BoxShadow(blurRadius: 8, offset: Offset(5, 5), color: Color(0xffe2e5ed), spreadRadius: 5),
-  BoxShadow(blurRadius: 8, offset: Offset(-5, -5), color: Color(0xffffffff), spreadRadius: 5)
+  BoxShadow(
+      blurRadius: 8,
+      offset: Offset(5, 5),
+      color: Color(0xffe2e5ed),
+      spreadRadius: 5),
+  BoxShadow(
+      blurRadius: 8,
+      offset: Offset(-5, -5),
+      color: Color(0xffffffff),
+      spreadRadius: 5)
 ], color: Color(0xfff1f3f6));
+
 TextStyle get titleStyle {
   return TextStyle(
     color: Colors.black,
@@ -28,15 +44,18 @@ TextStyle get titleStyle {
 }
 
 TextStyle get subtitleStyle {
-  return TextStyle(color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
+  return TextStyle(
+      color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
 }
 
 TextStyle get userNameStyle {
-  return TextStyle(color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
+  return TextStyle(
+      color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
 }
 
 TextStyle get textStyle14 {
-  return TextStyle(color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
+  return TextStyle(
+      color: AppColor.darkGrey, fontSize: 14, fontWeight: FontWeight.bold);
 }
 
 class TwitterColor {
@@ -85,7 +104,8 @@ class AppTheme {
           ),
           elevation: 0,
           textTheme: TextTheme(
-            title: TextStyle(color: Colors.black, fontSize: 26, fontStyle: FontStyle.normal),
+            title: TextStyle(
+                color: Colors.black, fontSize: 26, fontStyle: FontStyle.normal),
           )),
       tabBarTheme: TabBarTheme(
         labelStyle: titleStyle.copyWith(color: TwitterColor.dodgetBlue),

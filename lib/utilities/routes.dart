@@ -1,37 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/page/Auth/selectAuthMethod.dart';
-import 'package:twitter/page/Auth/verifyEmail.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/page/Auth/select_auth_method.dart';
+import 'package:twitter/page/Auth/verify_email.dart';
 import 'package:twitter/page/auth/signin.dart';
 import 'package:twitter/page/auth/signup.dart';
 import 'package:twitter/page/common/splash.dart';
-import 'package:twitter/page/feed/composeTweet.dart';
-import 'package:twitter/state/composeTweetState.dart';
-import 'package:twitter/page/message/conversationInformation.dart';
-import 'package:twitter/page/message/newMessagePage.dart';
-import 'package:twitter/page/profile/follow/followerListPage.dart';
-import 'package:twitter/page/profile/follow/followingListPage.dart';
-import 'package:twitter/page/profile/profileImageView.dart';
-import 'package:twitter/page/search/SearchPage.dart';
-import 'package:twitter/page/settings/accountSettings/about/aboutTwitter.dart';
-import 'package:twitter/page/settings/accountSettings/accessibility/accessibility.dart';
-import 'package:twitter/page/settings/accountSettings/accountSettingsPage.dart';
-import 'package:twitter/page/settings/accountSettings/contentPrefrences/contentPreference.dart';
-import 'package:twitter/page/settings/accountSettings/contentPrefrences/trends/trendsPage.dart';
-import 'package:twitter/page/settings/accountSettings/dataUsage/dataUsagePage.dart';
-import 'package:twitter/page/settings/accountSettings/displaySettings/displayAndSoundPage.dart';
-import 'package:twitter/page/settings/accountSettings/notifications/notificationPage.dart';
-import 'package:twitter/page/settings/accountSettings/privacyAndSafety/directMessage/directMessage.dart';
-import 'package:twitter/page/settings/accountSettings/privacyAndSafety/privacyAndSafetyPage.dart';
-import 'package:twitter/page/settings/accountSettings/proxy/proxyPage.dart';
-import 'package:twitter/page/settings/settingsAndPrivacyPage.dart';
-import 'package:provider/provider.dart';
-import '../page/feed/imageViewPage.dart';
-import '../page/Auth/forgetPasswordPage.dart';
-import '../page/feed/feedPostDetail.dart';
-import '../page/profile/EditProfilePage.dart';
-import '../page/message/chatScreenPage.dart';
-import '../page/profile/profilePage.dart';
-import '../widgets/customWidgets.dart';
+import 'package:twitter/page/feed/compose_tweet.dart';
+import 'package:twitter/page/message/conversation.dart';
+import 'package:twitter/page/message/new_message.dart';
+import 'package:twitter/page/profile/follow/follower_list.dart';
+import 'package:twitter/page/profile/follow/following_list.dart';
+import 'package:twitter/page/profile/profile_image.dart';
+import 'package:twitter/page/search/search.dart';
+import 'package:twitter/page/settings/account/about.dart';
+import 'package:twitter/page/settings/account/accessibility/accessibility.dart';
+import 'package:twitter/page/settings/account/account.dart';
+import 'package:twitter/page/settings/account/content_preferences/content_preference.dart';
+import 'package:twitter/page/settings/account/content_preferences/trends.dart';
+import 'package:twitter/page/settings/account/data_usage.dart';
+import 'package:twitter/page/settings/account/notification.dart';
+import 'package:twitter/page/settings/account/privacy_and_safety/direct_message.dart';
+import 'package:twitter/page/settings/account/privacy_and_safety/safety.dart';
+import 'package:twitter/page/settings/account/sound_page.dart';
+import 'package:twitter/page/settings/privacy.dart';
+import 'package:twitter/page/settings/proxy.dart';
+import 'package:twitter/states/tweet.dart';
+
+import '../page/Auth/forgot_password.dart';
+import '../page/feed/feed_post_detail.dart';
+import '../page/feed/image_view.dart';
+import '../page/message/chat_screen.dart';
+import '../page/profile/edit_profile.dart';
+import '../page/profile/profile.dart';
+import 'widget.dart';
 
 class Routes {
   static dynamic route() {
@@ -57,13 +58,15 @@ class Routes {
         bool isTweet = false;
         if (pathElements.length == 3 && pathElements[2].contains('retweet')) {
           isRetweet = true;
-        } else if (pathElements.length == 3 && pathElements[2].contains('tweet')) {
+        } else if (pathElements.length == 3 &&
+            pathElements[2].contains('tweet')) {
           isTweet = true;
         }
         return CustomRoute<bool>(
-            builder: (BuildContext context) => ChangeNotifierProvider<ComposeTweetState>(
-                  create: (_) => ComposeTweetState(),
-                  child: ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet),
+            builder: (BuildContext context) => ChangeNotifierProvider<Tweet>(
+                  create: (_) => Tweet(),
+                  child:
+                      ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet),
                 ));
       case "FeedPostDetail":
         var postId = pathElements[2];
@@ -83,28 +86,36 @@ class Routes {
                 ));
       case "CreateFeedPage":
         return CustomRoute<bool>(
-            builder: (BuildContext context) => ChangeNotifierProvider<ComposeTweetState>(
-                  create: (_) => ComposeTweetState(),
+            builder: (BuildContext context) =>
+                ChangeNotifierProvider<Tweet>(
+                  create: (_) => Tweet(),
                   child: ComposeTweetPage(isRetweet: false, isTweet: true),
                 ));
       case "WelcomePage":
-        return CustomRoute<bool>(builder: (BuildContext context) => WelcomePage());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => WelcomePage());
       case "SignIn":
         return CustomRoute<bool>(builder: (BuildContext context) => SignIn());
       case "SignUp":
         return CustomRoute<bool>(builder: (BuildContext context) => SignUp());
       case "ForgetPasswordPage":
-        return CustomRoute<bool>(builder: (BuildContext context) => ForgetPasswordPage());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => ForgetPasswordPage());
       case "SearchPage":
-        return CustomRoute<bool>(builder: (BuildContext context) => SearchPage());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => SearchPage());
       case "ImageViewPge":
-        return CustomRoute<bool>(builder: (BuildContext context) => ImageViewPge());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => ImageViewPge());
       case "EditProfile":
-        return CustomRoute<bool>(builder: (BuildContext context) => EditProfilePage());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => EditProfilePage());
       case "ProfileImageView":
-        return SlideLeftRoute<bool>(builder: (BuildContext context) => ProfileImageView());
+        return SlideLeftRoute<bool>(
+            builder: (BuildContext context) => ProfileImageView());
       case "ChatScreenPage":
-        return CustomRoute<bool>(builder: (BuildContext context) => ChatScreenPage());
+        return CustomRoute<bool>(
+            builder: (BuildContext context) => ChatScreenPage());
       case "NewMessagePage":
         return CustomRoute<bool>(
           builder: (BuildContext context) => NewMessagePage(),
@@ -113,11 +124,11 @@ class Routes {
         return CustomRoute<bool>(
           builder: (BuildContext context) => SettingsAndPrivacyPage(),
         );
-      case "AccountSettingsPage":
+      case "accountPage":
         return CustomRoute<bool>(
           builder: (BuildContext context) => AccountSettingsPage(),
         );
-      case "AccountSettingsPage":
+      case "accountPage":
         return CustomRoute<bool>(
           builder: (BuildContext context) => AccountSettingsPage(),
         );
@@ -131,7 +142,7 @@ class Routes {
         );
       case "ContentPrefrencePage":
         return CustomRoute<bool>(
-          builder: (BuildContext context) => ContentPrefrencePage(),
+          builder: (BuildContext context) => ContentPreferencePage(),
         );
       case "DisplayAndSoundPage":
         return CustomRoute<bool>(
@@ -198,10 +209,12 @@ class Routes {
 }
 
 class CustomRoute<T> extends MaterialPageRoute<T> {
-  CustomRoute({WidgetBuilder builder, RouteSettings settings}) : super(builder: builder, settings: settings);
+  CustomRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
     Routes.sendNavigationEventToFirebase(settings.name);
     if (settings.name == "SplashPage") {
       return child;
@@ -214,9 +227,12 @@ class CustomRoute<T> extends MaterialPageRoute<T> {
 }
 
 class SlideLeftRoute<T> extends MaterialPageRoute<T> {
-  SlideLeftRoute({WidgetBuilder builder, RouteSettings settings}) : super(builder: builder, settings: settings);
+  SlideLeftRoute({WidgetBuilder builder, RouteSettings settings})
+      : super(builder: builder, settings: settings);
+
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
     Routes.sendNavigationEventToFirebase(settings.name);
     if (settings.name == "SplashPage") {
       return child;
@@ -225,7 +241,8 @@ class SlideLeftRoute<T> extends MaterialPageRoute<T> {
       position: new Tween<Offset>(
         begin: const Offset(1.0, 0.0),
         end: Offset.zero,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn)),
+      ).animate(
+          CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn)),
       child: child,
     );
   }

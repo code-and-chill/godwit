@@ -1,26 +1,27 @@
-import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/newWidget/customLoader.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/layout/customLoader.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:developer' as developer;
 
-final kAnalytics = FirebaseAnalytics();
-final DatabaseReference kDatabase = FirebaseDatabase.instance.reference();
-final kScreenloader = CustomLoader();
+final firebaseAnalytics = FirebaseAnalytics();
+final DatabaseReference firebaseDatabase =
+    FirebaseDatabase.instance.reference();
+final myScreenLoader = CustomLoader();
 
-String getPostTime2(String date) {
+String getPostingTime(String date) {
   if (date == null || date.isEmpty) {
     return '';
   }
   var dt = DateTime.parse(date).toLocal();
-  var dat = DateFormat.jm().format(dt) + ' - ' + DateFormat("dd MMM yy").format(dt);
+  var dat =
+      DateFormat.jm().format(dt) + ' - ' + DateFormat("dd MMM yy").format(dt);
   return dat;
 }
 
@@ -89,14 +90,23 @@ String getPollTime(String date) {
   if (mm > 0) {
     msg += ' ' + mm.toString() + ' min';
   }
-  return (dur.inDays).toString() + ' Days ' + ' ' + hr.toString() + ' Hours ' + mm.toString() + ' min';
+  return (dur.inDays).toString() +
+      ' Days ' +
+      ' ' +
+      hr.toString() +
+      ' Hours ' +
+      mm.toString() +
+      ' min';
 }
 
 String getSocialLinks(String url) {
   if (url != null && url.isNotEmpty) {
     url = url.contains("https://www") || url.contains("http://www")
         ? url
-        : url.contains("www") && (!url.contains('https') && !url.contains('http')) ? 'https://' + url : 'https://www.' + url;
+        : url.contains("www") &&
+        (!url.contains('https') && !url.contains('http'))
+        ? 'https://' + url
+        : 'https://www.' + url;
   } else {
     return null;
   }
@@ -114,9 +124,11 @@ launchURL(String url) async {
 
 void cprint(dynamic data, {String errorIn, String event}) {
   if (errorIn != null) {
-    print('****************************** error ******************************');
+    print(
+        '****************************** error ******************************');
     developer.log('[Error]', time: DateTime.now(), error: data, name: errorIn);
-    print('****************************** error ******************************');
+    print(
+        '****************************** error ******************************');
   } else if (data != null) {
     developer.log(
       data,
@@ -129,7 +141,9 @@ void cprint(dynamic data, {String errorIn, String event}) {
 }
 
 void logEvent(String event, {Map<String, dynamic> parameter}) {
-  kReleaseMode ? kAnalytics.logEvent(name: event, parameters: parameter) : print("[EVENT]: $event");
+  kReleaseMode
+      ? firebaseAnalytics.logEvent(name: event, parameters: parameter)
+      : print("[EVENT]: $event");
 }
 
 void debugLog(String log, {dynamic param = ""}) {
@@ -142,11 +156,14 @@ void share(String message, {String subject}) {
 }
 
 List<String> getHashTags(String text) {
-  RegExp reg = RegExp(r"([#])\w+|(https?|ftp|file|#)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]*");
+  RegExp reg = RegExp(
+      r"([#])\w+|(https?|ftp|file|#)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]*");
   Iterable<Match> _matches = reg.allMatches(text);
   List<String> resultMatches = List<String>();
   for (Match match in _matches) {
-    if (match.group(0).isNotEmpty) {
+    if (match
+        .group(0)
+        .isNotEmpty) {
       var tag = match.group(0);
       resultMatches.add(tag);
     }
@@ -168,7 +185,8 @@ String getUserName({
   return userName;
 }
 
-bool validateCredentials(GlobalKey<ScaffoldState> _scaffoldKey, String email, String password) {
+bool validateCredentials(GlobalKey<ScaffoldState> _scaffoldKey, String email,
+    String password) {
   if (email == null || email.isEmpty) {
     customSnackBar(_scaffoldKey, 'Please enter email id');
     return false;

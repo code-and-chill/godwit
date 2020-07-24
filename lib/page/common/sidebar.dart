@@ -1,11 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/state/authState.dart';
-import 'package:twitter/widgets/customWidgets.dart';
-import 'package:twitter/widgets/newWidget/customUrlText.dart';
-import 'package:provider/provider.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/label/customUrlText.dart';
 
 class SidebarMenu extends StatefulWidget {
   const SidebarMenu({Key key, this.scaffoldKey}) : super(key: key);
@@ -49,7 +48,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
                   image: customAdvanceNetworkImage(
-                    state.userModel.profilePic ?? mockProfilePicture,
+                    state.userModel.profilePict ?? mockProfilePicture,
                   ),
                   fit: BoxFit.cover,
                 ),

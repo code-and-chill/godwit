@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/state/searchState.dart';
-import 'utilities/routes.dart';
-import 'state/appState.dart';
-import 'package:provider/provider.dart';
-import 'state/authState.dart';
-import 'state/chatState.dart';
-import 'state/feedState.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/states/notification.dart';
+import 'package:twitter/states/search.dart';
+import 'package:twitter/utilities/theme.dart';
 
-import 'state/notificationState.dart';
+import 'states/app.dart';
+import 'states/auth.dart';
+import 'states/chat.dart';
+import 'states/feed.dart';
+import 'utilities/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<FeedState>(create: (_) => FeedState()),
         ChangeNotifierProvider<ChatState>(create: (_) => ChatState()),
         ChangeNotifierProvider<SearchState>(create: (_) => SearchState()),
-        ChangeNotifierProvider<NotificationState>(create: (_) => NotificationState()),
+        ChangeNotifierProvider<NotificationState>(
+            create: (_) => NotificationState()),
       ],
       child: MaterialApp(
         title: 'Twitter',
