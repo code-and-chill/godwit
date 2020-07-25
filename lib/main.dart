@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/states/notification.dart';
 import 'package:twitter/states/search.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/utilities/theme.dart';
 
 import 'states/app.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         routes: Routes.route(),
         onGenerateRoute: (settings) => Routes.onGenerateRoute(settings),
         onUnknownRoute: (settings) => Routes.onUnknownRoute(settings),
-        initialRoute: "SplashPage",
+        initialRoute: page.Splash,
       ),
     );
   }

@@ -24,9 +24,10 @@ import 'package:twitter/page/settings/account/sound_page.dart';
 import 'package:twitter/page/settings/privacy.dart';
 import 'package:twitter/page/settings/proxy.dart';
 import 'package:twitter/states/tweet.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/widgets/label/splash.dart';
 
-import '../page/Auth/forgot_password.dart';
+import '../page/auth/forgot_password.dart';
 import '../page/feed/feed_post_detail.dart';
 import '../page/feed/image_view.dart';
 import '../page/message/chat_screen.dart';
@@ -37,7 +38,7 @@ import 'widget.dart';
 class Routes {
   static dynamic route() {
     return {
-      'SplashPage': (BuildContext context) => SplashPage(),
+      page.Splash: (BuildContext context) => SplashPage(),
     };
   }
 
@@ -53,7 +54,7 @@ class Routes {
       return null;
     }
     switch (pathElements[1]) {
-      case "ComposeTweetPage":
+      case page.ComposeTweet:
         bool isRetweet = false;
         bool isTweet = false;
         if (pathElements.length == 3 && pathElements[2].contains('retweet')) {
@@ -68,14 +69,14 @@ class Routes {
                   child:
                       ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet),
                 ));
-      case "FeedPostDetail":
+      case page.FeedPostDetail:
         var postId = pathElements[2];
         return SlideLeftRoute<bool>(
             builder: (BuildContext context) => FeedPostDetail(
                   postId: postId,
                 ),
-            settings: RouteSettings(name: 'FeedPostDetail'));
-      case "ProfilePage":
+            settings: RouteSettings(name: page.FeedPostDetail));
+      case page.Profile:
         String profileId;
         if (pathElements.length > 2) {
           profileId = pathElements[2];
@@ -84,107 +85,106 @@ class Routes {
             builder: (BuildContext context) => ProfilePage(
                   profileId: profileId,
                 ));
-      case "CreateFeedPage":
+      case page.CreateFeed:
         return CustomRoute<bool>(
-            builder: (BuildContext context) =>
-                ChangeNotifierProvider<Tweet>(
+            builder: (BuildContext context) => ChangeNotifierProvider<Tweet>(
                   create: (_) => Tweet(),
                   child: ComposeTweetPage(isRetweet: false, isTweet: true),
                 ));
-      case "WelcomePage":
+      case page.Welcome:
         return CustomRoute<bool>(
             builder: (BuildContext context) => WelcomePage());
-      case "SignIn":
+      case page.SignIn:
         return CustomRoute<bool>(builder: (BuildContext context) => SignIn());
-      case "SignUp":
+      case page.SignUp:
         return CustomRoute<bool>(builder: (BuildContext context) => SignUp());
-      case "ForgetPasswordPage":
+      case page.ForgotPassword:
         return CustomRoute<bool>(
             builder: (BuildContext context) => ForgetPasswordPage());
-      case "SearchPage":
+      case page.Search:
         return CustomRoute<bool>(
             builder: (BuildContext context) => SearchPage());
-      case "ImageViewPge":
+      case page.ImageView:
         return CustomRoute<bool>(
             builder: (BuildContext context) => ImageViewPge());
-      case "EditProfile":
+      case page.EditProfile:
         return CustomRoute<bool>(
             builder: (BuildContext context) => EditProfilePage());
-      case "ProfileImageView":
+      case page.ProfileImageView:
         return SlideLeftRoute<bool>(
             builder: (BuildContext context) => ProfileImageView());
-      case "ChatScreenPage":
+      case page.ChatScreen:
         return CustomRoute<bool>(
             builder: (BuildContext context) => ChatScreenPage());
-      case "NewMessagePage":
+      case page.NewMessage:
         return CustomRoute<bool>(
           builder: (BuildContext context) => NewMessagePage(),
         );
-      case "SettingsAndPrivacyPage":
+      case page.SettingsAndPrivacy:
         return CustomRoute<bool>(
           builder: (BuildContext context) => SettingsAndPrivacyPage(),
         );
-      case "accountPage":
+      case page.Account:
         return CustomRoute<bool>(
           builder: (BuildContext context) => AccountSettingsPage(),
         );
-      case "accountPage":
+      case page.Account:
         return CustomRoute<bool>(
           builder: (BuildContext context) => AccountSettingsPage(),
         );
-      case "PrivacyAndSaftyPage":
+      case page.PrivacyAndSafety:
         return CustomRoute<bool>(
           builder: (BuildContext context) => PrivacyAndSaftyPage(),
         );
-      case "NotificationPage":
+      case page.Notification:
         return CustomRoute<bool>(
           builder: (BuildContext context) => NotificationPage(),
         );
-      case "ContentPrefrencePage":
+      case page.ContentPreference:
         return CustomRoute<bool>(
           builder: (BuildContext context) => ContentPreferencePage(),
         );
-      case "DisplayAndSoundPage":
+      case page.DisplayAndSound:
         return CustomRoute<bool>(
           builder: (BuildContext context) => DisplayAndSoundPage(),
         );
-      case "DirectMessagesPage":
+      case page.DirectMessages:
         return CustomRoute<bool>(
           builder: (BuildContext context) => DirectMessagesPage(),
         );
-      case "TrendsPage":
+      case page.Trends:
         return CustomRoute<bool>(
           builder: (BuildContext context) => TrendsPage(),
         );
-      case "DataUsagePage":
+      case page.DataUsage:
         return CustomRoute<bool>(
           builder: (BuildContext context) => DataUsagePage(),
         );
-      case "AccessibilityPage":
+      case page.Accessibility:
         return CustomRoute<bool>(
           builder: (BuildContext context) => AccessibilityPage(),
         );
-      case "ProxyPage":
+      case page.Proxy:
         return CustomRoute<bool>(
           builder: (BuildContext context) => ProxyPage(),
         );
-      case "AboutPage":
+      case page.About:
         return CustomRoute<bool>(
           builder: (BuildContext context) => AboutPage(),
         );
-      case "ConversationInformation":
+      case page.ConversationInformation:
         return CustomRoute<bool>(
           builder: (BuildContext context) => ConversationInformation(),
         );
-      case "FollowingListPage":
+      case page.FollowingList:
         return CustomRoute<bool>(
           builder: (BuildContext context) => FollowingListPage(),
         );
-      case "FollowerListPage":
+      case page.FollowerList:
         return CustomRoute<bool>(
           builder: (BuildContext context) => FollowerListPage(),
         );
-      case "VerifyEmailPage":
+      case page.VerifyEmail:
         return CustomRoute<bool>(
           builder: (BuildContext context) => VerifyEmailPage(),
         );
@@ -234,7 +234,7 @@ class SlideLeftRoute<T> extends MaterialPageRoute<T> {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     Routes.sendNavigationEventToFirebase(settings.name);
-    if (settings.name == "SplashPage") {
+    if (settings.name == page.Splash) {
       return child;
     }
     return SlideTransition(
