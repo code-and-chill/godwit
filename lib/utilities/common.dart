@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share/share.dart';
 import 'package:twitter/utilities/widget.dart';
-import 'package:twitter/widgets/layout/customLoader.dart';
+import 'package:twitter/widgets/layout/loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final firebaseAnalytics = FirebaseAnalytics();
@@ -169,20 +169,6 @@ List<String> getHashTags(String text) {
     }
   }
   return resultMatches;
-}
-
-String getUserName({
-  String id,
-  String name,
-}) {
-  String userName = '';
-  if (name.length > 15) {
-    name = name.substring(0, 6);
-  }
-  name = name.split(' ')[0];
-  id = id.substring(0, 4).toLowerCase();
-  userName = '@$name$id';
-  return userName;
 }
 
 bool validateCredentials(GlobalKey<ScaffoldState> _scaffoldKey, String email,

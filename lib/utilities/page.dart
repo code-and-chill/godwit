@@ -29,3 +29,4 @@ const FollowingList = "followingList";
 const FollowerList = "followerList";
 const VerifyEmail = "verifyEmail";
 const Splash = "Splash ";
+const ForgetPassword = "ForgetPassword";

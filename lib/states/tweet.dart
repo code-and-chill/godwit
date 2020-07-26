@@ -149,10 +149,10 @@ class Tweet extends ChangeNotifier {
         /// Send notification to user one by one
         await Future.forEach(_matches, (Match match) async {
           var name = description.substring(match.start, match.end);
-          if (state.userlist.any((x) => x.userName == name)) {
+          if (state.users.any((x) => x.userName == name)) {
             /// Fetch user model from userlist
             /// UserId, FCMtoken is needed to send notification
-            final user = state.userlist.firstWhere((x) => x.userName == name);
+            final user = state.users.firstWhere((x) => x.userName == name);
             await sendNotificationToUser(model, user);
           } else {
             cprint("Name: $name ,", errorIn: "UserNot found");

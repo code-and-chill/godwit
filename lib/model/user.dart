@@ -4,7 +4,7 @@ class User {
   String userId;
   String displayName;
   String userName;
-  String webSite;
+  String website;
   String profilePict;
   String contact;
   String bio;
@@ -12,11 +12,9 @@ class User {
   String dateOfBirth;
   String createdAt;
   bool isVerified;
-  int followers;
-  int following;
   String fcmToken;
-  List<String> followersList;
-  List<String> followingList;
+  List<String> followers;
+  List<String> following;
 
   User({
     this.email,
@@ -30,74 +28,57 @@ class User {
     this.location,
     this.createdAt,
     this.userName,
-    this.followers,
-    this.following,
-    this.webSite,
+    this.website,
     this.isVerified,
     this.fcmToken,
-    this.followersList,
+    this.followers,
+    this.following,
   });
 
   User.fromJson(Map<dynamic, dynamic> map) {
     if (map == null) {
       return;
     }
-    if (followersList == null) {
-      followersList = [];
+    if (followers == null) {
+      followers = [];
     }
     email = map['email'];
-    userId = map['userId'];
-    displayName = map['displayName'];
-    profilePict = map['profilePic'];
+    userId = map['user_id'];
+    displayName = map['display_name'];
+    profilePict = map['profile_pict'];
     key = map['key'];
-    dateOfBirth = map['dateOfBirth'];
+    dateOfBirth = map['date_of_birth'];
     bio = map['bio'];
     location = map['location'];
     contact = map['contact'];
-    createdAt = map['createdAt'];
-    followers = map['followers'];
-    following = map['following'];
-    userName = map['userName'];
-    webSite = map['webSite'];
-    fcmToken = map['fcmToken'];
-    isVerified = map['isVerified'] ?? false;
-    if (map['followerList'] != null) {
-      followersList = List<String>();
-      map['followerList'].forEach((value) {
-        followersList.add(value);
-      });
-    }
-    followers = followersList != null ? followersList.length : null;
-    if (map['followingList'] != null) {
-      followingList = List<String>();
-      map['followingList'].forEach((value) {
-        followingList.add(value);
-      });
-    }
-    following = followingList != null ? followingList.length : null;
+    createdAt = map['created_at'];
+    userName = map['user_name'];
+    website = map['website'];
+    fcmToken = map['fcm_token'];
+    isVerified = map['is_verified'] ?? false;
+    followers = map['followers'] ?? [];
+    following = map['following'] ?? [];
   }
 
   toJson() {
     return {
       'key': key,
-      "userId": userId,
+      "user_id": userId,
       "email": email,
-      'displayName': displayName,
+      'display_name': displayName,
       'userId': userId,
-      'profilePic': profilePict,
+      'profile_pict': profilePict,
       'contact': contact,
-      'dateOfBirth': dateOfBirth,
+      'date_of_birth': dateOfBirth,
       'bio': bio,
       'location': location,
-      'createdAt': createdAt,
-      'followers': followersList != null ? followersList.length : null,
-      'following': followingList != null ? followingList.length : null,
+      'created_at': createdAt,
       'userName': userName,
-      'webSite': webSite,
-      'isVerified': isVerified ?? false,
-      'fcmToken': fcmToken,
-      'followerList': followersList,
-      'followingList': followingList
+      'website': website,
+      'is_verified': isVerified ?? false,
+      'fcm_token': fcmToken,
+      'followers': followers,
+      'followings': following
     };
   }
 
@@ -105,20 +86,19 @@ class User {
     String email,
     String userId,
     String displayName,
-    String profilePic,
+    String profilePict,
     String key,
     String contact,
     bio,
-    String dob,
+    String dateOfBirth,
     String location,
     String createdAt,
     String userName,
-    int followers,
-    int following,
-    String webSite,
+    String website,
     bool isVerified,
     String fcmToken,
-    List<String> followingList,
+    List<String> followers,
+    List<String> following,
   }) {
     return User(
       email: email ?? this.email,
@@ -126,26 +106,17 @@ class User {
       contact: contact ?? this.contact,
       createdAt: createdAt ?? this.createdAt,
       displayName: displayName ?? this.displayName,
-      dateOfBirth: dob ?? this.dateOfBirth,
-      followers: followersList != null ? followersList.length : null,
-      following: following ?? this.following,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       isVerified: isVerified ?? this.isVerified,
       key: key ?? this.key,
       location: location ?? this.location,
-      profilePict: profilePic ?? this.profilePict,
+      profilePict: profilePict ?? this.profilePict,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
-      webSite: webSite ?? this.webSite,
+      website: website ?? this.website,
       fcmToken: fcmToken ?? this.fcmToken,
-      followersList: followersList ?? this.followersList,
+      followers: followers ?? this.followers,
+      following: following ?? this.following,
     );
-  }
-
-  String getFollower() {
-    return '${this.followers ?? 0}';
-  }
-
-  String getFollowing() {
-    return '${this.following ?? 0}';
   }
 }

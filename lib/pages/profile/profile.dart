@@ -1,0 +1,559 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:twitter/model/choice.dart';
+import 'package:twitter/model/feed.dart';
+import 'package:twitter/model/user.dart';
+import 'package:twitter/states/auth.dart';
+import 'package:twitter/states/chat.dart';
+import 'package:twitter/states/feed.dart';
+import 'package:twitter/utilities/common.dart';
+import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/button/ripple.dart';
+import 'package:twitter/widgets/image/twitter_icon.dart';
+import 'package:twitter/widgets/label/notify.dart';
+import 'package:twitter/widgets/label/text.dart';
+import 'package:twitter/widgets/label/url.dart';
+import 'package:twitter/widgets/layout/loader.dart';
+import 'package:twitter/widgets/navigation/tab_painter.dart';
+import 'package:twitter/widgets/navigation/tweet_bottom_sheet.dart';
+import 'package:twitter/widgets/tweet/tweet.dart';
+
+class ProfilePage extends StatefulWidget {
+  ProfilePage({Key key, this.profileId}) : super(key: key);
+
+  final String profileId;
+
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStateMixin {
+  bool isMyProfile = false;
+  int pageIndex = 0;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      var authstate = Provider.of<AuthState>(context, listen: false);
+      authstate.getProfileUser(userProfileId: widget.profileId);
+      isMyProfile = widget.profileId == null || widget.profileId == authstate.userId;
+    });
+    _tabController = TabController(length: 3, vsync: this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  SliverAppBar getAppbar() {
+    var authstate = Provider.of<AuthState>(context);
+    return SliverAppBar(
+      forceElevated: false,
+      expandedHeight: 200,
+      elevation: 0,
+      stretch: true,
+      iconTheme: IconThemeData(color: Colors.white),
+      backgroundColor: Colors.transparent,
+      actions: <Widget>[
+        authstate.isAppBusy
+            ? SizedBox.shrink()
+            : PopupMenuButton<Choice>(
+                onSelected: (d) {},
+                itemBuilder: (BuildContext context) {
+                  return defaultChoices.map((Choice choice) {
+                    return PopupMenuItem<Choice>(
+                      value: choice,
+                      child: Text(choice.title),
+                    );
+                  }).toList();
+                },
+              ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        stretchModes: <StretchMode>[StretchMode.zoomBackground, StretchMode.blurBackground],
+        background: authstate.isAppBusy
+            ? SizedBox.shrink()
+            : Stack(
+                alignment: Alignment.topCenter,
+                children: <Widget>[
+                  SizedBox.expand(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 50),
+                      height: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                  // Container(height: 50, color: Colors.black),
+
+                  /// Banner image
+                  Container(
+                    height: 180,
+                    padding: EdgeInsets.only(top: 28),
+                    child: customNetworkImage(
+                      'https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500',
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+
+                  /// User avatar, message icon, profile edit and follow/following button
+                  Container(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        AnimatedContainer(
+                          duration: Duration(milliseconds: 500),
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(border: Border.all(color: Colors.white, width: 5), shape: BoxShape.circle),
+                          child: RippleButton(
+                            child: customImage(
+                              context,
+                              authstate.profileUser.profilePict,
+                              height: 80,
+                            ),
+                            borderRadius: BorderRadius.circular(50),
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/ProfileImageView");
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 90, right: 30),
+                          child: Row(
+                            children: <Widget>[
+                              isMyProfile
+                                  ? Container(height: 40)
+                                  : RippleButton(
+                                      splashColor: TwitterColor.dodgetBlue_50.withAlpha(100),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                      onPressed: () {
+                                        if (!isMyProfile) {
+                                          final chatState = Provider.of<
+                                              ChatState>(
+                                              context, listen: false);
+                                          chatState.setChatUser =
+                                              authstate.profileUser;
+                                          Navigator.pushNamed(
+                                              context, '/ChatScreenPage');
+                                        }
+                                      },
+                                      child: Container(
+                                        height: 35,
+                                        width: 35,
+                                        padding: EdgeInsets.only(bottom: 5, top: 0, right: 0, left: 0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(color: isMyProfile ? Colors.black87.withAlpha(180) : Colors.blue, width: 1),
+                                            shape: BoxShape.circle),
+                                        child: Icon(
+                                          IconData(AppIcon.messageEmpty, fontFamily: 'TwitterIcon'),
+                                          color: Colors.blue,
+                                          size: 20,
+                                        ),
+
+                                        // TwitterIcon(context, icon:AppIcon.messageEmpty, iconColor: TwitterColor.dodgetBlue, paddingIcon: 8)
+                                      ),
+                                    ),
+                              SizedBox(width: 10),
+                              RippleButton(
+                                splashColor: TwitterColor.dodgetBlue_50.withAlpha(100),
+                                borderRadius: BorderRadius.all(Radius.circular(60)),
+                                onPressed: () {
+                                  if (isMyProfile) {
+                                    Navigator.pushNamed(context, '/EditProfile');
+                                  } else {
+                                    authstate.followUser(
+                                      removeFollower: isFollower(),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isFollower() ? TwitterColor.dodgetBlue : TwitterColor.white,
+                                    border: Border.all(color: isMyProfile ? Colors.black87.withAlpha(180) : Colors.blue, width: 1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+
+                                  /// If [isMyProfile] is true then Edit profile button will display
+                                  // Otherwise Follow/Following button will be display
+                                  child: Text(
+                                    isMyProfile ? 'Edit Profile' : isFollower() ? 'Following' : 'Follow',
+                                    style: TextStyle(
+                                      color: isMyProfile ? Colors.black87.withAlpha(180) : isFollower() ? TwitterColor.white : Colors.blue,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _floatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {
+        Navigator.of(context).pushNamed('/CreateFeedPage');
+      },
+      child: TwitterIcon(
+        icon: AppIcon.fabTweet,
+        iconColor: Theme
+            .of(context)
+            .colorScheme
+            .onPrimary,
+        size: 25,
+      ),
+    );
+  }
+
+  Widget _emptyBox() {
+    return SliverToBoxAdapter(child: SizedBox.shrink());
+  }
+
+  isFollower() {
+    var authState = Provider.of<AuthState>(context);
+    if (authState.profileUser.followers != null &&
+        authState.profileUser.followers.isNotEmpty) {
+      return (authState.profileUser.followers.any((x) =>
+      x == authState.userModel.userId));
+    } else {
+      return false;
+    }
+  }
+
+  /// This meathod called when user pressed back button
+  /// When profile page is about to close
+  /// Maintain minimum user's profile in profile page list
+  Future<bool> _onWillPop() async {
+    final state = Provider.of<AuthState>(context, listen: false);
+
+    /// It will remove last user's profile from profileUserModelList
+    state.removeLastUser();
+    return true;
+  }
+
+  TabController _tabController;
+
+  @override
+  build(BuildContext context) {
+    var state = Provider.of<FeedState>(context);
+    var authstate = Provider.of<AuthState>(context);
+    List<Feed> list;
+    String id = widget.profileId ?? authstate.userId;
+
+    /// Filter user's tweet among all tweets available in home page tweets list
+    if (state.feedlist != null && state.feedlist.length > 0) {
+      list = state.feedlist.where((x) => x.userId == id).toList();
+    }
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        floatingActionButton: !isMyProfile ? null : _floatingActionButton(),
+        backgroundColor: TwitterColor.mystic,
+        body: NestedScrollView(
+          // controller: _scrollController,
+          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
+            return <Widget>[
+              getAppbar(),
+              authstate.isAppBusy
+                  ? _emptyBox()
+                  : SliverToBoxAdapter(
+                      child: Container(
+                        color: Colors.white,
+                        child: authstate.isAppBusy
+                            ? SizedBox.shrink()
+                            : UserNameRowWidget(
+                          user: authstate.profileUser,
+                          isMyProfile: isMyProfile,
+                        ),
+                      ),
+                    ),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Container(
+                      color: TwitterColor.white,
+                      child: TabBar(
+                        indicator: TabIndicator(),
+                        controller: _tabController,
+                        tabs: <Widget>[Text("Tweets"), Text("Tweets & replies"), Text("Media")],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              /// Display all independent tweers list
+              _tweetList(context, authstate, list, false, false),
+
+              /// Display all reply tweet list
+              _tweetList(context, authstate, list, true, false),
+
+              /// Display all reply and comments tweet list
+              _tweetList(context, authstate, list, false, true)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _tweetList(BuildContext context, AuthState authstate, List<Feed> tweetsList, bool isreply, bool isMedia) {
+    List<Feed> list;
+
+    /// If user hasn't tweeted yet
+    if (tweetsList == null) {
+      // cprint('No Tweet avalible');
+    } else if (isMedia) {
+      /// Display all Tweets with media file
+
+      list = tweetsList.where((x) => x.imagePath != null).toList();
+    } else if (!isreply) {
+      /// Display all independent Tweets
+      /// No comments Tweet will display
+
+      list = tweetsList.where((x) => x.parentKey == null || x.childRetweetKey != null).toList();
+    } else {
+      /// Display all reply Tweets
+      /// No intependent tweet will display
+      list = tweetsList.where((x) => x.parentKey != null && x.childRetweetKey == null).toList();
+    }
+
+    /// if [authState.isbusy] is true then an loading indicator will be displayed on screen.
+    return authstate.isAppBusy
+        ? Container(
+      height: fullHeight(context) - 180,
+      child: CustomScreenLoader(
+        height: double.infinity,
+        width: fullWidth(context),
+        backgroundColor: Colors.white,
+      ),
+    )
+
+    /// if tweet list is empty or null then need to show user a message
+        : list == null || list.length < 1
+            ? Container(
+                padding: EdgeInsets.only(top: 50, left: 30, right: 30),
+                child: NotifyText(
+                  title: isMyProfile
+                      ? 'You haven\'t ${isreply ? 'reply to any Tweet' : isMedia
+                      ? 'post any media Tweet yet'
+                      : 'post any Tweet yet'}'
+                      : '${authstate.profileUser.userName} hasn\'t ${isreply
+                      ? 'reply to any Tweet'
+                      : isMedia
+                      ? 'post any media Tweet yet'
+                      : 'post any Tweet yet'}',
+                  subTitle: isMyProfile
+                      ? 'Tap tweet button to add new'
+                      : 'Once he\'ll do, they will be shown up here',
+                ),
+              )
+
+            /// If tweets available then tweet list will displayed
+            : ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: 0),
+                itemCount: list.length,
+                itemBuilder: (context, index) => Container(
+                  color: TwitterColor.white,
+                  child: Tweet(
+                    model: list[index],
+                    isDisplayOnProfile: true,
+                    trailing: TweetBottomSheet().tweetOptionIcon(
+                      context,
+                      list[index],
+                      TweetType.Tweet,
+                    ),
+                  ),
+                ),
+              );
+  }
+}
+
+class UserNameRowWidget extends StatelessWidget {
+  const UserNameRowWidget({
+    Key key,
+    @required this.user,
+    @required this.isMyProfile,
+  }) : super(key: key);
+
+  final bool isMyProfile;
+  final User user;
+
+  String getBio(String bio) {
+    if (isMyProfile) {
+      return bio;
+    } else if (bio == "Edit profile to update bio") {
+      return "No bio available";
+    } else {
+      return bio;
+    }
+  }
+
+  Widget _tappbleText(BuildContext context, String count, String text, String navigateTo) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, '/$navigateTo');
+      },
+      child: Row(
+        children: <Widget>[
+          CustomText(
+            '$count ',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          ),
+          CustomText(
+            '$text',
+            style: TextStyle(color: AppColor.darkGrey, fontSize: 17),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(height: 10),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 10,
+          ),
+          child: Row(
+            children: <Widget>[
+              UrlText(
+                text: user.displayName,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              SizedBox(
+                width: 3,
+              ),
+              user.isVerified
+                  ? TwitterIcon(icon: AppIcon.blueTick,
+                  iconColor: AppColor.primary,
+                  size: 13,
+                  paddingIcon: 3)
+                  : SizedBox(width: 0),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 9),
+          child: CustomText(
+            '${user.userName}',
+            style: subtitleStyle.copyWith(fontSize: 13),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: CustomText(
+            getBio(user.bio),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TwitterIcon(icon: AppIcon.locationPin,
+                  size: 14,
+                  paddingIcon: 5,
+                  iconColor: AppColor.darkGrey),
+              SizedBox(width: 10),
+              Expanded(
+                child: CustomText(
+                  user.location,
+                  style: TextStyle(color: AppColor.darkGrey),
+                ),
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          child: Row(
+            children: <Widget>[
+              TwitterIcon(icon: AppIcon.calender,
+                  size: 14,
+                  paddingIcon: 5,
+                  iconColor: AppColor.darkGrey),
+              SizedBox(width: 10),
+              CustomText(
+                getJoiningDate(user.createdAt),
+                style: TextStyle(color: AppColor.darkGrey),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 10,
+                height: 30,
+              ),
+              _tappbleText(context, '${user.followers.length}', ' Followers',
+                  'FollowerListPage'),
+              SizedBox(width: 40),
+              _tappbleText(context, '${user.following.length}', ' Following',
+                  'FollowingListPage'),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ChoiceCard extends StatelessWidget {
+  const ChoiceCard({Key key, this.choice}) : super(key: key);
+
+  final Choice choice;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle textStyle = Theme.of(context).textTheme.display1;
+    return Card(
+      color: Colors.white,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(choice.icon, size: 128.0, color: textStyle.color),
+            Text(choice.title, style: textStyle),
+          ],
+        ),
+      ),
+    );
+  }
+}

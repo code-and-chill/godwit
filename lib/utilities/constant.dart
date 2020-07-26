@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:twitter/model/choice.dart';
+
 String mockProfilePicture =
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6TaCLCqU4K0ieF27ayjl51NmitWaJAh_X0r1rLX4gMvOe0MDaYw&s';
 String appFont = 'HelveticaNeuea';
@@ -10,6 +13,14 @@ List<String> mockProfilePictures = [
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPxjRIYT8pG0zgzKTilbko-MOv8pSnmO63M9FkOvfHoR9FvInm&s',
   'https://cdn5.f-cdn.com/contestentries/753244/11441006/57c152cc68857_thumb900.jpg',
   'https://cdn6.f-cdn.com/contestentries/753244/20994643/57c189b564237_thumb900.jpg'
+];
+
+const List<Choice> defaultChoices = const <Choice>[
+  const Choice(title: 'Share', icon: Icons.directions_car),
+  const Choice(title: 'Draft', icon: Icons.directions_bike),
+  const Choice(title: 'View Lists', icon: Icons.directions_boat),
+  const Choice(title: 'View Moments', icon: Icons.directions_bus),
+  const Choice(title: 'QR code', icon: Icons.directions_railway),
 ];
 
 class AppIcon {

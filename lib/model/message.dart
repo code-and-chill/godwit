@@ -1,13 +1,24 @@
 class Message {
   String key;
   String senderId;
-  String message;
-  bool seen;
-  String createdAt;
-  String timestamp;
-
   String senderName;
   String receiverId;
+  String message;
+  bool seen;
+  String timestamp;
+
+  factory Message.fromJson(Map<dynamic, dynamic> json) => Message(
+        key: json["key"],
+        senderId: json["sender_id"],
+        senderName: json["sender_name"],
+        receiverId: json["receiver_id"],
+        message: json["message"],
+        seen: json["seen"],
+        createdAt: json["created_at"],
+        timestamp: json['timestamp'],
+      );
+
+  String createdAt;
 
   Message(
       {this.key,
@@ -19,25 +30,15 @@ class Message {
       this.senderName,
       this.timestamp});
 
-  factory Message.fromJson(Map<dynamic, dynamic> json) =>
-      Message(
-          key: json["key"],
-          senderId: json["sender_id"],
-          message: json["message"],
-          seen: json["seen"],
-          createdAt: json["created_at"],
-          timestamp: json['timestamp'],
-          senderName: json["senderName"],
-          receiverId: json["receiverId"]);
-
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "key": key,
         "sender_id": senderId,
+        "sender_name": senderName,
+        "receiver_id": receiverId,
         "message": message,
-        "receiverId": receiverId,
         "seen": seen,
+        "timestamp": timestamp,
         "created_at": createdAt,
-        "senderName": senderName,
-        "timestamp": timestamp
       };
 }

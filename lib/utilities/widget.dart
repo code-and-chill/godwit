@@ -7,6 +7,10 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
+import 'package:twitter/widgets/label/text.dart';
+import 'package:twitter/widgets/navigation/ink_well.dart';
+
+import 'geometry.dart';
 
 Widget customTitleText(String title, {BuildContext context}) {
   return Text(
@@ -24,7 +28,7 @@ Widget heading(String heading,
     {double horizontalPadding = 10, BuildContext context}) {
   double fontSize = 16;
   if (context != null) {
-    fontSize = getDimention(context, 16);
+    fontSize = getDimension(context, 16);
   }
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -34,125 +38,6 @@ Widget heading(String heading,
           .copyWith(fontSize: fontSize),
     ),
   );
-}
-
-Widget userImage(String path, {double height = 100}) {
-  return Container(
-    child: Container(
-      width: height,
-      height: height,
-      alignment: FractionalOffset.topCenter,
-      decoration: BoxDecoration(
-        boxShadow: shadow,
-        border: Border.all(color: Colors.white, width: 1),
-        borderRadius: BorderRadius.circular(height / 2),
-        image: DecorationImage(image: NetworkImage(path)),
-      ),
-    ),
-  );
-}
-
-Widget customIcon(
-  BuildContext context, {
-  int icon,
-  bool isEnable = false,
-  double size = 18,
-  bool istwitterIcon = true,
-  bool isFontAwesomeRegular = false,
-  bool isFontAwesomeSolid = false,
-  Color iconColor,
-  double paddingIcon = 10,
-}) {
-  iconColor = iconColor ?? Theme.of(context).textTheme.caption.color;
-  return Padding(
-    padding: EdgeInsets.only(bottom: istwitterIcon ? paddingIcon : 0),
-    child: Icon(
-      IconData(icon,
-          fontFamily: istwitterIcon
-              ? 'TwitterIcon'
-              : isFontAwesomeRegular
-                  ? 'AwesomeRegular'
-                  : isFontAwesomeSolid ? 'AwesomeSolid' : 'Fontello'),
-      size: size,
-      color: isEnable ? Theme.of(context).primaryColor : iconColor,
-    ),
-  );
-}
-
-Widget customTappbleIcon(BuildContext context, int icon,
-    {double size = 16,
-    bool isEnable = false,
-    Function(bool, int) onPressed1,
-    bool isBoolValue,
-    int id,
-    Function onPressed2,
-    bool isFontAwesomeRegular = false,
-    bool istwitterIcon = false,
-    bool isFontAwesomeSolid = false,
-    Color iconColor,
-    EdgeInsetsGeometry padding}) {
-  if (padding == null) {
-    padding = EdgeInsets.all(10);
-  }
-  return MaterialButton(
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    minWidth: 10,
-    height: 10,
-    padding: padding,
-    shape: CircleBorder(),
-    color: Colors.transparent,
-    elevation: 0,
-    onPressed: () {
-      if (onPressed1 != null) {
-        onPressed1(isBoolValue, id);
-      } else if (onPressed2 != null) {
-        onPressed2();
-      }
-    },
-    child: customIcon(context,
-        icon: icon,
-        size: size,
-        isEnable: isEnable,
-        istwitterIcon: istwitterIcon,
-        isFontAwesomeRegular: isFontAwesomeRegular,
-        isFontAwesomeSolid: isFontAwesomeSolid,
-        iconColor: iconColor),
-  );
-}
-
-Widget customText(String msg,
-    {Key key,
-    TextStyle style,
-    TextAlign textAlign = TextAlign.justify,
-    TextOverflow overflow = TextOverflow.visible,
-    BuildContext context,
-    bool softwrap = true}) {
-  if (msg == null) {
-    return SizedBox(
-      height: 0,
-      width: 0,
-    );
-  } else {
-    if (context != null && style != null) {
-      var fontSize =
-          style.fontSize ?? Theme
-              .of(context)
-              .textTheme
-              .body1
-              .fontSize;
-      style = style.copyWith(
-        fontSize: fontSize - (fullWidth(context) <= 375 ? 2 : 0),
-      );
-    }
-    return Text(
-      msg,
-      style: style,
-      textAlign: textAlign,
-      overflow: overflow,
-      softWrap: softwrap,
-      key: key,
-    );
-  }
 }
 
 Widget customImage(
@@ -175,45 +60,11 @@ Widget customImage(
 }
 
 double fullWidth(BuildContext context) {
-  // cprint(MediaQuery.of(context).size.width.toString());
   return MediaQuery.of(context).size.width;
 }
 
 double fullHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
-}
-
-Widget customInkWell(
-    {Widget child,
-    BuildContext context,
-    Function(bool, int) function1,
-    Function onPressed,
-    bool isEnable = false,
-    int no = 0,
-    Color color = Colors.transparent,
-    Color splashColor,
-    BorderRadius radius}) {
-  if (splashColor == null) {
-    splashColor = Theme.of(context).primaryColorLight;
-  }
-  if (radius == null) {
-    radius = BorderRadius.circular(0);
-  }
-  return Material(
-    color: color,
-    child: InkWell(
-      borderRadius: radius,
-      onTap: () {
-        if (function1 != null) {
-          function1(isEnable, no);
-        } else if (onPressed != null) {
-          onPressed();
-        }
-      },
-      splashColor: splashColor,
-      child: child,
-    ),
-  );
 }
 
 SizedBox sizedBox({double height = 5, String title}) {
@@ -275,8 +126,8 @@ Widget customAlert(BuildContext context,
   return AlertDialog(
     title: Text('Alert',
         style: TextStyle(
-            fontSize: getDimention(context, 25), color: Colors.black54)),
-    content: customText(title, style: TextStyle(color: Colors.black45)),
+            fontSize: getDimension(context, 25), color: Colors.black54)),
+    content: CustomText(title, style: TextStyle(color: Colors.black45)),
     actions: <Widget>[
       FlatButton(
         textColor: Colors.grey,
@@ -350,7 +201,7 @@ Widget emptyListWidget(BuildContext context, String title,
               SizedBox(
                 height: 20,
               ),
-              customText(
+              CustomText(
                 title,
                 style: Theme
                     .of(context)
@@ -359,7 +210,7 @@ Widget emptyListWidget(BuildContext context, String title,
                     .display1
                     .copyWith(color: Color(0xff9da9c7)),
               ),
-              customText(
+              CustomText(
                 subTitle,
                 style: Theme
                     .of(context)
@@ -420,12 +271,11 @@ Widget customExtendedText(String text, bool isExpanded,
           constraints: isExpanded
               ? BoxConstraints()
               : BoxConstraints(maxHeight: wordLimit == 100 ? 100.0 : 260.0),
-          child: customText(text,
-              softwrap: true,
+          child: CustomText(text,
+              softWrap: true,
               overflow: TextOverflow.fade,
               style: style,
-              context: context,
-              textAlign: TextAlign.start),
+              align: TextAlign.start),
         ),
       ),
       text != null && text.length > wordLimit
@@ -447,22 +297,17 @@ Widget customExtendedText(String text, bool isExpanded,
   );
 }
 
-double getDimention(context, double unit) {
-  if (fullWidth(context) <= 360.0) {
-    return unit / 1.3;
-  } else {
-    return unit;
-  }
-}
-
 Widget customListTile(BuildContext context,
     {Widget title,
       Widget subtitle,
       Widget leading,
       Widget trailing,
       Function onTap}) {
-  return customInkWell(
-    context: context,
+  return CustomInkWell(
+    splashColor: Theme
+        .of(context)
+        .primaryColorLight,
+    radius: BorderRadius.circular(0.0),
     onPressed: () {
       if (onTap != null) {
         onTap();

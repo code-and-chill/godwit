@@ -15,111 +15,56 @@ class Feed {
   List<String> tags;
   List<String> replyTweetKeys;
   User user;
+
   Feed(
       {this.key,
+      this.parentKey,
+      this.childRetweetKey,
       this.description,
       this.userId,
       this.likeCount,
+      this.likes,
       this.commentCount,
       this.retweetCount,
       this.createdAt,
       this.imagePath,
-      this.likes,
       this.tags,
-      this.user,
       this.replyTweetKeys,
-      this.parentKey,
-      this.childRetweetKey});
+      this.user});
+
   toJson() {
     return {
-      "userId": userId,
+      "key": key,
+      "parent_key": parentKey,
+      "child_retweet_key": childRetweetKey,
       "description": description,
-      "likeCount": likeCount,
-      "commentCount": commentCount ?? 0,
-      "retweetCount": retweetCount ?? 0,
-      "createdAt": createdAt,
-      "imagePath": imagePath,
-      "likeList": likes,
+      "user_id": userId,
+      "like_count": likeCount,
+      "likes": likes,
+      "comment_count": commentCount ?? 0,
+      "retweet_count": retweetCount ?? 0,
+      "created_at": createdAt,
+      "image_path": imagePath,
       "tags": tags,
-      "replyTweetKeyList": replyTweetKeys,
+      "reply_tweet_keys": replyTweetKeys,
       "user": user == null ? null : user.toJson(),
-      "parentKey": parentKey,
-      "childRetwetkey": childRetweetKey
     };
   }
 
   Feed.fromJson(Map<dynamic, dynamic> map) {
     key = map['key'];
+    parentKey = map['parent_key'];
+    childRetweetKey = map['child_retweet_key'];
     description = map['description'];
-    userId = map['userId'];
-    //  name = map['name'];
-    //  profilePic = map['profilePic'];
-    likeCount = map['likeCount'] ?? 0;
-    commentCount = map['commentCount'];
-    retweetCount = map["retweetCount"] ?? 0;
+    likeCount = map['like_count'] ?? 0;
+    likes = map['likes'] ?? [];
+    commentCount = map['comment_count'];
+    retweetCount = map["retweet_count"] ?? 0;
+    imagePath = map['image_path'];
+    createdAt = map['created_at'];
     imagePath = map['imagePath'];
-    createdAt = map['createdAt'];
-    imagePath = map['imagePath'];
-    //  username = map['username'];
+    tags = map['tags'] ?? [];
     user = User.fromJson(map['user']);
-    parentKey = map['parentKey'];
-    childRetweetKey = map['childRetwetkey'];
-    if (map['tags'] != null) {
-      tags = List<String>();
-      map['tags'].forEach((value) {
-        tags.add(value);
-      });
-    }
-    if (map["likeList"] != null) {
-      likes = List<String>();
-
-      final list = map['likeList'];
-
-      /// In new tweet db schema likeList is stored as a List<String>()
-      ///
-      if (list is List) {
-        map['likeList'].forEach((value) {
-          if (value is String) {
-            likes.add(value);
-          }
-        });
-        likeCount = likes.length ?? 0;
-      }
-
-      /// In old database tweet db schema likeList is saved in the form of map
-      /// like list map is removed from latest code but to support old schema below code is required
-      /// Once all user migrated to new version like list map support will be removed
-      else if (list is Map) {
-        list.forEach((key, value) {
-          likes.add(value["userId"]);
-        });
-        likeCount = list.length;
-      }
-    } else {
-      likes = [];
-      likeCount = 0;
-    }
-    if (map['replyTweetKeyList'] != null) {
-      map['replyTweetKeyList'].forEach((value) {
-        replyTweetKeys = List<String>();
-        map['replyTweetKeyList'].forEach((value) {
-          replyTweetKeys.add(value);
-        });
-      });
-      commentCount = replyTweetKeys.length;
-    } else {
-      replyTweetKeys = [];
-      commentCount = 0;
-    }
-  }
-
-  bool get isValidTweet {
-    bool isValid = false;
-    if (description != null && description.isNotEmpty && this.user != null && this.user.userName != null && this.user.userName.isNotEmpty) {
-      isValid = true;
-    } else {
-      print("Invalid Tweet found. Id:- $key");
-    }
-    return isValid;
+    replyTweetKeys = map['reply_tweet_keys'] ?? [];
   }
 }

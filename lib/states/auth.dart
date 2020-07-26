@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/firebase_database.dart' as dabase;
+import 'package:firebase_database/firebase_database.dart' as fbDatabase;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ import 'package:path/path.dart' as Path;
 import 'package:twitter/model/user.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/user.dart';
 import 'package:twitter/utilities/widget.dart';
 
 import 'app.dart';
@@ -19,41 +20,41 @@ import 'app.dart';
 class AuthState extends AppState {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   bool isSignInWithGoogle = false;
-  FirebaseUser user;
+  FirebaseUser firebaseUser;
   String userId;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
-  dabase.Query _profileQuery;
-  List<User> _profileUserModelList;
-  User _userModel;
+  fbDatabase.Query _profileQuery;
+  List<User> _profileUsers;
+  User _user;
 
-  User get userModel => _userModel;
+  User get userModel => _user;
 
-  User get profileUserModel {
-    if (_profileUserModelList != null && _profileUserModelList.length > 0) {
-      return _profileUserModelList.last;
+  User get profileUser {
+    if (_profileUsers != null && _profileUsers.length > 0) {
+      return _profileUsers.last;
     } else {
       return null;
     }
   }
 
   void removeLastUser() {
-    _profileUserModelList.removeLast();
+    _profileUsers.removeLast();
   }
 
   /// Logout from device
   void logoutCallback() {
     authStatus = AuthStatus.NOT_LOGGED_IN;
     userId = '';
-    _userModel = null;
-    user = null;
-    _profileUserModelList = null;
+    _user = null;
+    firebaseUser = null;
+    _profileUsers = null;
+
     if (isSignInWithGoogle) {
       _googleSignIn.signOut();
       logEvent('google_logout');
     }
-    _firebaseAuth.signOut();
+    FirebaseAuth.instance.signOut();
     notifyListeners();
   }
 
@@ -67,7 +68,8 @@ class AuthState extends AppState {
   databaseInit() {
     try {
       if (_profileQuery == null) {
-        _profileQuery = firebaseDatabase.child("profile").child(user.uid);
+        _profileQuery =
+            firebaseDatabase.child("profile").child(firebaseUser.uid);
         _profileQuery.onValue.listen(_onProfileChanged);
       }
     } catch (error) {
@@ -76,13 +78,15 @@ class AuthState extends AppState {
   }
 
   /// Verify user's credentials for login
-  Future<String> signIn(String email, String password, {GlobalKey<ScaffoldState> scaffoldKey}) async {
+  Future<String> signIn(String email, String password,
+      {GlobalKey<ScaffoldState> scaffoldKey}) async {
     try {
       loading = true;
-      var result = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      user = result.user;
-      userId = user.uid;
-      return user.uid;
+      var result = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      firebaseUser = result.user;
+      userId = firebaseUser.uid;
+      return firebaseUser.uid;
     } catch (error) {
       loading = false;
       cprint(error, errorIn: 'signIn');
@@ -111,25 +115,26 @@ class AuthState extends AppState {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      user = (await _firebaseAuth.signInWithCredential(credential)).user;
+      firebaseUser =
+          (await FirebaseAuth.instance.signInWithCredential(credential)).user;
       authStatus = AuthStatus.LOGGED_IN;
-      userId = user.uid;
+      userId = firebaseUser.uid;
       isSignInWithGoogle = true;
-      createUserFromGoogleSignIn(user);
+      createUserFromGoogleSignIn(firebaseUser);
       notifyListeners();
-      return user;
+      return firebaseUser;
     } on PlatformException catch (error) {
-      user = null;
+      firebaseUser = null;
       authStatus = AuthStatus.NOT_LOGGED_IN;
       cprint(error, errorIn: 'handleGoogleSignIn');
       return null;
     } on Exception catch (error) {
-      user = null;
+      firebaseUser = null;
       authStatus = AuthStatus.NOT_LOGGED_IN;
       cprint(error, errorIn: 'handleGoogleSignIn');
       return null;
     } catch (error) {
-      user = null;
+      firebaseUser = null;
       authStatus = AuthStatus.NOT_LOGGED_IN;
       cprint(error, errorIn: 'handleGoogleSignIn');
       return null;
@@ -144,11 +149,13 @@ class AuthState extends AppState {
     if (diff < Duration(seconds: 15)) {
       User model = User(
         bio: 'Edit profile to update bio',
-        dateOfBirth: DateTime(1950, DateTime
+        dateOfBirth:
+        DateTime(1950, DateTime
             .now()
             .month, DateTime
             .now()
-            .day + 3).toString(),
+            .day + 3)
+            .toString(),
         location: 'Somewhere in universe',
         profilePict: user.photoUrl,
         displayName: user.displayName,
@@ -165,25 +172,26 @@ class AuthState extends AppState {
   }
 
   /// Create new user's profile in db
-  Future<String> signUp(User userModel, {GlobalKey<ScaffoldState> scaffoldKey, String password}) async {
+  Future<String> signUp(User userModel,
+      {GlobalKey<ScaffoldState> scaffoldKey, String password}) async {
     try {
       loading = true;
-      var result = await _firebaseAuth.createUserWithEmailAndPassword(
+      var result = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: userModel.email,
         password: password,
       );
-      user = result.user;
+      firebaseUser = result.user;
       authStatus = AuthStatus.LOGGED_IN;
       firebaseAnalytics.logSignUp(signUpMethod: 'register');
       UserUpdateInfo updateInfo = UserUpdateInfo();
       updateInfo.displayName = userModel.displayName;
       updateInfo.photoUrl = userModel.profilePict;
       await result.user.updateProfile(updateInfo);
-      _userModel = userModel;
-      _userModel.key = user.uid;
-      _userModel.userId = user.uid;
-      createUser(_userModel, newUser: true);
-      return user.uid;
+      _user = userModel;
+      _user.key = firebaseUser.uid;
+      _user.userId = firebaseUser.uid;
+      createUser(_user, newUser: true);
+      return firebaseUser.uid;
     } catch (error) {
       loading = false;
       cprint(error, errorIn: 'signUp');
@@ -206,9 +214,9 @@ class AuthState extends AppState {
     }
 
     firebaseDatabase.child('profile').child(user.userId).set(user.toJson());
-    _userModel = user;
-    if (_profileUserModelList != null) {
-      _profileUserModelList.last = _userModel;
+    _user = user;
+    if (_profileUsers != null) {
+      _profileUsers.last = _user;
     }
     loading = false;
   }
@@ -218,16 +226,16 @@ class AuthState extends AppState {
     try {
       loading = true;
       logEvent('get_currentUSer');
-      user = await _firebaseAuth.currentUser();
-      if (user != null) {
+      firebaseUser = await FirebaseAuth.instance.currentUser();
+      if (firebaseUser != null) {
         authStatus = AuthStatus.LOGGED_IN;
-        userId = user.uid;
+        userId = firebaseUser.uid;
         getProfileUser();
       } else {
         authStatus = AuthStatus.NOT_LOGGED_IN;
       }
       loading = false;
-      return user;
+      return firebaseUser;
     } catch (error) {
       loading = false;
       cprint(error, errorIn: 'getCurrentUser');
@@ -238,30 +246,34 @@ class AuthState extends AppState {
 
   /// Reload user to get refresh user data
   reloadUser() async {
-    await user.reload();
-    user = await _firebaseAuth.currentUser();
-    if (user.isEmailVerified) {
+    await firebaseUser.reload();
+    firebaseUser = await FirebaseAuth.instance.currentUser();
+    if (firebaseUser.isEmailVerified) {
       userModel.isVerified = true;
       // If user verifed his email
       // Update user in firebase realtime kDatabase
       createUser(userModel);
       cprint('User email verification complete');
-      logEvent('email_verification_complete', parameter: {userModel.userName: user.email});
+      logEvent('email_verification_complete',
+          parameter: {userModel.userName: firebaseUser.email});
     }
   }
 
   /// Send email verification link to email2
-  Future<void> sendEmailVerification(GlobalKey<ScaffoldState> scaffoldKey) async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+  Future<void> sendEmailVerification(
+      GlobalKey<ScaffoldState> scaffoldKey) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
     user.sendEmailVerification().then((_) {
-      logEvent('email_verifcation_sent', parameter: {userModel.displayName: user.email});
+      logEvent('email_verifcation_sent',
+          parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         'An email verification link is send to your email.',
       );
     }).catchError((error) {
       cprint(error.message, errorIn: 'sendEmailVerification');
-      logEvent('email_verifcation_block', parameter: {userModel.displayName: user.email});
+      logEvent('email_verifcation_block',
+          parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         error.message,
@@ -271,15 +283,18 @@ class AuthState extends AppState {
 
   /// Check if user's email is verified
   Future<bool> isEmailVerified() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
     return user.isEmailVerified;
   }
 
   /// Send password reset link to email
-  Future<void> forgetPassword(String email, {GlobalKey<ScaffoldState> scaffoldKey}) async {
+  Future<void> forgetPassword(String email,
+      {GlobalKey<ScaffoldState> scaffoldKey}) async {
     try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email).then((value) {
-        customSnackBar(scaffoldKey, 'A reset password link is sent yo your mail.You can reset your password from there');
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email).then((
+          value) {
+        customSnackBar(scaffoldKey,
+            'A reset password link is sent yo your mail.You can reset your password from there');
         logEvent('forgot+password');
       }).catchError((error) {
         cprint(error.message);
@@ -297,21 +312,24 @@ class AuthState extends AppState {
       if (image == null) {
         createUser(userModel);
       } else {
-        StorageReference storageReference = FirebaseStorage.instance.ref().child('user/profile/${Path.basename(image.path)}');
+        StorageReference storageReference = FirebaseStorage.instance
+            .ref()
+            .child('user/profile/${Path.basename(image.path)}');
         StorageUploadTask uploadTask = storageReference.putFile(image);
         await uploadTask.onComplete.then((value) {
           storageReference.getDownloadURL().then((fileURL) async {
             print(fileURL);
             UserUpdateInfo updateInfo = UserUpdateInfo();
-            updateInfo.displayName = userModel?.displayName ?? user.displayName;
+            updateInfo.displayName =
+                userModel?.displayName ?? firebaseUser.displayName;
             updateInfo.photoUrl = fileURL;
-            await user.updateProfile(updateInfo);
+            await firebaseUser.updateProfile(updateInfo);
             if (userModel != null) {
               userModel.profilePict = fileURL;
               createUser(userModel);
             } else {
-              _userModel.profilePict = fileURL;
-              createUser(_userModel);
+              _user.profilePict = fileURL;
+              createUser(_user);
             }
           });
         });
@@ -323,7 +341,7 @@ class AuthState extends AppState {
   }
 
   /// `Fetch` user `detail` whoose userId is passed
-  Future<User> getuserDetail(String userId) async {
+  Future<User> getUserDetail(String userId) async {
     User user;
     var snapshot = await firebaseDatabase.child('profile').child(userId).once();
     if (snapshot.value != null) {
@@ -341,25 +359,28 @@ class AuthState extends AppState {
   getProfileUser({String userProfileId}) {
     try {
       loading = true;
-      if (_profileUserModelList == null) {
-        _profileUserModelList = [];
+      if (_profileUsers == null) {
+        _profileUsers = [];
       }
 
-      userProfileId = userProfileId == null ? user.uid : userProfileId;
-      firebaseDatabase.child("profile").child(userProfileId).once().then((
-          DataSnapshot snapshot) {
+      userProfileId = userProfileId == null ? firebaseUser.uid : userProfileId;
+      firebaseDatabase
+          .child("profile")
+          .child(userProfileId)
+          .once()
+          .then((DataSnapshot snapshot) {
         if (snapshot.value != null) {
           var map = snapshot.value;
           if (map != null) {
-            _profileUserModelList.add(User.fromJson(map));
-            if (userProfileId == user.uid) {
-              _userModel = _profileUserModelList.last;
-              _userModel.isVerified = user.isEmailVerified;
-              if (!user.isEmailVerified) {
+            _profileUsers.add(User.fromJson(map));
+            if (userProfileId == firebaseUser.uid) {
+              _user = _profileUsers.last;
+              _user.isVerified = firebaseUser.isEmailVerified;
+              if (!firebaseUser.isEmailVerified) {
                 // Check if logged in user verified his email address or not
                 reloadUser();
               }
-              if (_userModel.fcmToken == null) {
+              if (_user.fcmToken == null) {
                 updateFCMToken();
               }
             }
@@ -379,14 +400,14 @@ class AuthState extends AppState {
   /// Then get token from firebase and save it to profile
   /// When someone sends you a message FCM token is used
   void updateFCMToken() {
-    if (_userModel == null) {
+    if (_user == null) {
       return;
     }
     getProfileUser();
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
-      _userModel.fcmToken = token;
-      createUser(_userModel);
+      _user.fcmToken = token;
+      createUser(_user);
     });
   }
 
@@ -403,33 +424,39 @@ class AuthState extends AppState {
         /// If logged-in user `alredy follow `profile user then
         /// 1.Remove logged-in user from profile user's `follower` list
         /// 2.Remove profile user from logged-in user's `following` list
-        profileUserModel.followersList.remove(userModel.userId);
+        profileUser.followers.remove(userModel.userId);
 
         /// Remove profile user from logged-in user's following list
-        userModel.followingList.remove(profileUserModel.userId);
+        userModel.following.remove(profileUser.userId);
         cprint('user removed from following list', event: 'remove_follow');
       } else {
         /// if logged in user is `not following` profile user then
         /// 1.Add logged in user to profile user's `follower` list
         /// 2. Add profile user to logged in user's `following` list
-        if (profileUserModel.followersList == null) {
-          profileUserModel.followersList = [];
+        if (profileUser.followers == null) {
+          profileUser.followers = [];
         }
-        profileUserModel.followersList.add(userModel.userId);
+        profileUser.followers.add(userModel.userId);
         // Adding profile user to logged-in user's following list
-        if (userModel.followingList == null) {
-          userModel.followingList = [];
+        if (userModel.following == null) {
+          userModel.following = [];
         }
-        userModel.followingList.add(profileUserModel.userId);
+        userModel.following.add(profileUser.userId);
       }
       // update profile user's user follower count
-      profileUserModel.followers = profileUserModel.followersList.length;
+      profileUser.followers = profileUser.followers;
       // update logged-in user's following count
-      userModel.following = userModel.followingList.length;
-      firebaseDatabase.child('profile').child(profileUserModel.userId).child(
-          'followerList').set(profileUserModel.followersList);
-      firebaseDatabase.child('profile').child(userModel.userId).child(
-          'followingList').set(userModel.followingList);
+      userModel.following = userModel.following;
+      firebaseDatabase
+          .child('profile')
+          .child(profileUser.userId)
+          .child('followerList')
+          .set(profileUser.followers);
+      firebaseDatabase
+          .child('profile')
+          .child(userModel.userId)
+          .child('followingList')
+          .set(userModel.following);
       cprint('user added to following list', event: 'add_follow');
       notifyListeners();
     } catch (error) {
@@ -442,8 +469,8 @@ class AuthState extends AppState {
   void _onProfileChanged(Event event) {
     if (event.snapshot != null) {
       final updatedUser = User.fromJson(event.snapshot.value);
-      if (updatedUser.userId == user.uid) {
-        _userModel = updatedUser;
+      if (updatedUser.userId == firebaseUser.uid) {
+        _user = updatedUser;
       }
       cprint('User Updated');
       notifyListeners();

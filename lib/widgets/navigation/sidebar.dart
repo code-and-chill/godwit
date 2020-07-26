@@ -4,7 +4,10 @@ import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
-import 'package:twitter/widgets/label/customUrlText.dart';
+import 'package:twitter/widgets/image/twitter_icon.dart';
+import 'package:twitter/widgets/label/text.dart';
+import 'package:twitter/widgets/label/url.dart';
+import 'package:twitter/widgets/navigation/ink_well.dart';
 
 class SidebarMenu extends StatefulWidget {
   const SidebarMenu({Key key, this.scaffoldKey}) : super(key: key);
@@ -15,14 +18,55 @@ class SidebarMenu extends StatefulWidget {
 }
 
 class _SidebarMenuState extends State<SidebarMenu> {
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: 45),
+              child: ListView(
+                physics: BouncingScrollPhysics(),
+                children: <Widget>[
+                  Container(
+                    child: _menuHeader(),
+                  ),
+                  Divider(),
+                  _menuListRowButton('Profile',
+                      icon: AppIcon.profile, isEnable: true, onPressed: () {
+                    _navigateTo('ProfilePage');
+                  }),
+                  _menuListRowButton('Lists', icon: AppIcon.lists),
+                  _menuListRowButton('Bookmark', icon: AppIcon.bookmark),
+                  _menuListRowButton('Moments', icon: AppIcon.moments),
+                  _menuListRowButton('Fwitter ads', icon: AppIcon.twitterAds),
+                  Divider(),
+                  _menuListRowButton('Settings and privacy', isEnable: true,
+                      onPressed: () {
+                    _navigateTo('SettingsAndPrivacyPage');
+                  }),
+                  _menuListRowButton('Help Center'),
+                  Divider(),
+                  _menuListRowButton('Logout',
+                      icon: null, onPressed: _logOut, isEnable: true),
+                ],
+              ),
+            ),
+            _footer()
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _menuHeader() {
     final state = Provider.of<AuthState>(context);
     if (state.userModel == null) {
-      return customInkWell(
-        context: context,
-        onPressed: () {
-          //  Navigator.of(context).pushNamed('/signIn');
-        },
+      return CustomInkWell(
+        splashColor: Theme.of(context).primaryColorLight,
+        radius: BorderRadius.circular(0),
+        onPressed: () {},
         child: ConstrainedBox(
           constraints: BoxConstraints(minWidth: 200, minHeight: 100),
           child: Center(
@@ -68,17 +112,23 @@ class _SidebarMenuState extends State<SidebarMenu> {
                     width: 3,
                   ),
                   state.userModel.isVerified ?? false
-                      ? customIcon(context, icon: AppIcon.blueTick, istwitterIcon: true, iconColor: AppColor.primary, size: 18, paddingIcon: 3)
+                      ? TwitterIcon(icon: AppIcon.blueTick,
+                      iconColor: AppColor.primary,
+                      size: 18,
+                      paddingIcon: 3)
                       : SizedBox(
-                          width: 0,
-                        ),
+                    width: 0,
+                  ),
                 ],
               ),
-              subtitle: customText(
+              subtitle: CustomText(
                 state.userModel.userName,
-                style: onPrimarySubTitleText.copyWith(color: Colors.black54, fontSize: 15),
+                style: onPrimarySubTitleText.copyWith(
+                    color: Colors.black54, fontSize: 15),
               ),
-              trailing: customIcon(context, icon: AppIcon.arrowDown, iconColor: AppColor.primary, paddingIcon: 20),
+              trailing: TwitterIcon(icon: AppIcon.arrowDown,
+                  iconColor: AppColor.primary,
+                  paddingIcon: 20),
             ),
             Container(
               alignment: Alignment.center,
@@ -87,9 +137,13 @@ class _SidebarMenuState extends State<SidebarMenu> {
                   SizedBox(
                     width: 17,
                   ),
-                  _tappbleText(context, '${state.userModel.getFollower()}', ' Followers', 'FollowerListPage'),
+                  _tappbleText(
+                      context, '${state.userModel.followers}', ' Followers',
+                      'FollowerListPage'),
                   SizedBox(width: 10),
-                  _tappbleText(context, '${state.userModel.getFollowing()}', ' Following', 'FollowingListPage'),
+                  _tappbleText(
+                      context, '${state.userModel.following}', ' Following',
+                      'FollowingListPage'),
                 ],
               ),
             ),
@@ -109,11 +163,11 @@ class _SidebarMenuState extends State<SidebarMenu> {
       },
       child: Row(
         children: <Widget>[
-          customText(
+          CustomText(
             '$count ',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
           ),
-          customText(
+          CustomText(
             '$text',
             style: TextStyle(color: AppColor.darkGrey, fontSize: 17),
           ),
@@ -132,15 +186,14 @@ class _SidebarMenuState extends State<SidebarMenu> {
       leading: icon == null
           ? null
           : Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: customIcon(
-                context,
-                icon: icon,
-                size: 25,
-                iconColor: isEnable ? AppColor.darkGrey : AppColor.lightGrey,
-              ),
-            ),
-      title: customText(
+        padding: EdgeInsets.only(top: 5),
+        child: TwitterIcon(
+          icon: icon,
+          size: 25,
+          iconColor: isEnable ? AppColor.darkGrey : AppColor.lightGrey,
+        ),
+      ),
+      title: CustomText(
         title,
         style: TextStyle(
           fontSize: 20,
@@ -164,7 +217,9 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 width: 10,
                 height: 45,
               ),
-              customIcon(context, icon: AppIcon.bulbOn, istwitterIcon: true, size: 25, iconColor: TwitterColor.dodgetBlue),
+              TwitterIcon(icon: AppIcon.bulbOn,
+                  size: 25,
+                  iconColor: TwitterColor.dodgetBlue),
               Spacer(),
               Image.asset(
                 "assets/images/qr.png",
@@ -190,44 +245,5 @@ class _SidebarMenuState extends State<SidebarMenu> {
   void _navigateTo(String path) {
     Navigator.pop(context);
     Navigator.of(context).pushNamed('/$path');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 45),
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                children: <Widget>[
-                  Container(
-                    child: _menuHeader(),
-                  ),
-                  Divider(),
-                  _menuListRowButton('Profile', icon: AppIcon.profile, isEnable: true, onPressed: () {
-                    _navigateTo('ProfilePage');
-                  }),
-                  _menuListRowButton('Lists', icon: AppIcon.lists),
-                  _menuListRowButton('Bookmark', icon: AppIcon.bookmark),
-                  _menuListRowButton('Moments', icon: AppIcon.moments),
-                  _menuListRowButton('Fwitter ads', icon: AppIcon.twitterAds),
-                  Divider(),
-                  _menuListRowButton('Settings and privacy', isEnable: true, onPressed: () {
-                    _navigateTo('SettingsAndPrivacyPage');
-                  }),
-                  _menuListRowButton('Help Center'),
-                  Divider(),
-                  _menuListRowButton('Logout', icon: null, onPressed: _logOut, isEnable: true),
-                ],
-              ),
-            ),
-            _footer()
-          ],
-        ),
-      ),
-    );
   }
 }

@@ -14,6 +14,8 @@ class TwitterNotification {
   }
 
   Map<String, dynamic> toJson() => {
-        "tweetKey": tweetKey == null ? null : tweetKey,
+        "tweet_key": tweetKey,
+        "updated_at": updatedAt,
+        "type": type,
       };
 }

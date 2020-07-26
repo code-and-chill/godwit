@@ -10,6 +10,7 @@ import 'package:twitter/model/user.dart';
 import 'package:twitter/states/app.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/validator.dart';
 // import 'auth.dart';
 
 class FeedState extends AppState {
@@ -58,7 +59,9 @@ class FeedState extends AppState {
         }
 
         /// Only include Tweets of logged-in user's and his following user's
-        if (x.user.userId == userModel.userId || (userModel?.followingList != null && userModel.followingList.contains(x.user.userId))) {
+        if (x.user.userId == userModel.userId ||
+            (userModel?.following != null &&
+                userModel.following.contains(x.user.userId))) {
           return true;
         } else {
           return false;
@@ -142,10 +145,10 @@ class FeedState extends AppState {
           var map = snapshot.value;
           if (map != null) {
             map.forEach((key, value) {
-              var model = Feed.fromJson(value);
-              model.key = key;
-              if (model.isValidTweet) {
-                _feedlist.add(model);
+              var feed = Feed.fromJson(value);
+              feed.key = key;
+              if (isValidTweet(feed)) {
+                _feedlist.add(feed);
               }
             });
 
@@ -473,7 +476,8 @@ class FeedState extends AppState {
     if (_feedlist == null) {
       _feedlist = List<Feed>();
     }
-    if ((_feedlist.length == 0 || _feedlist.any((x) => x.key != tweet.key)) && tweet.isValidTweet) {
+    if ((_feedlist.length == 0 || _feedlist.any((x) => x.key != tweet.key)) &&
+        isValidTweet(tweet)) {
       _feedlist.add(tweet);
       cprint('Tweet Added');
     }
