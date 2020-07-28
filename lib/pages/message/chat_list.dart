@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twitter/model/message.dart';
 import 'package:twitter/model/user.dart';
+import 'package:twitter/pages/message/user_card.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/states/chat.dart';
 import 'package:twitter/states/search.dart';
-import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
-import 'package:twitter/widgets/button/ripple.dart';
+import 'package:twitter/widgets/button/new_message.dart';
 import 'package:twitter/widgets/empty/empty_list.dart';
-import 'package:twitter/widgets/image/twitter_icon.dart';
-import 'package:twitter/widgets/label/text.dart';
-import 'package:twitter/widgets/label/title.dart';
 import 'package:twitter/widgets/navigation/appbar.dart';
 
 class ChatListPage extends StatefulWidget {
@@ -44,7 +40,8 @@ class _ChatListPageState extends State<ChatListPage> {
         padding: EdgeInsets.symmetric(horizontal: 30),
         child: EmptyList(
           'No message available ',
-          subTitle: 'When someone sends you message,User list\'ll show up here \n  To send message tap message button.',
+          subTitle:
+              'When someone sends you message,User list\'ll show up here \n  To send message tap message button.',
         ),
       );
     } else {
@@ -54,12 +51,13 @@ class _ChatListPageState extends State<ChatListPage> {
       return ListView.separated(
         physics: BouncingScrollPhysics(),
         itemCount: state.chatUserList.length,
-        itemBuilder: (context, index) => _userCard(
-            searchState.users.firstWhere(
-              (x) => x.userId == state.chatUserList[index].key,
-              orElse: () => User(userName: "Unknown"),
-            ),
-            state.chatUserList[index]),
+        itemBuilder: (context, index) =>
+            UserCard(
+                searchState.users.firstWhere(
+                      (x) => x.userId == state.chatUserList[index].key,
+                  orElse: () => User(userName: "Unknown"),
+                ),
+                state.chatUserList[index]),
         separatorBuilder: (context, index) {
           return Divider(
             height: 0,
@@ -67,92 +65,6 @@ class _ChatListPageState extends State<ChatListPage> {
         },
       );
     }
-  }
-
-  Widget _userCard(User model, Message lastMessage) {
-    return Container(
-      color: Colors.white,
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 10),
-        onTap: () {
-          final chatState = Provider.of<ChatState>(context, listen: false);
-          final searchState = Provider.of<SearchState>(context, listen: false);
-          chatState.setChatUser = model;
-          if (searchState.users.any((x) => x.userId == model.userId)) {
-            chatState.setChatUser = searchState.users
-                .where((x) => x.userId == model.userId)
-                .first;
-          }
-          Navigator.pushNamed(context, '/ChatScreenPage');
-        },
-        leading: RippleButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed('/ProfilePage/${model.userId}');
-          },
-          borderRadius: BorderRadius.circular(28),
-          child: Container(
-            height: 56,
-            width: 56,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white, width: 2),
-              borderRadius: BorderRadius.circular(28),
-              image: DecorationImage(
-                  image: customAdvanceNetworkImage(
-                    model.profilePict ?? mockProfilePicture,
-                  ),
-                  fit: BoxFit.cover),
-            ),
-          ),
-        ),
-        title: TitleText(
-          model.displayName ?? "NA",
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: CustomText(
-          getLastMessage(lastMessage.message) ?? '@${model.displayName}',
-          style: onPrimarySubTitleText.copyWith(color: Colors.black54),
-        ),
-        trailing: lastMessage == null
-            ? SizedBox.shrink()
-            : Text(
-                getChatTime(lastMessage.createdAt).toString(),
-              ),
-      ),
-    );
-  }
-
-  FloatingActionButton _newMessageButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed('/NewMessagePage');
-      },
-      child: TwitterIcon(
-        icon: AppIcon.newMessage,
-        iconColor: Theme
-            .of(context)
-            .colorScheme
-            .onPrimary,
-        size: 25,
-      ),
-    );
-  }
-
-  void onSettingIconPressed() {
-    Navigator.pushNamed(context, '/DirectMessagesPage');
-  }
-
-  String getLastMessage(String message) {
-    if (message != null && message.isNotEmpty) {
-      if (message.length > 100) {
-        message = message.substring(0, 80) + '...';
-        return message;
-      } else {
-        return message;
-      }
-    }
-    return null;
   }
 
   @override
@@ -164,9 +76,11 @@ class _ChatListPageState extends State<ChatListPage> {
           'Messages',
         ),
         icon: AppIcon.settings,
-        onActionPressed: onSettingIconPressed,
+        onActionPressed: () {
+          Navigator.pushNamed(context, '/DirectMessagesPage');
+        },
       ),
-      floatingActionButton: _newMessageButton(),
+      floatingActionButton: NewMessageButton(),
       backgroundColor: TwitterColor.mystic,
       body: _body(),
     );

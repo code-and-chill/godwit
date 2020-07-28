@@ -26,7 +26,7 @@ class NotificationPage extends StatelessWidget {
             "Quality filter",
             showCheckBox: true,
             subtitle:
-                'Filter lower-quality from your notifications. This won\'t filter out notifications from people you follow or account you\'ve inteacted with recently.',
+                'Filter lower-quality from your notifications. This won\'t filter out notifications from people you follow or account you\'ve interacted with recently.',
             // navigateTo: 'AccountSettingsPage',
           ),
           Divider(height: 0),
@@ -45,7 +45,7 @@ class NotificationPage extends StatelessWidget {
           SettingRowWidget("SMS notifications"),
           SettingRowWidget(
             "Email notifications",
-            subtitle: 'Control when how often Fwitter sends emails to you.',
+            subtitle: 'Control when how often Twitter sends emails to you.',
           ),
         ],
       ),

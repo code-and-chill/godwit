@@ -15,10 +15,10 @@ class ChatScreenPage extends StatefulWidget {
 
   final String userProfileId;
 
-  _ChatScreenPageState createState() => _ChatScreenPageState();
+  ChatScreenPageState createState() => ChatScreenPageState();
 }
 
-class _ChatScreenPageState extends State<ChatScreenPage> {
+class ChatScreenPageState extends State<ChatScreenPage> {
   final messageController = new TextEditingController();
   String senderId;
   String userImage;

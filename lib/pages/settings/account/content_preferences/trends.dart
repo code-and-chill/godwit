@@ -9,7 +9,6 @@ import 'package:twitter/widgets/layout/settings_row.dart';
 import 'package:twitter/widgets/navigation/appbar.dart';
 
 class TrendsPage extends StatelessWidget {
-  String sortBy = "";
 
   TrendsPage({Key key}) : super(key: key);
 
@@ -88,6 +87,7 @@ class TrendsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String sortBy;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = Provider.of<SearchState>(context);
       sortBy = state.selectedFilter;
@@ -119,7 +119,8 @@ class TrendsPage extends StatelessWidget {
           ),
           SettingRowWidget(
             null,
-            subtitle: 'You can see what\'s trending in a specfic location by selecting which location appears in your Trending tab.',
+            subtitle:
+                'You can see what\'s trending in a specific location by selecting which location appears in your Trending tab.',
             navigateTo: null,
             showDivider: false,
             vPadding: 12,

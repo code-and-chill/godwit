@@ -7,7 +7,10 @@ class CustomTextField extends StatelessWidget {
   final bool isEmail;
 
   const CustomTextField(
-      {this.controller, this.isNeedToBeObscured, this.hint, this.isEmail});
+      {this.controller,
+      this.isNeedToBeObscured = false,
+      this.hint,
+      this.isEmail = false});
 
   @override
   Widget build(BuildContext context) {

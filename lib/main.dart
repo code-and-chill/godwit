@@ -10,7 +10,7 @@ import 'states/app.dart';
 import 'states/auth.dart';
 import 'states/chat.dart';
 import 'states/feed.dart';
-import 'utilities/routes.dart';
+import 'utilities/routes/routes.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

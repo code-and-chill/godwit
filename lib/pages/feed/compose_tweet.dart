@@ -21,8 +21,7 @@ import 'package:twitter/widgets/label/title.dart';
 import 'package:twitter/widgets/label/url.dart';
 import 'package:twitter/widgets/layout/view.dart';
 import 'package:twitter/widgets/navigation/appbar.dart';
-
-import '../user_list.dart';
+import 'package:twitter/widgets/user/user_list.dart';
 
 class ComposeTweetPage extends StatefulWidget {
   ComposeTweetPage({Key key, this.isRetweet, this.isTweet = true})
@@ -146,7 +145,7 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
     /// If no user found or not compost tweet screen is closed and redirect back to home page.
     await Provider.of<Tweet>(context, listen: false)
         .sendNotification(
-        tweetModel, Provider.of<SearchState>(context, listen: false))
+            tweetModel, Provider.of<SearchState>(context, listen: false))
         .then((_) {
       /// Hide running loader on screen
       myScreenLoader.hideLoader();
@@ -177,8 +176,11 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
         user: commentedUser,
         createdAt: DateTime.now().toUtc().toString(),
         tags: tags,
-        parentKey: widget.isTweet ? null : widget.isRetweet ? null : state.tweetToReplyModel.key,
-        childRetweetKey: widget.isTweet ? null : widget.isRetweet ? model.key : null,
+        parentKey: widget.isTweet
+            ? null
+            : widget.isRetweet ? null : state.tweetToReplyModel.key,
+        childRetweetKey:
+        widget.isTweet ? null : widget.isRetweet ? model.key : null,
         userId: myUser.userId);
     return reply;
   }
@@ -190,14 +192,14 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
         title: customTitleText(''),
         onActionPressed: _submitButton,
         isCrossButton: true,
-        submitButtonText: widget.isTweet ? 'Tweet' : widget.isRetweet
-            ? 'Retweet'
-            : 'Reply',
+        submitButtonText:
+        widget.isTweet ? 'Tweet' : widget.isRetweet ? 'Retweet' : 'Reply',
         isSubmitDisable: !Provider
             .of<Tweet>(context)
-            .enableSubmitButton || Provider
-            .of<FeedState>(context)
-            .isBusy,
+            .enableSubmitButton ||
+            Provider
+                .of<FeedState>(context)
+                .isBusy,
         isBottomLine: Provider
             .of<Tweet>(context)
             .isScrollingDown,
@@ -208,8 +210,8 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
           children: <Widget>[
             SingleChildScrollView(
               controller: scrollController,
-              child: widget.isRetweet ? _ComposeRetweet(this) : ComposeTweet(
-                  this),
+              child:
+              widget.isRetweet ? _ComposeRetweet(this) : ComposeTweet(this),
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -254,8 +256,12 @@ class _ComposeRetweet
                   ),
                   SizedBox(width: 10),
                   ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 0, maxWidth: fullWidth(context) * .5),
-                    child: TitleText(model.user.displayName, fontSize: 16, fontWeight: FontWeight.w800, overflow: TextOverflow.ellipsis),
+                    constraints: BoxConstraints(
+                        minWidth: 0, maxWidth: fullWidth(context) * .5),
+                    child: TitleText(model.user.displayName,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        overflow: TextOverflow.ellipsis),
                   ),
                   SizedBox(width: 3),
                   model.user.isVerified
@@ -308,8 +314,8 @@ class _ComposeRetweet
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: customImage(
-                    context, authState.firebaseUser?.photoUrl, height: 40),
+                child: customImage(context, authState.firebaseUser?.photoUrl,
+                    height: 40),
               ),
               Expanded(
                 child: _TextField(
@@ -407,7 +413,9 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
                   ),
                   SizedBox(height: 30),
                   UrlText(
-                    text: 'Replying to ${viewState.model.user.userName ?? viewState.model.user.displayName}',
+                    text:
+                    'Replying to ${viewState.model.user.userName ??
+                        viewState.model.user.displayName}',
                     style: TextStyle(
                       color: TwitterColor.paleSky,
                       fontSize: 13,
@@ -420,14 +428,14 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                customImage(
-                    context, viewState.model.user.profilePict, height: 40),
+                customImage(context, viewState.model.user.profilePict,
+                    height: 40),
                 SizedBox(width: 10),
                 ConstrainedBox(
                   constraints: BoxConstraints(
                       minWidth: 0, maxWidth: fullWidth(context) * .5),
-                  child: TitleText(
-                      viewState.model.user.displayName, fontSize: 16,
+                  child: TitleText(viewState.model.user.displayName,
+                      fontSize: 16,
                       fontWeight: FontWeight.w800,
                       overflow: TextOverflow.ellipsis),
                 ),
@@ -471,8 +479,8 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              customImage(
-                  context, authState.firebaseUser?.photoUrl, height: 40),
+              customImage(context, authState.firebaseUser?.photoUrl,
+                  height: 40),
               SizedBox(
                 width: 10,
               ),
@@ -507,7 +515,11 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
 }
 
 class _TextField extends StatelessWidget {
-  const _TextField({Key key, this.textEditingController, this.isTweet = false, this.isRetweet = false}) : super(key: key);
+  const _TextField({Key key,
+    this.textEditingController,
+    this.isTweet = false,
+    this.isRetweet = false})
+      : super(key: key);
   final TextEditingController textEditingController;
   final bool isTweet;
   final bool isRetweet;
@@ -521,13 +533,15 @@ class _TextField extends StatelessWidget {
         TextField(
           controller: textEditingController,
           onChanged: (text) {
-            Provider.of<Tweet>(context, listen: false).onDescriptionChanged(
-                text, searchState);
+            Provider.of<Tweet>(context, listen: false)
+                .onDescriptionChanged(text, searchState);
           },
           maxLines: null,
           decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: isTweet ? 'What\'s happening?' : isRetweet ? 'Add a comment' : 'Tweet your reply',
+              hintText: isTweet
+                  ? 'What\'s happening?'
+                  : isRetweet ? 'Add a comment' : 'Tweet your reply',
               hintStyle: TextStyle(fontSize: 18)),
         ),
       ],

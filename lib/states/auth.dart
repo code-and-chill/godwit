@@ -22,24 +22,24 @@ class AuthState extends AppState {
   bool isSignInWithGoogle = false;
   FirebaseUser firebaseUser;
   String userId;
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  fbDatabase.Query _profileQuery;
-  List<User> _profileUsers;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  fbDatabase.Query profileQuery;
+  List<User> profileUsers;
   User _user;
 
   User get userModel => _user;
 
   User get profileUser {
-    if (_profileUsers != null && _profileUsers.length > 0) {
-      return _profileUsers.last;
+    if (profileUsers != null && profileUsers.length > 0) {
+      return profileUsers.last;
     } else {
       return null;
     }
   }
 
   void removeLastUser() {
-    _profileUsers.removeLast();
+    profileUsers.removeLast();
   }
 
   /// Logout from device
@@ -48,10 +48,10 @@ class AuthState extends AppState {
     userId = '';
     _user = null;
     firebaseUser = null;
-    _profileUsers = null;
+    profileUsers = null;
 
     if (isSignInWithGoogle) {
-      _googleSignIn.signOut();
+      googleSignIn.signOut();
       logEvent('google_logout');
     }
     FirebaseAuth.instance.signOut();
@@ -67,10 +67,8 @@ class AuthState extends AppState {
 
   databaseInit() {
     try {
-      if (_profileQuery == null) {
-        _profileQuery =
-            firebaseDatabase.child("profile").child(firebaseUser.uid);
-        _profileQuery.onValue.listen(_onProfileChanged);
+      if (profileQuery == null) {
+        profileQuery.onValue.listen(_onProfileChanged);
       }
     } catch (error) {
       cprint(error, errorIn: 'databaseInit');
@@ -104,7 +102,7 @@ class AuthState extends AppState {
     try {
       /// Record log in firebase kAnalytics about Google login
       firebaseAnalytics.logLogin(loginMethod: 'google_login');
-      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAccount googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         throw Exception('Google login cancelled by user');
       }
@@ -215,8 +213,8 @@ class AuthState extends AppState {
 
     firebaseDatabase.child('profile').child(user.userId).set(user.toJson());
     _user = user;
-    if (_profileUsers != null) {
-      _profileUsers.last = _user;
+    if (profileUsers != null) {
+      profileUsers.last = _user;
     }
     loading = false;
   }
@@ -250,7 +248,7 @@ class AuthState extends AppState {
     firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser.isEmailVerified) {
       userModel.isVerified = true;
-      // If user verifed his email
+      // If user verified his email
       // Update user in firebase realtime kDatabase
       createUser(userModel);
       cprint('User email verification complete');
@@ -264,7 +262,7 @@ class AuthState extends AppState {
       GlobalKey<ScaffoldState> scaffoldKey) async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     user.sendEmailVerification().then((_) {
-      logEvent('email_verifcation_sent',
+      logEvent('email_verification_sent',
           parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
@@ -272,7 +270,7 @@ class AuthState extends AppState {
       );
     }).catchError((error) {
       cprint(error.message, errorIn: 'sendEmailVerification');
-      logEvent('email_verifcation_block',
+      logEvent('email_verification_block',
           parameter: {userModel.displayName: user.email});
       customSnackBar(
         scaffoldKey,
@@ -359,8 +357,8 @@ class AuthState extends AppState {
   getProfileUser({String userProfileId}) {
     try {
       loading = true;
-      if (_profileUsers == null) {
-        _profileUsers = [];
+      if (profileUsers == null) {
+        profileUsers = [];
       }
 
       userProfileId = userProfileId == null ? firebaseUser.uid : userProfileId;
@@ -372,9 +370,9 @@ class AuthState extends AppState {
         if (snapshot.value != null) {
           var map = snapshot.value;
           if (map != null) {
-            _profileUsers.add(User.fromJson(map));
+            profileUsers.add(User.fromJson(map));
             if (userProfileId == firebaseUser.uid) {
-              _user = _profileUsers.last;
+              _user = profileUsers.last;
               _user.isVerified = firebaseUser.isEmailVerified;
               if (!firebaseUser.isEmailVerified) {
                 // Check if logged in user verified his email address or not
@@ -404,7 +402,7 @@ class AuthState extends AppState {
       return;
     }
     getProfileUser();
-    _firebaseMessaging.getToken().then((String token) {
+    firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       _user.fcmToken = token;
       createUser(_user);
@@ -417,11 +415,11 @@ class AuthState extends AppState {
   ///
   /// If `removeFollower` is false then add user to follower list
   followUser({bool removeFollower = false}) {
-    /// `userModel` is user who is looged-in app.
-    /// `profileUserModel` is user whoose profile is open in app.
+    /// `userModel` is user who is logged-in app.
+    /// `profileUserModel` is user whose profile is open in app.
     try {
       if (removeFollower) {
-        /// If logged-in user `alredy follow `profile user then
+        /// If logged-in user `already follow `profile user then
         /// 1.Remove logged-in user from profile user's `follower` list
         /// 2.Remove profile user from logged-in user's `following` list
         profileUser.followers.remove(userModel.userId);

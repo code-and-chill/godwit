@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/states/auth.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/navigation/appbar.dart';
@@ -28,33 +29,33 @@ class SettingsAndPrivacyPage extends StatelessWidget {
           HeaderWidget(user.userName),
           SettingRowWidget(
             "Account",
-            navigateTo: 'AccountSettingsPage',
+            navigateTo: page.Account,
           ),
           Divider(height: 0),
           SettingRowWidget("Privacy and Policy",
-              navigateTo: 'PrivacyAndSaftyPage'),
-          SettingRowWidget("Notification", navigateTo: 'NotificationPage'),
-          SettingRowWidget("Content prefrences",
-              navigateTo: 'ContentPrefrencePage'),
+              navigateTo: page.PrivacyAndSafety),
+          SettingRowWidget("Notification", navigateTo: page.Notification),
+          SettingRowWidget("Content preferences",
+              navigateTo: page.ContentPreference),
           HeaderWidget(
             'General',
             secondHeader: true,
           ),
           SettingRowWidget("Display and Sound",
               navigateTo: 'DisplayAndSoundPage'),
-          SettingRowWidget("Data usage", navigateTo: 'DataUsagePage'),
-          SettingRowWidget("Accessibility", navigateTo: 'AccessibilityPage'),
-          SettingRowWidget("Proxy", navigateTo: "ProxyPage"),
+          SettingRowWidget("Data usage", navigateTo: page.DataUsage),
+          SettingRowWidget("Accessibility", navigateTo: page.Accessibility),
+          SettingRowWidget("Proxy", navigateTo: page.Proxy),
           SettingRowWidget(
-            "About Fwitter",
-            navigateTo: "AboutPage",
+            "About Twitter",
+            navigateTo: page.About,
           ),
           SettingRowWidget(
             null,
             showDivider: false,
             vPadding: 10,
             subtitle:
-            'These settings affect all of your Fwitter accounts on this devce.',
+                'These settings affect all of your Twitter accounts on this device.',
           )
         ],
       ),

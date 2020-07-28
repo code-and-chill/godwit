@@ -19,68 +19,9 @@ class VerifyEmailPage extends StatefulWidget {
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Widget _body(BuildContext context) {
-    var state = Provider.of<AuthState>(context, listen: false);
-    return Container(
-      height: fullHeight(context),
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: state.firebaseUser.isEmailVerified
-            ? <Widget>[
-                NotifyText(
-                  title: 'Your email address is verified',
-                  subTitle:
-                      'You have got your blue tick on your name. Cheers !!',
-                ),
-              ]
-            : <Widget>[
-                NotifyText(
-                  title: 'Verify your email address',
-                  subTitle:
-                      'Send email verification email link to ${state.firebaseUser.email} to verify address',
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                _submitButton(context),
-              ],
-      ),
-    );
-  }
-
-  Widget _submitButton(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 15),
-      width: MediaQuery.of(context).size.width,
-      alignment: Alignment.center,
-      child: Wrap(
-        children: <Widget>[
-          MaterialButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            color: Colors.blueAccent,
-            onPressed: _submit,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-            child: TitleText(
-              'Send Link',
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submit() {
-    var state = Provider.of<AuthState>(context, listen: false);
-    state.sendEmailVerification(_scaffoldKey);
-  }
-
   @override
   Widget build(BuildContext context) {
+    var state = Provider.of<AuthState>(context, listen: false);
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: TwitterColor.mystic,
@@ -91,7 +32,56 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         ),
         centerTitle: true,
       ),
-      body: _body(context),
+      body: Container(
+        height: fullHeight(context),
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: state.firebaseUser.isEmailVerified
+              ? <Widget>[
+                  NotifyText(
+                    title: 'Your email address is verified',
+                    subTitle:
+                        'You have got your blue tick on your name. Cheers !!',
+                  ),
+                ]
+              : <Widget>[
+                  NotifyText(
+                    title: 'Verify your email address',
+                    subTitle:
+                        'Send email verification email link to ${state.firebaseUser.email} to verify address',
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 15),
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    child: Wrap(
+                      children: <Widget>[
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          color: Colors.blueAccent,
+                          onPressed: () {
+                            state.sendEmailVerification(_scaffoldKey);
+                          },
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 10),
+                          child: TitleText(
+                            'Send Link',
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+        ),
+      ),
     );
   }
 }

@@ -27,7 +27,7 @@ class AboutPage extends StatelessWidget {
             secondHeader: true,
           ),
           SettingRowWidget(
-            "Help Centre",
+            "Help Center",
             vPadding: 0,
             showDivider: false,
             onPressed: () {
@@ -53,7 +53,7 @@ class AboutPage extends StatelessWidget {
             onPressed: () async {
               showLicensePage(
                 context: context,
-                applicationName: 'Fwitter',
+                applicationName: 'Twitter',
                 applicationVersion: '1.0.0',
                 useRootNavigator: true,
               );
@@ -63,7 +63,7 @@ class AboutPage extends StatelessWidget {
           SettingRowWidget("Github", showDivider: true, onPressed: () {
             launchURL("https://github.com/TheAlphamerc");
           }),
-          SettingRowWidget("LinkidIn", showDivider: true, onPressed: () {
+          SettingRowWidget("LinkedIn", showDivider: true, onPressed: () {
             launchURL("https://www.linkedin.com/in/thealphamerc/");
           }),
           SettingRowWidget("Twitter", showDivider: true, onPressed: () {

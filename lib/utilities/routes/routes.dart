@@ -7,8 +7,7 @@ import 'package:twitter/pages/auth/signup.dart';
 import 'package:twitter/pages/feed/compose_tweet.dart';
 import 'package:twitter/pages/message/conversation.dart';
 import 'package:twitter/pages/message/new_message.dart';
-import 'package:twitter/pages/profile/follow/follower_list.dart';
-import 'package:twitter/pages/profile/follow/following_list.dart';
+import 'package:twitter/pages/profile/follower_list.dart';
 import 'package:twitter/pages/profile/profile_image.dart';
 import 'package:twitter/pages/search/search.dart';
 import 'package:twitter/pages/settings/account/about.dart';
@@ -25,15 +24,18 @@ import 'package:twitter/pages/settings/privacy.dart';
 import 'package:twitter/pages/settings/proxy.dart';
 import 'package:twitter/pages/splash.dart';
 import 'package:twitter/states/tweet.dart';
+import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/page.dart' as page;
+import 'package:twitter/utilities/routes/slide_left_route.dart';
 
-import '../pages/auth/forgot_password.dart';
-import '../pages/feed/feed_post_detail.dart';
-import '../pages/feed/image_view.dart';
-import '../pages/message/chat_screen.dart';
-import '../pages/profile/edit_profile.dart';
-import '../pages/profile/profile.dart';
-import 'widget.dart';
+import '../../pages/auth/forgot_password.dart';
+import '../../pages/feed/feed_post_detail.dart';
+import '../../pages/feed/image_view.dart';
+import '../../pages/message/chat_screen.dart';
+import '../../pages/profile/edit_profile.dart';
+import '../../pages/profile/profile.dart';
+import '../widget.dart';
+import 'custom_route.dart';
 
 class Routes {
   static dynamic route() {
@@ -55,42 +57,30 @@ class Routes {
     }
     switch (pathElements[1]) {
       case page.ComposeTweet:
-        bool isRetweet = false;
-        bool isTweet = false;
-        if (pathElements.length == 3 && pathElements[2].contains('retweet')) {
-          isRetweet = true;
-        } else if (pathElements.length == 3 &&
-            pathElements[2].contains('tweet')) {
-          isTweet = true;
-        }
+        bool isRetweet =
+            pathElements.length == 3 && pathElements[2].contains('retweet');
+        bool isTweet =
+            pathElements.length == 3 && pathElements[2].contains('tweet');
         return CustomRoute<bool>(
             builder: (BuildContext context) => ChangeNotifierProvider<Tweet>(
-                  create: (_) => Tweet(),
-                  child:
-                      ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet),
-                ));
+                create: (_) => Tweet(),
+                child:
+                    ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet)));
       case page.FeedPostDetail:
         var postId = pathElements[2];
         return SlideLeftRoute<bool>(
-            builder: (BuildContext context) => FeedPostDetail(
-                  postId: postId,
-                ),
+            builder: (BuildContext context) => FeedPostDetail(postId: postId),
             settings: RouteSettings(name: page.FeedPostDetail));
       case page.Profile:
-        String profileId;
-        if (pathElements.length > 2) {
-          profileId = pathElements[2];
-        }
         return CustomRoute<bool>(
-            builder: (BuildContext context) => ProfilePage(
-                  profileId: profileId,
-                ));
+            builder: (BuildContext context) =>
+                ProfilePage(profileId: pathElements[2]));
       case page.CreateFeed:
         return CustomRoute<bool>(
-            builder: (BuildContext context) => ChangeNotifierProvider<Tweet>(
-                  create: (_) => Tweet(),
-                  child: ComposeTweetPage(isRetweet: false, isTweet: true),
-                ));
+            builder: (BuildContext context) =>
+                ChangeNotifierProvider<Tweet>(
+                    create: (_) => Tweet(),
+                    child: ComposeTweetPage(isRetweet: false, isTweet: true)));
       case page.Welcome:
         return CustomRoute<bool>(
             builder: (BuildContext context) => WelcomePage());
@@ -118,76 +108,66 @@ class Routes {
             builder: (BuildContext context) => ChatScreenPage());
       case page.NewMessage:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => NewMessagePage(),
-        );
+            builder: (BuildContext context) => NewMessagePage());
       case page.SettingsAndPrivacy:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => SettingsAndPrivacyPage(),
-        );
+            builder: (BuildContext context) => SettingsAndPrivacyPage());
       case page.Account:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => AccountSettingsPage(),
-        );
+            builder: (BuildContext context) => AccountSettingsPage());
       case page.Account:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => AccountSettingsPage(),
-        );
+            builder: (BuildContext context) => AccountSettingsPage());
       case page.PrivacyAndSafety:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => PrivacyAndSaftyPage(),
-        );
+            builder: (BuildContext context) => PrivacyAndSaftyPage());
       case page.Notification:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => NotificationPage(),
-        );
+            builder: (BuildContext context) => NotificationPage());
       case page.ContentPreference:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => ContentPreferencePage(),
-        );
+            builder: (BuildContext context) => ContentPreferencePage());
       case page.DisplayAndSound:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => DisplayAndSoundPage(),
-        );
+            builder: (BuildContext context) => DisplayAndSoundPage());
       case page.DirectMessages:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => DirectMessagesPage(),
-        );
+            builder: (BuildContext context) => DirectMessagesPage());
       case page.Trends:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => TrendsPage(),
-        );
+            builder: (BuildContext context) => TrendsPage());
       case page.DataUsage:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => DataUsagePage(),
-        );
+            builder: (BuildContext context) => DataUsagePage());
       case page.Accessibility:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => AccessibilityPage(),
-        );
+            builder: (BuildContext context) => AccessibilityPage());
       case page.Proxy:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => ProxyPage(),
-        );
+            builder: (BuildContext context) => ProxyPage());
       case page.About:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => AboutPage(),
-        );
+            builder: (BuildContext context) => AboutPage());
       case page.ConversationInformation:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => ConversationInformation(),
-        );
+            builder: (BuildContext context) => ConversationInformation());
       case page.FollowingList:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => FollowingListPage(),
-        );
+            builder: (BuildContext context) =>
+                FollowListPage(
+                  FollowType.Following,
+                  pageTitle: "following",
+                ));
       case page.FollowerList:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => FollowerListPage(),
-        );
+            builder: (BuildContext context) =>
+                FollowListPage(
+                  FollowType.Followers,
+                  pageTitle: "followers",
+                ));
       case page.VerifyEmail:
         return CustomRoute<bool>(
-          builder: (BuildContext context) => VerifyEmailPage(),
-        );
+            builder: (BuildContext context) => VerifyEmailPage());
       default:
         return onUnknownRoute(RouteSettings(name: '/Feature'));
     }
@@ -201,49 +181,9 @@ class Routes {
           centerTitle: true,
         ),
         body: Center(
-          child: Text('${settings.name.split('/')[1]} Comming soon..'),
+          child: Text('${settings.name.split('/')[1]} Coming soon..'),
         ),
       ),
-    );
-  }
-}
-
-class CustomRoute<T> extends MaterialPageRoute<T> {
-  CustomRoute({WidgetBuilder builder, RouteSettings settings})
-      : super(builder: builder, settings: settings);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    Routes.sendNavigationEventToFirebase(settings.name);
-    if (settings.name == "SplashPage") {
-      return child;
-    }
-    return FadeTransition(
-      opacity: CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn),
-      child: child,
-    );
-  }
-}
-
-class SlideLeftRoute<T> extends MaterialPageRoute<T> {
-  SlideLeftRoute({WidgetBuilder builder, RouteSettings settings})
-      : super(builder: builder, settings: settings);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    Routes.sendNavigationEventToFirebase(settings.name);
-    if (settings.name == page.Splash) {
-      return child;
-    }
-    return SlideTransition(
-      position: new Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
-        end: Offset.zero,
-      ).animate(
-          CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn)),
-      child: child,
     );
   }
 }

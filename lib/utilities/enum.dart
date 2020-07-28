@@ -23,3 +23,5 @@ enum NotificationType {
   Mention,
   Like
 }
+
+enum FollowType { Followers, Following }
