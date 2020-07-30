@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';

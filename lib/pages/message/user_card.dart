@@ -6,9 +6,10 @@ import 'package:twitter/states/chat.dart';
 import 'package:twitter/states/search.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/page.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/button/ripple.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 import 'package:twitter/widgets/label/text.dart';
 import 'package:twitter/widgets/label/title.dart';
 
@@ -32,11 +33,11 @@ class UserCard extends StatelessWidget {
             chatState.setChatUser =
                 searchState.users.where((x) => x.userId == user.userId).first;
           }
-          Navigator.pushNamed(context, '/ChatScreenPage');
+          Navigator.pushNamed(context, '/' + ChatScreen);
         },
         leading: RippleButton(
           onPressed: () {
-            Navigator.of(context).pushNamed('/ProfilePage/${user.userId}');
+            Navigator.of(context).pushNamed('/' + Profile + '/${user.userId}');
           },
           borderRadius: BorderRadius.circular(28),
           child: Container(

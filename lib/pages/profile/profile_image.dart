@@ -5,6 +5,7 @@ import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 
 class ProfileImageView extends StatelessWidget {
   const ProfileImageView({Key key}) : super(key: key);

@@ -20,7 +20,7 @@ class FollowListPage extends StatelessWidget {
         userIdsList: state.profileUser?.followers,
         appBarIcon: AppIcon.follow,
         emptyScreenText:
-            '${state?.profileUser?.userName ?? state.userModel.userName} doesn\'t have any followers',
+            '${state?.profileUser?.userName ?? state.getUser.userName} doesn\'t have any followers',
         emptyScreenSubTileText:
             'When someone follow them, they\'ll be listed here.',
       );
@@ -30,7 +30,8 @@ class FollowListPage extends StatelessWidget {
         userIdsList: state.profileUser.following,
         appBarIcon: AppIcon.follow,
         emptyScreenText:
-            '${state?.profileUser?.userName ?? state.userModel.userName} isn\'t follow anyone',
+        '${state?.profileUser?.userName ??
+            state.getUser.userName} isn\'t follow anyone',
         emptyScreenSubTileText: 'When they do they\'ll be listed here.');
   }
 }

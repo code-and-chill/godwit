@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/states/search.dart';
 import 'package:twitter/states/tweet.dart';
 import 'package:twitter/utilities/common.dart';
@@ -30,64 +30,64 @@ class ComposeTweetPage extends StatefulWidget {
   final bool isRetweet;
   final bool isTweet;
 
-  _ComposeTweetReplyPageState createState() => _ComposeTweetReplyPageState();
+  ComposeTweetReplyPageState createState() => ComposeTweetReplyPageState();
 }
 
-class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
-  bool isScrollingDown = false;
-  Feed model;
+class ComposeTweetReplyPageState extends State<ComposeTweetPage> {
+  TextEditingController textEditingController;
   ScrollController scrollController;
-
-  File _image;
-  TextEditingController _textEditingController;
+  Feed feed;
+  File image;
+  bool isScrollingDown = false;
 
   @override
   void dispose() {
     scrollController.dispose();
-    _textEditingController.dispose();
+    textEditingController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     var feedState = Provider.of<FeedState>(context, listen: false);
-    model = feedState.tweetToReplyModel;
+    feed = feedState.getTweetToReply;
     scrollController = ScrollController();
-    _textEditingController = TextEditingController();
-    scrollController..addListener(_scrollListener);
+    textEditingController = TextEditingController();
+    scrollController
+      ..addListener(() {
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          if (!isScrollingDown) {
+            Provider.of<Tweet>(context, listen: false).setIsScrolllingDown =
+                true;
+          }
+        }
+        if (scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          Provider.of<Tweet>(context, listen: false).setIsScrolllingDown =
+              false;
+        }
+      });
     super.initState();
-  }
-
-  _scrollListener() {
-    if (scrollController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (!isScrollingDown) {
-        Provider.of<Tweet>(context, listen: false).setIsScrolllingDown = true;
-      }
-    }
-    if (scrollController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      Provider.of<Tweet>(context, listen: false).setIsScrolllingDown = false;
-    }
   }
 
   void _onCrossIconPressed() {
     setState(() {
-      _image = null;
+      image = null;
     });
   }
 
   void _onImageIconSelected(File file) {
     setState(() {
-      _image = file;
+      image = file;
     });
   }
 
   /// Submit tweet to save in firebase database
   void _submitButton() async {
-    if (_textEditingController.text == null ||
-        _textEditingController.text.isEmpty ||
-        _textEditingController.text.length > 280) {
+    if (textEditingController.text == null ||
+        textEditingController.text.isEmpty ||
+        textEditingController.text.length > 280) {
       return;
     }
     var state = Provider.of<FeedState>(context, listen: false);
@@ -97,10 +97,10 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
 
     /// If tweet contain image
     /// First image is uploaded on firebase storage
-    /// After sucessfull image upload to firebase storage it returns image path
+    /// After successful image upload to firebase storage it returns image path
     /// Add this image path to tweet model and save to firebase database
-    if (_image != null) {
-      await state.uploadFile(_image).then((imagePath) {
+    if (image != null) {
+      await state.uploadFile(image).then((imagePath) {
         if (imagePath != null) {
           tweetModel.imagePath = imagePath;
 
@@ -116,7 +116,7 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
 
           /// If type of tweet is new comment tweet
           else {
-            state.addcommentToPost(tweetModel);
+            state.addCommentToPost(tweetModel);
           }
         }
       });
@@ -136,7 +136,7 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
 
       /// If type of tweet is new comment tweet
       else {
-        state.addcommentToPost(tweetModel);
+        state.addCommentToPost(tweetModel);
       }
     }
 
@@ -162,25 +162,25 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
   Feed createTweetModel() {
     var state = Provider.of<FeedState>(context, listen: false);
     var authState = Provider.of<AuthState>(context, listen: false);
-    var myUser = authState.userModel;
+    var myUser = authState.getUser;
     var profilePic = myUser.profilePict ?? mockProfilePicture;
     var commentedUser = User(
         displayName: myUser.displayName ?? myUser.email.split('@')[0],
         profilePict: profilePic,
         userId: myUser.userId,
-        isVerified: authState.userModel.isVerified,
-        userName: authState.userModel.userName);
-    var tags = getHashTags(_textEditingController.text);
+        isVerified: authState.getUser.isVerified,
+        userName: authState.getUser.userName);
+    var tags = getHashTags(textEditingController.text);
     Feed reply = Feed(
-        description: _textEditingController.text,
+        description: textEditingController.text,
         user: commentedUser,
         createdAt: DateTime.now().toUtc().toString(),
         tags: tags,
         parentKey: widget.isTweet
             ? null
-            : widget.isRetweet ? null : state.tweetToReplyModel.key,
+            : widget.isRetweet ? null : state.getTweetToReply.key,
         childRetweetKey:
-        widget.isTweet ? null : widget.isRetweet ? model.key : null,
+        widget.isTweet ? null : widget.isRetweet ? feed.key : null,
         userId: myUser.userId);
     return reply;
   }
@@ -189,7 +189,7 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: customTitleText(''),
+        title: customText(''),
         onActionPressed: _submitButton,
         isCrossButton: true,
         submitButtonText:
@@ -216,7 +216,7 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: ComposeBottomIconWidget(
-                textEditingController: _textEditingController,
+                textEditingController: textEditingController,
                 onImageIconSelected: _onImageIconSelected,
               ),
             ),
@@ -228,10 +228,10 @@ class _ComposeTweetReplyPageState extends State<ComposeTweetPage> {
 }
 
 class _ComposeRetweet
-    extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
+    extends View<ComposeTweetPage, ComposeTweetReplyPageState> {
   _ComposeRetweet(this.viewState) : super(viewState);
 
-  final _ComposeTweetReplyPageState viewState;
+  final ComposeTweetReplyPageState viewState;
 
   Widget _tweet(BuildContext context, Feed model) {
     return Column(
@@ -321,7 +321,7 @@ class _ComposeRetweet
                 child: _TextField(
                   isTweet: false,
                   isRetweet: true,
-                  textEditingController: viewState._textEditingController,
+                  textEditingController: viewState.textEditingController,
                 ),
               ),
               SizedBox(
@@ -332,7 +332,7 @@ class _ComposeRetweet
           Padding(
             padding: EdgeInsets.only(right: 16, left: 80, bottom: 8),
             child: ComposeTweetImage(
-              image: viewState._image,
+              image: viewState.image,
               onCrossIconPressed: viewState._onCrossIconPressed,
             ),
           ),
@@ -349,7 +349,7 @@ class _ComposeRetweet
                           border: Border.all(
                               color: AppColor.extraLightGrey, width: .5),
                           borderRadius: BorderRadius.all(Radius.circular(15))),
-                      child: _tweet(context, viewState.model),
+                      child: _tweet(context, viewState.feed),
                     ),
                   ],
                 ),
@@ -357,7 +357,7 @@ class _ComposeRetweet
                   list: Provider
                       .of<SearchState>(context)
                       .users,
-                  textEditingController: viewState._textEditingController,
+                  textEditingController: viewState.textEditingController,
                 )
               ],
             ),
@@ -369,10 +369,10 @@ class _ComposeRetweet
   }
 }
 
-class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
+class ComposeTweet extends View<ComposeTweetPage, ComposeTweetReplyPageState> {
   ComposeTweet(this.viewState) : super(viewState);
 
-  final _ComposeTweetReplyPageState viewState;
+  final ComposeTweetReplyPageState viewState;
 
   Widget tweetCard(BuildContext context) {
     return Row(
@@ -398,7 +398,7 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
                   Container(
                     width: fullWidth(context) - 72,
                     child: UrlText(
-                      text: viewState.model.description ?? '',
+                      text: viewState.feed.description ?? '',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -414,8 +414,8 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
                   SizedBox(height: 30),
                   UrlText(
                     text:
-                    'Replying to ${viewState.model.user.userName ??
-                        viewState.model.user.displayName}',
+                    'Replying to ${viewState.feed.user.userName ??
+                        viewState.feed.user.displayName}',
                     style: TextStyle(
                       color: TwitterColor.paleSky,
                       fontSize: 13,
@@ -428,19 +428,19 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                customImage(context, viewState.model.user.profilePict,
+                customImage(context, viewState.feed.user.profilePict,
                     height: 40),
                 SizedBox(width: 10),
                 ConstrainedBox(
                   constraints: BoxConstraints(
                       minWidth: 0, maxWidth: fullWidth(context) * .5),
-                  child: TitleText(viewState.model.user.displayName,
+                  child: TitleText(viewState.feed.user.displayName,
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
                       overflow: TextOverflow.ellipsis),
                 ),
                 SizedBox(width: 3),
-                viewState.model.user.isVerified
+                viewState.feed.user.isVerified
                     ? TwitterIcon(
                   icon: AppIcon.blueTick,
                   iconColor: AppColor.primary,
@@ -448,14 +448,14 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
                   paddingIcon: 3,
                 )
                     : SizedBox(width: 0),
-                SizedBox(width: viewState.model.user.isVerified ? 5 : 0),
-                CustomText('${viewState.model.user.userName}',
+                SizedBox(width: viewState.feed.user.isVerified ? 5 : 0),
+                CustomText('${viewState.feed.user.userName}',
                     style: userNameStyle.copyWith(fontSize: 15)),
                 SizedBox(width: 5),
                 Padding(
                   padding: EdgeInsets.only(top: 3),
                   child: CustomText(
-                      '- ${getChatTime(viewState.model.createdAt)}',
+                      '- ${getChatTime(viewState.feed.createdAt)}',
                       style: userNameStyle.copyWith(fontSize: 12)),
                 )
               ],
@@ -487,7 +487,7 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
               Expanded(
                 child: _TextField(
                   isTweet: widget.isTweet,
-                  textEditingController: viewState._textEditingController,
+                  textEditingController: viewState.textEditingController,
                 ),
               )
             ],
@@ -496,14 +496,14 @@ class ComposeTweet extends View<ComposeTweetPage, _ComposeTweetReplyPageState> {
             child: Stack(
               children: <Widget>[
                 ComposeTweetImage(
-                  image: viewState._image,
+                  image: viewState.image,
                   onCrossIconPressed: viewState._onCrossIconPressed,
                 ),
                 UserList(
                   list: Provider
                       .of<SearchState>(context)
                       .users,
-                  textEditingController: viewState._textEditingController,
+                  textEditingController: viewState.textEditingController,
                 )
               ],
             ),

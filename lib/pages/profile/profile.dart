@@ -7,10 +7,10 @@ import 'package:twitter/pages/profile/banner.dart';
 import 'package:twitter/pages/profile/tweet_list.dart';
 import 'package:twitter/pages/profile/user_name.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 import 'package:twitter/widgets/image/twitter_icon.dart';
 import 'package:twitter/widgets/navigation/tab_painter.dart';
 
@@ -54,8 +54,8 @@ class ProfilePageState extends State<ProfilePage>
     String id = widget.profileId ?? authState.userId;
 
     /// Filter user's tweet among all tweets available in home page tweets list
-    if (feedState.feedlist != null && feedState.feedlist.length > 0) {
-      list = feedState.feedlist.where((x) => x.userId == id).toList();
+    if (feedState.getFeeds != null && feedState.getFeeds.length > 0) {
+      list = feedState.getFeeds.where((x) => x.userId == id).toList();
     }
     return WillPopScope(
       onWillPop: () async {
@@ -175,10 +175,10 @@ class ProfilePageState extends State<ProfilePage>
 
             /// Banner image
             BannerImage(
-              image: customNetworkImage(
-                'https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500',
-                fit: BoxFit.fill,
-              ),
+              image: CustomNetworkImage(
+                      'https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500',
+                      fit: BoxFit.fill,
+                    ),
             ),
 
             /// User avatar, message icon, profile edit and follow/following button

@@ -75,7 +75,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
           scaffoldKey: widget.scaffoldKey,
           isBackButton: true,
           isBottomLine: true,
-          title: customTitleText(
+          title: customText(
             'New Message',
           ),
         ),

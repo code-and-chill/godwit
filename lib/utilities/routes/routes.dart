@@ -177,7 +177,7 @@ class Routes {
     return MaterialPageRoute(
       builder: (_) => Scaffold(
         appBar: AppBar(
-          title: customTitleText(settings.name.split('/')[1]),
+          title: customText(settings.name.split('/')[1]),
           centerTitle: true,
         ),
         body: Center(

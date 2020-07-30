@@ -24,7 +24,7 @@ class UserListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var state = Provider.of<AuthState>(context, listen: false);
-    String myId = state.userModel.key;
+    String myId = state.getUser.key;
     return ListView.separated(
       itemBuilder: (context, index) {
         return UserTile(

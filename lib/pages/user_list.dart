@@ -30,9 +30,7 @@ class UsersListPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: TwitterColor.mystic,
       appBar: CustomAppBar(
-          isBackButton: true,
-          title: customTitleText(pageTitle),
-          icon: appBarIcon),
+          isBackButton: true, title: customText(pageTitle), icon: appBarIcon),
       body: Consumer<SearchState>(
         builder: (context, state, child) {
           if (userIdsList != null && userIdsList.isNotEmpty) {

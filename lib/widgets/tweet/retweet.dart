@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';
@@ -117,7 +117,7 @@ class RetweetWidget extends StatelessWidget {
             child: RippleButton(
               borderRadius: BorderRadius.all(Radius.circular(15)),
               onPressed: () {
-                feedState.getpostDetailFromDatabase(null, model: snapshot.data);
+                feedState.getPostDetailFromDatabase(null, feed: snapshot.data);
                 Navigator.of(context)
                     .pushNamed('/FeedPostDetail/' + snapshot.data.key);
               },

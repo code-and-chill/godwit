@@ -12,7 +12,7 @@ class DirectMessagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<AuthState>(context).userModel ?? User();
+    var user = Provider.of<AuthState>(context).getUser ?? User();
     return Scaffold(
       backgroundColor: TwitterColor.white,
       appBar: SettingsAppBar(
@@ -33,7 +33,7 @@ class DirectMessagesPage extends StatelessWidget {
             visibleSwitch: true,
             vPadding: 20,
             subtitle:
-            'You will be able to receive Direct Message requests from anyone on Fwitter, even if you don\'t follow them.',
+            'You will be able to receive Direct Message requests from anyone on Twitter, even if you don\'t follow them.',
           ),
           SettingRowWidget(
             "Show read receipts",

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/widgets/image/icons_row.dart';
@@ -49,7 +49,7 @@ class Tweet extends StatelessWidget {
     if (type == TweetType.Tweet && !isDisplayOnProfile) {
       feedState.clearAllDetailAndReplyTweetStack();
     }
-    feedState.getpostDetailFromDatabase(null, model: model);
+    feedState.getPostDetailFromDatabase(null, feed: model);
     Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
   }
 

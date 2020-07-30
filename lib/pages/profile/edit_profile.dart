@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 import 'package:twitter/widgets/label/text.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -28,10 +29,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _location = TextEditingController();
     _dob = TextEditingController();
     var state = Provider.of<AuthState>(context, listen: false);
-    _name.text = state?.userModel?.displayName;
-    _bio.text = state?.userModel?.bio;
-    _location.text = state?.userModel?.location;
-    _dob.text = getDateOfBirth(state?.userModel?.dateOfBirth);
+    _name.text = state?.getUser?.displayName;
+    _bio.text = state?.getUser?.bio;
+    _location.text = state?.getUser?.location;
+    _dob.text = getDateOfBirth(state?.getUser?.dateOfBirth);
     super.initState();
   }
 
@@ -55,7 +56,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Container(
                 height: 180,
                 padding: EdgeInsets.only(bottom: 50),
-                child: customNetworkImage('https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500', fit: BoxFit.fill),
+                child: CustomNetworkImage(
+                    'https://pbs.twimg.com/profile_banners/457684585/1510495215/1500x500',
+                    fit: BoxFit.fill),
               ),
               Align(
                 alignment: Alignment.bottomLeft,
@@ -84,14 +87,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         border: Border.all(color: Colors.white, width: 5),
         shape: BoxShape.circle,
         image: DecorationImage(
-            image: customAdvanceNetworkImage(authstate.userModel.profilePict),
+            image: customAdvanceNetworkImage(authstate.getUser.profilePict),
             fit: BoxFit.cover),
       ),
       child: CircleAvatar(
         radius: 40,
         backgroundImage: _image != null
             ? FileImage(_image)
-            : customAdvanceNetworkImage(authstate.userModel.profilePict),
+            : customAdvanceNetworkImage(authstate.getUser.profilePict),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -149,16 +152,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
     var state = Provider.of<AuthState>(context, listen: false);
-    var model = state.userModel.copyWith(
-      key: state.userModel.userId,
-      displayName: state.userModel.displayName,
-      bio: state.userModel.bio,
-      contact: state.userModel.contact,
-      dateOfBirth: state.userModel.dateOfBirth,
-      email: state.userModel.email,
-      location: state.userModel.location,
-      profilePict: state.userModel.profilePict,
-      userId: state.userModel.userId,
+    var model = state.getUser.copyWith(
+      key: state.getUser.userId,
+      displayName: state.getUser.displayName,
+      bio: state.getUser.bio,
+      contact: state.getUser.contact,
+      dateOfBirth: state.getUser.dateOfBirth,
+      email: state.getUser.email,
+      location: state.getUser.location,
+      profilePict: state.getUser.profilePict,
+      userId: state.getUser.userId,
     );
     if (_name.text != null && _name.text.isNotEmpty) {
       model.displayName = _name.text;
@@ -191,7 +194,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.blue),
-        title: customTitleText('Profile Edit'),
+        title: customText('Profile Edit'),
         actions: <Widget>[
           InkWell(
             onTap: _submitButton,

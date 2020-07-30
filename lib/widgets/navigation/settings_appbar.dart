@@ -14,7 +14,7 @@ class SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SizedBox(height: 5),
-          customTitleText(
+          customText(
             title,
           ),
           Text(

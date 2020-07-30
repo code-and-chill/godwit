@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 import 'package:twitter/widgets/image/twitter_icon.dart';
 import 'package:twitter/widgets/label/text.dart';
 import 'package:twitter/widgets/label/url.dart';
@@ -40,7 +40,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                   _menuListRowButton('Lists', icon: AppIcon.lists),
                   _menuListRowButton('Bookmark', icon: AppIcon.bookmark),
                   _menuListRowButton('Moments', icon: AppIcon.moments),
-                  _menuListRowButton('Fwitter ads', icon: AppIcon.twitterAds),
+                  _menuListRowButton('Twitter ads', icon: AppIcon.twitterAds),
                   Divider(),
                   _menuListRowButton('Settings and privacy', isEnable: true,
                       onPressed: () {
@@ -62,9 +62,11 @@ class _SidebarMenuState extends State<SidebarMenu> {
 
   Widget _menuHeader() {
     final state = Provider.of<AuthState>(context);
-    if (state.userModel == null) {
+    if (state.getUser == null) {
       return CustomInkWell(
-        splashColor: Theme.of(context).primaryColorLight,
+        splashColor: Theme
+            .of(context)
+            .primaryColorLight,
         radius: BorderRadius.circular(0),
         onPressed: () {},
         child: ConstrainedBox(
@@ -92,7 +94,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
                   image: customAdvanceNetworkImage(
-                    state.userModel.profilePict ?? mockProfilePicture,
+                    state.getUser.profilePict ?? mockProfilePicture,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -105,13 +107,14 @@ class _SidebarMenuState extends State<SidebarMenu> {
               title: Row(
                 children: <Widget>[
                   UrlText(
-                    text: state.userModel.displayName ?? "",
-                    style: onPrimaryTitleText.copyWith(color: Colors.black, fontSize: 20),
+                    text: state.getUser.displayName ?? "",
+                    style: onPrimaryTitleText.copyWith(
+                        color: Colors.black, fontSize: 20),
                   ),
                   SizedBox(
                     width: 3,
                   ),
-                  state.userModel.isVerified ?? false
+                  state.getUser.isVerified ?? false
                       ? TwitterIcon(icon: AppIcon.blueTick,
                       iconColor: AppColor.primary,
                       size: 18,
@@ -122,7 +125,7 @@ class _SidebarMenuState extends State<SidebarMenu> {
                 ],
               ),
               subtitle: CustomText(
-                state.userModel.userName,
+                state.getUser.userName,
                 style: onPrimarySubTitleText.copyWith(
                     color: Colors.black54, fontSize: 15),
               ),
@@ -138,11 +141,11 @@ class _SidebarMenuState extends State<SidebarMenu> {
                     width: 17,
                   ),
                   _tappbleText(
-                      context, '${state.userModel.followers}', ' Followers',
+                      context, '${state.getUser.followers}', ' Followers',
                       'FollowerListPage'),
                   SizedBox(width: 10),
                   _tappbleText(
-                      context, '${state.userModel.following}', ' Following',
+                      context, '${state.getUser.following}', ' Following',
                       'FollowingListPage'),
                 ],
               ),

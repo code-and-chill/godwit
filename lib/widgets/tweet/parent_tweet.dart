@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/widgets/tweet/tweet.dart';
 import 'package:twitter/widgets/tweet/unavailable_tweet.dart';
@@ -22,7 +22,7 @@ class ParentTweetWidget extends StatelessWidget {
 
   void onTweetPressed(BuildContext context, Feed model) {
     var feedState = Provider.of<FeedState>(context, listen: false);
-    feedState.getpostDetailFromDatabase(null, model: model);
+    feedState.getPostDetailFromDatabase(null, feed: model);
     Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
   }
 

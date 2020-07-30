@@ -9,7 +9,7 @@ import 'package:twitter/utilities/theme.dart';
 import 'states/app.dart';
 import 'states/auth.dart';
 import 'states/chat.dart';
-import 'states/feed.dart';
+import 'states/feed/feed.dart';
 import 'utilities/routes/routes.dart';
 
 void main() {

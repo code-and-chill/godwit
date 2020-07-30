@@ -8,6 +8,7 @@ import 'package:twitter/states/chat.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 import 'package:twitter/widgets/label/url.dart';
 
 class ChatScreenPage extends StatefulWidget {
@@ -215,7 +216,7 @@ class ChatScreenPageState extends State<ChatScreenPage> {
     message = Message(
         message: messageController.text,
         createdAt: DateTime.now().toUtc().toString(),
-        senderId: authstate.userModel.userId,
+        senderId: authstate.getUser.userId,
         receiverId: state.chatUser.userId,
         seen: false,
         timestamp: DateTime.now().toUtc().millisecondsSinceEpoch.toString(),
@@ -224,10 +225,10 @@ class ChatScreenPageState extends State<ChatScreenPage> {
       return;
     }
     User myUser = User(
-        displayName: authstate.userModel.displayName,
-        userId: authstate.userModel.userId,
-        userName: authstate.userModel.userName,
-        profilePict: authstate.userModel.profilePict);
+        displayName: authstate.getUser.displayName,
+        userId: authstate.getUser.userId,
+        userName: authstate.getUser.userName,
+        profilePict: authstate.getUser.profilePict);
     User secondUser = User(
       displayName: state.chatUser.displayName,
       userId: state.chatUser.userId,

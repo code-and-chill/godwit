@@ -110,7 +110,7 @@ class DisplayAndSoundPage extends StatelessWidget {
       backgroundColor: TwitterColor.white,
       appBar: CustomAppBar(
         isBackButton: true,
-        title: customTitleText(
+        title: customText(
           'Display and Sound',
         ),
       ),
@@ -142,7 +142,8 @@ class DisplayAndSoundPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Emoji",
-            subtitle: 'Use the Fwitter set instead of your device\'s default set',
+            subtitle:
+                'Use the Twitter set instead of your device\'s default set',
             showDivider: false,
             showCheckBox: false,
           ),
@@ -161,7 +162,7 @@ class DisplayAndSoundPage extends StatelessWidget {
           ),
           SettingRowWidget(
             "Use in-app browser",
-            subtitle: 'Open external links with Fwitter browser',
+            subtitle: 'Open external links with Twitter browser',
             showCheckBox: false,
           ),
         ],

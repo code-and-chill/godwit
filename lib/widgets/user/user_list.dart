@@ -28,7 +28,7 @@ class UserList extends StatelessWidget {
               itemBuilder: (context, index) {
                 return UserTile(
                   user: list[index],
-                  onUserSelected: (user) {
+                  onTap: (user) {
                     textEditingController.text = Provider.of<Tweet>(context)
                             .getDescription(user.userName) +
                         " ";

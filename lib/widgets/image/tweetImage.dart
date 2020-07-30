@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/widget.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 
 class TweetImage extends StatelessWidget {
   const TweetImage(
@@ -34,7 +35,7 @@ class TweetImage extends StatelessWidget {
                     return;
                   }
                   var state = Provider.of<FeedState>(context, listen: false);
-                  state.getpostDetailFromDatabase(model.key);
+                  state.getPostDetailFromDatabase(model.key);
                   state.setTweetToReply = model;
                   Navigator.pushNamed(context, '/ImageViewPge');
                 },
@@ -51,7 +52,7 @@ class TweetImage extends StatelessWidget {
                     ),
                     child: AspectRatio(
                       aspectRatio: 4 / 3,
-                      child: customNetworkImage(model.imagePath,
+                      child: CustomNetworkImage(model.imagePath,
                           fit: BoxFit.cover),
                     ),
                   ),

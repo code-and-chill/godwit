@@ -99,14 +99,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
       padding: EdgeInsets.all(10),
       child: CustomInkWell(
-        splashColor: Theme
-            .of(context)
-            .primaryColorLight,
+        splashColor: Theme.of(context).primaryColorLight,
         onPressed: () {
           scaffoldKey.currentState.openDrawer();
         },
-        child:
-        customImage(context, authState.userModel?.profilePict, height: 30),
+        child: customImage(context, authState.getUser?.profilePict, height: 30),
       ),
     );
   }

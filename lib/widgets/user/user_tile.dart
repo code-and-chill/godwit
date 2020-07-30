@@ -7,15 +7,15 @@ import 'package:twitter/widgets/image/twitter_icon.dart';
 import 'package:twitter/widgets/label/title.dart';
 
 class UserTile extends StatelessWidget {
-  const UserTile({Key key, this.user, this.onUserSelected}) : super(key: key);
+  const UserTile({Key key, this.user, this.onTap}) : super(key: key);
   final User user;
-  final ValueChanged<User> onUserSelected;
+  final Function onTap;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        onUserSelected(user);
+        onTap();
       },
       leading: customImage(context, user.profilePict, height: 35),
       title: Row(

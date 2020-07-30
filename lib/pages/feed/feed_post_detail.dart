@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/navigation/tweet_bottom_sheet.dart';
@@ -32,7 +33,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
     return FloatingActionButton(
       onPressed: () {
         var state = Provider.of<FeedState>(context, listen: false);
-        state.setTweetToReply = state.tweetDetailModel?.last;
+        state.setTweetToReply = state.getTweetDetails?.last;
         Navigator.of(context).pushNamed('/ComposeTweetPage/' + postId);
       },
       child: Icon(Icons.add),
@@ -60,16 +61,16 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
   void addLikeToComment(String commentId) {
     var state = Provider.of<FeedState>(context, listen: false);
     var authState = Provider.of<AuthState>(context, listen: false);
-    state.addLikeToTweet(state.tweetDetailModel.last, authState.userId);
+    state.addLikeToTweet(state.getTweetDetails.last, authState.userId);
   }
 
   void openImage() async {
-    Navigator.pushNamed(context, '/ImageViewPge');
+    Navigator.pushNamed(context, '/' + page.ImageView);
   }
 
-  void deleteTweet(TweetType type, String tweetId, {String parentkey}) {
+  void deleteTweet(TweetType type, String tweetId, {String parentKey}) {
     var state = Provider.of<FeedState>(context, listen: false);
-    state.deleteTweet(tweetId, type, parentkey: parentkey);
+    state.deleteTweet(tweetId, type, parentKey: parentKey);
     Navigator.of(context).pop();
     if (type == TweetType.Detail) Navigator.of(context).pop();
   }
@@ -90,7 +91,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
           slivers: <Widget>[
             SliverAppBar(
               pinned: true,
-              title: customTitleText('Thread'),
+              title: customText('Thread'),
               iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
               backgroundColor: Theme.of(context).appBarTheme.color,
               bottom: PreferredSize(
@@ -104,10 +105,10 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  state.tweetDetailModel == null ||
-                      state.tweetDetailModel.length == 0
+                  state.getTweetDetails == null ||
+                      state.getTweetDetails.length == 0
                       ? Container()
-                      : _tweetDetail(state.tweetDetailModel?.last),
+                      : _tweetDetail(state.getTweetDetails?.last),
                   Container(
                     height: 6,
                     width: fullWidth(context),

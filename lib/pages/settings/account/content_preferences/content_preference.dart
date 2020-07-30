@@ -12,7 +12,7 @@ class ContentPreferencePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<AuthState>(context).userModel ?? User();
+    var user = Provider.of<AuthState>(context).getUser ?? User();
     return Scaffold(
       backgroundColor: TwitterColor.white,
       appBar: SettingsAppBar(

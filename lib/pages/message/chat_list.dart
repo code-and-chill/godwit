@@ -72,7 +72,7 @@ class _ChatListPageState extends State<ChatListPage> {
     return Scaffold(
       appBar: CustomAppBar(
         scaffoldKey: widget.scaffoldKey,
-        title: customTitleText(
+        title: customText(
           'Messages',
         ),
         icon: AppIcon.settings,

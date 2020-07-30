@@ -28,7 +28,7 @@ class AuthState extends AppState {
   List<User> profileUsers;
   User _user;
 
-  User get userModel => _user;
+  User get getUser => _user;
 
   User get profileUser {
     if (profileUsers != null && profileUsers.length > 0) {
@@ -247,13 +247,13 @@ class AuthState extends AppState {
     await firebaseUser.reload();
     firebaseUser = await FirebaseAuth.instance.currentUser();
     if (firebaseUser.isEmailVerified) {
-      userModel.isVerified = true;
+      getUser.isVerified = true;
       // If user verified his email
       // Update user in firebase realtime kDatabase
-      createUser(userModel);
+      createUser(getUser);
       cprint('User email verification complete');
       logEvent('email_verification_complete',
-          parameter: {userModel.userName: firebaseUser.email});
+          parameter: {getUser.userName: firebaseUser.email});
     }
   }
 
@@ -263,7 +263,7 @@ class AuthState extends AppState {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
     user.sendEmailVerification().then((_) {
       logEvent('email_verification_sent',
-          parameter: {userModel.displayName: user.email});
+          parameter: {getUser.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         'An email verification link is send to your email.',
@@ -271,7 +271,7 @@ class AuthState extends AppState {
     }).catchError((error) {
       cprint(error.message, errorIn: 'sendEmailVerification');
       logEvent('email_verification_block',
-          parameter: {userModel.displayName: user.email});
+          parameter: {getUser.displayName: user.email});
       customSnackBar(
         scaffoldKey,
         error.message,
@@ -422,10 +422,10 @@ class AuthState extends AppState {
         /// If logged-in user `already follow `profile user then
         /// 1.Remove logged-in user from profile user's `follower` list
         /// 2.Remove profile user from logged-in user's `following` list
-        profileUser.followers.remove(userModel.userId);
+        profileUser.followers.remove(getUser.userId);
 
         /// Remove profile user from logged-in user's following list
-        userModel.following.remove(profileUser.userId);
+        getUser.following.remove(profileUser.userId);
         cprint('user removed from following list', event: 'remove_follow');
       } else {
         /// if logged in user is `not following` profile user then
@@ -434,17 +434,17 @@ class AuthState extends AppState {
         if (profileUser.followers == null) {
           profileUser.followers = [];
         }
-        profileUser.followers.add(userModel.userId);
+        profileUser.followers.add(getUser.userId);
         // Adding profile user to logged-in user's following list
-        if (userModel.following == null) {
-          userModel.following = [];
+        if (getUser.following == null) {
+          getUser.following = [];
         }
-        userModel.following.add(profileUser.userId);
+        getUser.following.add(profileUser.userId);
       }
       // update profile user's user follower count
       profileUser.followers = profileUser.followers;
       // update logged-in user's following count
-      userModel.following = userModel.following;
+      getUser.following = getUser.following;
       firebaseDatabase
           .child('profile')
           .child(profileUser.userId)
@@ -452,9 +452,9 @@ class AuthState extends AppState {
           .set(profileUser.followers);
       firebaseDatabase
           .child('profile')
-          .child(userModel.userId)
+          .child(getUser.userId)
           .child('followingList')
-          .set(userModel.following);
+          .set(getUser.following);
       cprint('user added to following list', event: 'add_follow');
       notifyListeners();
     } catch (error) {

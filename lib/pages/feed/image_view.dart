@@ -4,11 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/image/icons_row.dart';
+import 'package:twitter/widgets/image/network_image.dart';
 
 class ImageViewPge extends StatefulWidget {
   _ImageViewPgeState createState() => _ImageViewPgeState();
@@ -43,7 +44,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
                   isToolAvailable = !isToolAvailable;
                 });
               },
-              child: _imageFeed(state.tweetDetailModel.last.imagePath),
+              child: _imageFeed(state.getTweetDetails.last.imagePath),
             ),
           ),
         ),
@@ -77,7 +78,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       TweetIconsRow(
-                        feed: state.tweetDetailModel.last,
+                        feed: state.getTweetDetails.last,
                         iconColor: Theme.of(context).colorScheme.onPrimary,
                         iconEnableColor:
                             Theme.of(context).colorScheme.onPrimary,
@@ -139,7 +140,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
         : Container(
             alignment: Alignment.center,
             child: Container(
-              child: customNetworkImage(
+              child: CustomNetworkImage(
                 _image,
                 fit: BoxFit.fitWidth,
               ),
@@ -150,7 +151,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
   void addLikeToTweet() {
     var state = Provider.of<FeedState>(context, listen: false);
     var authState = Provider.of<AuthState>(context, listen: false);
-    state.addLikeToTweet(state.tweetDetailModel.last, authState.userId);
+    state.addLikeToTweet(state.getTweetDetails.last, authState.userId);
   }
 
   void _submitButton() {
@@ -163,24 +164,24 @@ class _ImageViewPgeState extends State<ImageViewPge> {
     }
     var state = Provider.of<FeedState>(context, listen: false);
     var authState = Provider.of<AuthState>(context, listen: false);
-    var user = authState.userModel;
+    var user = authState.getUser;
     var profilePic = user.profilePict;
     if (profilePic == null) {
       profilePic = mockProfilePicture;
     }
-    var name = authState.userModel.displayName ??
-        authState.userModel.email.split('@')[0];
-    var pic = authState.userModel.profilePict ?? mockProfilePicture;
+    var name = authState.getUser.displayName ??
+        authState.getUser.email.split('@')[0];
+    var pic = authState.getUser.profilePict ?? mockProfilePicture;
     var tags = getHashTags(_textEditingController.text);
 
     User commentedUser = User(
         displayName: name,
-        userName: authState.userModel.userName,
-        isVerified: authState.userModel.isVerified,
+        userName: authState.getUser.userName,
+        isVerified: authState.getUser.isVerified,
         profilePict: pic,
         userId: authState.userId);
 
-    var postId = state.tweetDetailModel.last.key;
+    var postId = state.getTweetDetails.last.key;
 
     Feed reply = Feed(
       description: _textEditingController.text,
@@ -190,7 +191,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
       userId: commentedUser.userId,
       parentKey: postId,
     );
-    state.addcommentToPost(reply);
+    state.addCommentToPost(reply);
     FocusScope.of(context).requestFocus(_focusNode);
     setState(() {
       _textEditingController.text = '';

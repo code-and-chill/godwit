@@ -12,7 +12,7 @@ class NotificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<AuthState>(context).userModel ?? User();
+    var user = Provider.of<AuthState>(context).getUser ?? User();
     return Scaffold(
       backgroundColor: TwitterColor.white,
       appBar: SettingsAppBar(
@@ -39,7 +39,7 @@ class NotificationPage extends StatelessWidget {
           SettingRowWidget(
             "Unread notification count badge",
             showCheckBox: false,
-            subtitle: 'Display a badge with the number of notifications waiting for you inside the Fwitter app.',
+            subtitle: 'Display a badge with the number of notifications waiting for you inside the Twitter app.',
           ),
           SettingRowWidget("Push notifications"),
           SettingRowWidget("SMS notifications"),

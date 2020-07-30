@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twitter/model/user.dart';
 import 'package:twitter/states/search.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/constant.dart';
-import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/widget.dart';
-import 'package:twitter/widgets/image/twitter_icon.dart';
-import 'package:twitter/widgets/label/title.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/widgets/navigation/appbar.dart';
+import 'package:twitter/widgets/user/user_tile.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key key, this.scaffoldKey}) : super(key: key);
@@ -23,14 +20,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = Provider.of<SearchState>(context);
+      final state = Provider.of<SearchState>(context, listen: false);
       state.resetFilterList();
     });
     super.initState();
   }
 
   void onSettingIconPressed() {
-    Navigator.pushNamed(context, '/TrendsPage');
+    Navigator.pushNamed(context, '/' + page.Trends);
   }
 
   @override
@@ -54,50 +51,20 @@ class _SearchPageState extends State<SearchPage> {
         child: ListView.separated(
           addAutomaticKeepAlives: false,
           physics: BouncingScrollPhysics(),
-          itemBuilder: (context, index) => _UserTile(user: list[index]),
+          itemBuilder: (context, index) => UserTile(
+              user: list[index],
+              onTap: () {
+                firebaseAnalytics.logViewSearchResults(
+                    searchTerm: list[index].userName);
+                Navigator.of(context)
+                    .pushNamed('/' + page.Profile + '/' + list[index]?.userId);
+              }),
           separatorBuilder: (_, index) => Divider(
             height: 0,
           ),
           itemCount: list?.length ?? 0,
         ),
       ),
-    );
-  }
-}
-
-class _UserTile extends StatelessWidget {
-  const _UserTile({Key key, this.user}) : super(key: key);
-  final User user;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        firebaseAnalytics.logViewSearchResults(searchTerm: user.userName);
-        Navigator.of(context).pushNamed('/ProfilePage/' + user?.userId);
-      },
-      leading: customImage(context, user.profilePict, height: 40),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            child: TitleText(user.displayName,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                overflow: TextOverflow.ellipsis),
-          ),
-          SizedBox(width: 3),
-          user.isVerified
-              ? TwitterIcon(
-                  icon: AppIcon.blueTick,
-                  iconColor: AppColor.primary,
-                  size: 13,
-                  paddingIcon: 3,
-                )
-              : SizedBox(width: 0),
-        ],
-      ),
-      subtitle: Text(user.userName),
     );
   }
 }

@@ -18,7 +18,7 @@ class Avatar extends StatelessWidget {
     if (authState.profileUser.followers != null &&
         authState.profileUser.followers.isNotEmpty) {
       return (authState.profileUser.followers
-          .any((x) => x == authState.userModel.userId));
+          .any((x) => x == authState.getUser.userId));
     } else {
       return false;
     }

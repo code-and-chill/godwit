@@ -96,7 +96,7 @@ class TrendsPage extends StatelessWidget {
       backgroundColor: TwitterColor.white,
       appBar: CustomAppBar(
         isBackButton: true,
-        title: customTitleText(
+        title: customText(
           'Trends',
         ),
       ),

@@ -4,9 +4,10 @@ import 'package:twitter/model/feed.dart';
 import 'package:twitter/model/notification.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/states/notification.dart';
 import 'package:twitter/utilities/constant.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/empty/empty_list.dart';
@@ -18,7 +19,7 @@ import 'package:twitter/widgets/navigation/appbar.dart';
 class NotificationPage extends StatefulWidget {
   NotificationPage({Key key, this.scaffoldKey}) : super(key: key);
 
-  /// scaffoldKey used to open sidebaar drawer
+  /// scaffoldKey used to open sidebar drawer
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   _NotificationPageState createState() => _NotificationPageState();
@@ -36,7 +37,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void onSettingIconPressed() {
-    Navigator.pushNamed(context, '/NotificationPage');
+    Navigator.pushNamed(context, '/' + page.Notification);
   }
 
   @override
@@ -45,7 +46,7 @@ class _NotificationPageState extends State<NotificationPage> {
       backgroundColor: TwitterColor.mystic,
       appBar: CustomAppBar(
         scaffoldKey: widget.scaffoldKey,
-        title: customTitleText(
+        title: customText(
           'Notifications',
         ),
         icon: AppIcon.settings,
@@ -98,7 +99,7 @@ class NotificationPageBody extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 30),
         child: EmptyList(
           'No Notification available yet',
-          subTitle: 'When new notifiction found, they\'ll show up here.',
+          subTitle: 'When new notification found, they\'ll show up here.',
         ),
       );
     }
@@ -206,7 +207,7 @@ class NotificationTile extends StatelessWidget {
           child: ListTile(
             onTap: () {
               var state = Provider.of<FeedState>(context, listen: false);
-              state.getpostDetailFromDatabase(null, model: model);
+              state.getPostDetailFromDatabase(null, feed: model);
               Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
             },
             title: _userList(context, model.likes),

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';
+import 'package:twitter/utilities/page.dart' as page;
 import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/empty/empty_list.dart';
@@ -25,7 +26,7 @@ class FeedPage extends StatelessWidget {
   Widget _floatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.of(context).pushNamed('/CreateFeedPage/tweet');
+        Navigator.of(context).pushNamed('/' + page.CreateFeed + '/tweet');
       },
       child: TwitterIcon(
         icon: AppIcon.fabTweet,
@@ -47,12 +48,11 @@ class FeedPage extends StatelessWidget {
           child: RefreshIndicator(
             key: refreshIndicatorKey,
             onRefresh: () async {
-              /// refresh home page feed
               var feedState = Provider.of<FeedState>(context, listen: false);
               feedState.getDataFromDatabase();
               return Future.value(true);
             },
-            child: _FeedPageBody(
+            child: FeedPageBody(
               refreshIndicatorKey: refreshIndicatorKey,
               scaffoldKey: scaffoldKey,
             ),
@@ -63,36 +63,20 @@ class FeedPage extends StatelessWidget {
   }
 }
 
-class _FeedPageBody extends StatelessWidget {
+class FeedPageBody extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  const _FeedPageBody({Key key, this.scaffoldKey, this.refreshIndicatorKey}) : super(key: key);
-  Widget _getUserAvatar(BuildContext context) {
-    var authState = Provider.of<AuthState>(context);
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: CustomInkWell(
-        splashColor: Theme
-            .of(context)
-            .primaryColorLight,
-        radius: BorderRadius.circular(0.0),
-        onPressed: () {
-          scaffoldKey.currentState.openDrawer();
-        },
-        child:
-        customImage(context, authState.userModel?.profilePict, height: 30),
-      ),
-    );
-  }
+  const FeedPageBody({Key key, this.scaffoldKey, this.refreshIndicatorKey})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var authstate = Provider.of<AuthState>(context, listen: false);
+    var authState = Provider.of<AuthState>(context, listen: false);
     return Consumer<FeedState>(
       builder: (context, state, child) {
-        final List<Feed> list = state.getTweetList(authstate.userModel);
+        final List<Feed> list = state.getTweetList(authState.getUser);
         return CustomScrollView(
           slivers: <Widget>[
             child,
@@ -111,20 +95,21 @@ class _FeedPageBody extends StatelessWidget {
                     ? SliverToBoxAdapter(
                         child: EmptyList(
                           'No Tweet added yet',
-                          subTitle: 'When new Tweet added, they\'ll show up here \n Tap tweet button to add new',
+                          subTitle:
+                          'When new Tweet added, they\'ll show up here \n Tap tweet button to add new',
                         ),
                       )
                     : SliverList(
                         delegate: SliverChildListDelegate(
                           list.map(
-                            (model) {
+                                (feed) {
                               return Container(
                                 color: Colors.white,
                                 child: Tweet(
-                                  model: model,
+                                  model: feed,
                                   trailing: TweetBottomSheet().tweetOptionIcon(
                                     context,
-                                    model,
+                                    feed,
                                     TweetType.Tweet,
                                   ),
                                 ),
@@ -139,10 +124,28 @@ class _FeedPageBody extends StatelessWidget {
       child: SliverAppBar(
         floating: true,
         elevation: 0,
-        leading: _getUserAvatar(context),
-        title: customTitleText('Home'),
-        iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
-        backgroundColor: Theme.of(context).appBarTheme.color,
+        leading: Padding(
+          padding: EdgeInsets.all(10),
+          child: CustomInkWell(
+            splashColor: Theme
+                .of(context)
+                .primaryColorLight,
+            radius: BorderRadius.circular(0.0),
+            onPressed: () {
+              scaffoldKey.currentState.openDrawer();
+            },
+            child:
+            customImage(context, authState.getUser?.profilePict, height: 30),
+          ),
+        ),
+        title: customText('Home'),
+        iconTheme: IconThemeData(color: Theme
+            .of(context)
+            .primaryColor),
+        backgroundColor: Theme
+            .of(context)
+            .appBarTheme
+            .color,
         bottom: PreferredSize(
           child: Container(
             color: Colors.grey.shade200,

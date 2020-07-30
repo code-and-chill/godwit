@@ -5,7 +5,7 @@ import 'package:twitter/pages/message/chat_list.dart';
 import 'package:twitter/states/app.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/states/chat.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/states/notification.dart';
 import 'package:twitter/states/search.dart';
 import 'package:twitter/utilities/common.dart';
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       /// `notificationSenderId` is a user id who sends you a message
       /// `notificationReceiverId` is a your user id.
       if (state.notificationType == NotificationType.Message &&
-          state.notificationReciverId == authState.userModel.userId) {
+          state.notificationReciverId == authState.getUser.userId) {
         state.setNotificationType = null;
         state.getuserDetail(state.notificationSenderId).then((user) {
           cprint("Opening user chat screen");
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
       /// You can check that tweet on his profile timeline
       /// `notificationSenderId` is user id who tagged you in a tweet
       else if (state.notificationType == NotificationType.Mention &&
-          state.notificationReciverId == authState.userModel.userId) {
+          state.notificationReciverId == authState.getUser.userId) {
         state.setNotificationType = null;
         Navigator.of(context)
             .pushNamed('/ProfilePage/' + state.notificationSenderId);

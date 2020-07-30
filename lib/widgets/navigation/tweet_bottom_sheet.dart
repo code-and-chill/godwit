@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
 import 'package:twitter/states/auth.dart';
-import 'package:twitter/states/feed.dart';
+import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/constant.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/theme.dart';
@@ -266,7 +266,7 @@ class TweetBottomSheet {
   void _deleteTweet(BuildContext context, TweetType type, String tweetId,
       {String parentkey}) {
     var state = Provider.of<FeedState>(context, listen: false);
-    state.deleteTweet(tweetId, type, parentkey: parentkey);
+    state.deleteTweet(tweetId, type, parentKey: parentkey);
     // CLose bottom sheet
     Navigator.of(context).pop();
     if (type == TweetType.Detail) {

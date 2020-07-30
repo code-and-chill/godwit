@@ -3,7 +3,6 @@ import 'package:twitter/model/feed.dart';
 import 'package:twitter/pages/user_list.dart';
 import 'package:twitter/utilities/routes/custom_route.dart';
 import 'package:twitter/utilities/theme.dart';
-import 'package:twitter/utilities/widget.dart';
 import 'package:twitter/widgets/label/text.dart';
 
 class LikeComment extends StatelessWidget {
@@ -72,8 +71,13 @@ class LikeComment extends StatelessWidget {
                         firstChild: SizedBox.shrink(),
                         secondChild: Row(
                           children: <Widget>[
-                            customSwitcherWidget(
-                              duraton: Duration(milliseconds: 300),
+                            AnimatedSwitcher(
+                              duration: Duration(milliseconds: 300),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) {
+                                return ScaleTransition(
+                                    child: child, scale: animation);
+                              },
                               child: CustomText(feed.likeCount.toString(),
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                   key: ValueKey(feed.likeCount)),
