@@ -62,10 +62,11 @@ class Routes {
         bool isTweet =
             pathElements.length == 3 && pathElements[2].contains('tweet');
         return CustomRoute<bool>(
-            builder: (BuildContext context) => ChangeNotifierProvider<Tweet>(
-                create: (_) => Tweet(),
-                child:
-                    ComposeTweetPage(isRetweet: isRetweet, isTweet: isTweet)));
+            builder: (BuildContext context) =>
+                ChangeNotifierProvider<TweetState>(
+                    create: (_) => TweetState(),
+                    child: ComposeTweetPage(
+                        isRetweet: isRetweet, isTweet: isTweet)));
       case page.FeedPostDetail:
         var postId = pathElements[2];
         return SlideLeftRoute<bool>(
@@ -78,8 +79,8 @@ class Routes {
       case page.CreateFeed:
         return CustomRoute<bool>(
             builder: (BuildContext context) =>
-                ChangeNotifierProvider<Tweet>(
-                    create: (_) => Tweet(),
+                ChangeNotifierProvider<TweetState>(
+                    create: (_) => TweetState(),
                     child: ComposeTweetPage(isRetweet: false, isTweet: true)));
       case page.Welcome:
         return CustomRoute<bool>(

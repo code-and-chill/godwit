@@ -13,14 +13,14 @@ import 'retweet.dart';
 import 'tweet_body.dart';
 
 class Tweet extends StatelessWidget {
-  final Feed model;
+  final Feed feed;
   final Widget trailing;
   final TweetType type;
   final bool isDisplayOnProfile;
 
   const Tweet(
       {Key key,
-      this.model,
+      this.feed,
       this.trailing,
       this.type = TweetType.Tweet,
       this.isDisplayOnProfile = false})
@@ -28,7 +28,7 @@ class Tweet extends StatelessWidget {
 
   void onLongPressedTweet(BuildContext context) {
     if (type == TweetType.Detail || type == TweetType.ParentTweet) {
-      var text = ClipboardData(text: model.description);
+      var text = ClipboardData(text: feed.description);
       Clipboard.setData(text);
       Scaffold.of(context).showSnackBar(
         SnackBar(
@@ -49,8 +49,8 @@ class Tweet extends StatelessWidget {
     if (type == TweetType.Tweet && !isDisplayOnProfile) {
       feedState.clearAllDetailAndReplyTweetStack();
     }
-    feedState.getPostDetailFromDatabase(null, feed: model);
-    Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
+    feedState.getPostDetailFromDatabase(null, feed: feed);
+    Navigator.of(context).pushNamed('/FeedPostDetail/' + feed.key);
   }
 
   @override
@@ -93,13 +93,13 @@ class Tweet extends StatelessWidget {
                 child: type == TweetType.Tweet || type == TweetType.Reply
                     ? TweetBody(
                   isDisplayOnProfile: isDisplayOnProfile,
-                  feed: model,
+                  feed: feed,
                   trailing: trailing,
                   type: type,
                 )
                     : TweetDetailBody(
                   isDisplayOnProfile: isDisplayOnProfile,
-                  model: model,
+                  model: feed,
                   trailing: trailing,
                   type: type,
                 ),
@@ -107,24 +107,24 @@ class Tweet extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.only(right: 16),
                 child: TweetImage(
-                  model: model,
+                  model: feed,
                   type: type,
                 ),
               ),
-              model.childRetweetKey == null
+              feed.childRetweetKey == null
                   ? SizedBox.shrink()
                   : RetweetWidget(
-                childRetweetKey: model.childRetweetKey,
+                childRetweetKey: feed.childRetweetKey,
                 type: type,
                 isImageAvailable:
-                model.imagePath != null && model.imagePath.isNotEmpty,
+                feed.imagePath != null && feed.imagePath.isNotEmpty,
               ),
               Padding(
                 padding:
                 EdgeInsets.only(left: type == TweetType.Detail ? 10 : 60),
                 child: TweetIconsRow(
                   type: type,
-                  feed: model,
+                  feed: feed,
                   isTweetDetail: type == TweetType.Detail,
                   iconColor: Theme
                       .of(context)

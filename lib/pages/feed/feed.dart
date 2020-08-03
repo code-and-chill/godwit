@@ -106,7 +106,7 @@ class FeedPageBody extends StatelessWidget {
                               return Container(
                                 color: Colors.white,
                                 child: Tweet(
-                                  model: feed,
+                                  feed: feed,
                                   trailing: TweetBottomSheet().tweetOptionIcon(
                                     context,
                                     feed,

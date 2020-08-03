@@ -73,7 +73,7 @@ class TweetList extends StatelessWidget {
                 itemBuilder: (context, index) => Container(
                   color: TwitterColor.white,
                   child: Tweet(
-                    model: list[index],
+                    feed: list[index],
                     isDisplayOnProfile: true,
                     trailing: TweetBottomSheet().tweetOptionIcon(
                       context,

@@ -34,7 +34,7 @@ class ParentTweetWidget extends StatelessWidget {
       builder: (context, AsyncSnapshot<Feed> snapshot) {
         if (snapshot.hasData) {
           return Tweet(
-              model: snapshot.data,
+              feed: snapshot.data,
               type: TweetType.ParentTweet,
               trailing: trailing);
         }

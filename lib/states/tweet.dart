@@ -9,7 +9,7 @@ import 'package:twitter/states/search.dart';
 import 'package:twitter/utilities/common.dart';
 import 'package:twitter/utilities/enum.dart';
 
-class Tweet extends ChangeNotifier {
+class TweetState extends ChangeNotifier {
   bool showUserList = false;
   bool enableSubmitButton = false;
   bool hideUserList = false;

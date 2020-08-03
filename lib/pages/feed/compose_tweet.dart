@@ -58,13 +58,13 @@ class ComposeTweetReplyPageState extends State<ComposeTweetPage> {
         if (scrollController.position.userScrollDirection ==
             ScrollDirection.reverse) {
           if (!isScrollingDown) {
-            Provider.of<Tweet>(context, listen: false).setIsScrolllingDown =
-                true;
+            Provider.of<TweetState>(context, listen: false)
+                .setIsScrolllingDown = true;
           }
         }
         if (scrollController.position.userScrollDirection ==
             ScrollDirection.forward) {
-          Provider.of<Tweet>(context, listen: false).setIsScrolllingDown =
+          Provider.of<TweetState>(context, listen: false).setIsScrolllingDown =
               false;
         }
       });
@@ -83,125 +83,87 @@ class ComposeTweetReplyPageState extends State<ComposeTweetPage> {
     });
   }
 
-  /// Submit tweet to save in firebase database
-  void _submitButton() async {
-    if (textEditingController.text == null ||
-        textEditingController.text.isEmpty ||
-        textEditingController.text.length > 280) {
-      return;
-    }
-    var state = Provider.of<FeedState>(context, listen: false);
-    myScreenLoader.showLoader(context);
-
-    Feed tweetModel = createTweetModel();
-
-    /// If tweet contain image
-    /// First image is uploaded on firebase storage
-    /// After successful image upload to firebase storage it returns image path
-    /// Add this image path to tweet model and save to firebase database
-    if (image != null) {
-      await state.uploadFile(image).then((imagePath) {
-        if (imagePath != null) {
-          tweetModel.imagePath = imagePath;
-
-          /// If type of tweet is new tweet
-          if (widget.isTweet) {
-            state.createTweet(tweetModel);
-          }
-
-          /// If type of tweet is  retweet
-          else if (widget.isRetweet) {
-            state.createReTweet(tweetModel);
-          }
-
-          /// If type of tweet is new comment tweet
-          else {
-            state.addCommentToPost(tweetModel);
-          }
-        }
-      });
-    }
-
-    /// If tweet did not contain image
-    else {
-      /// If type of tweet is new tweet
-      if (widget.isTweet) {
-        state.createTweet(tweetModel);
-      }
-
-      /// If type of tweet is  retweet
-      else if (widget.isRetweet) {
-        state.createReTweet(tweetModel);
-      }
-
-      /// If type of tweet is new comment tweet
-      else {
-        state.addCommentToPost(tweetModel);
-      }
-    }
-
-    /// Checks for username in tweet description
-    /// If foud sends notification to all tagged user
-    /// If no user found or not compost tweet screen is closed and redirect back to home page.
-    await Provider.of<Tweet>(context, listen: false)
-        .sendNotification(
-            tweetModel, Provider.of<SearchState>(context, listen: false))
-        .then((_) {
-      /// Hide running loader on screen
-      myScreenLoader.hideLoader();
-
-      /// Navigate back to home page
-      Navigator.pop(context);
-    });
-  }
-
-  /// Return Tweet model which is either a new Tweet , retweet model or comment model
-  /// If tweet is new tweet then `parentkey` and `childRetwetkey` should be null
-  /// IF tweet is a comment then it should have `parentkey`
-  /// IF tweet is a retweet then it should have `childRetwetkey`
-  Feed createTweetModel() {
-    var state = Provider.of<FeedState>(context, listen: false);
-    var authState = Provider.of<AuthState>(context, listen: false);
-    var myUser = authState.getUser;
-    var profilePic = myUser.profilePict ?? mockProfilePicture;
-    var commentedUser = User(
-        displayName: myUser.displayName ?? myUser.email.split('@')[0],
-        profilePict: profilePic,
-        userId: myUser.userId,
-        isVerified: authState.getUser.isVerified,
-        userName: authState.getUser.userName);
-    var tags = getHashTags(textEditingController.text);
-    Feed reply = Feed(
-        description: textEditingController.text,
-        user: commentedUser,
-        createdAt: DateTime.now().toUtc().toString(),
-        tags: tags,
-        parentKey: widget.isTweet
-            ? null
-            : widget.isRetweet ? null : state.getTweetToReply.key,
-        childRetweetKey:
-        widget.isTweet ? null : widget.isRetweet ? feed.key : null,
-        userId: myUser.userId);
-    return reply;
-  }
-
   @override
   Widget build(BuildContext context) {
+    var feedState = Provider.of<FeedState>(context, listen: false);
+    var tweetState = Provider.of<TweetState>(context, listen: false);
+    var searchState = Provider.of<SearchState>(context, listen: false);
+    var authState = Provider.of<AuthState>(context, listen: false);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: customText(''),
-        onActionPressed: _submitButton,
+        onActionPressed: () async {
+          if (textEditingController.text == null ||
+              textEditingController.text.isEmpty ||
+              textEditingController.text.length > 280) {
+            return;
+          }
+
+          myScreenLoader.showLoader(context);
+
+          var myUser = authState.getUser;
+          var profilePict = myUser.profilePict ?? mockProfilePicture;
+          var commentedUser = User(
+              displayName: myUser.displayName ?? myUser.email.split('@')[0],
+              profilePict: profilePict,
+              userId: myUser.userId,
+              isVerified: authState.getUser.isVerified,
+              userName: authState.getUser.userName);
+          var tags = getHashTags(textEditingController.text);
+          Feed tweet = Feed(
+              description: textEditingController.text,
+              user: commentedUser,
+              createdAt: DateTime.now().toUtc().toString(),
+              tags: tags,
+              parentKey: widget.isTweet
+                  ? null
+                  : widget.isRetweet ? null : feedState.getTweetToReply.key,
+              childRetweetKey:
+              widget.isTweet ? null : widget.isRetweet ? feed.key : null,
+              userId: myUser.userId);
+
+          if (image != null) {
+            await feedState.uploadFile(image).then((imagePath) {
+              if (imagePath != null) {
+                tweet.imagePath = imagePath;
+                if (widget.isTweet) {
+                  feedState.createTweet(tweet);
+                } else if (widget.isRetweet) {
+                  feedState.createReTweet(tweet);
+                } else {
+                  feedState.addCommentToPost(tweet);
+                }
+              }
+            });
+          } else {
+            if (widget.isTweet) {
+              feedState.createTweet(tweet);
+            } else if (widget.isRetweet) {
+              feedState.createReTweet(tweet);
+            } else {
+              feedState.addCommentToPost(tweet);
+            }
+          }
+
+          await tweetState
+              .sendNotification(tweet, searchState)
+              .then((_) {
+            myScreenLoader.hideLoader();
+            Navigator.pop(context);
+          });
+        },
         isCrossButton: true,
         submitButtonText:
         widget.isTweet ? 'Tweet' : widget.isRetweet ? 'Retweet' : 'Reply',
         isSubmitDisable: !Provider
-            .of<Tweet>(context)
+            .of<TweetState>(context)
             .enableSubmitButton ||
             Provider
                 .of<FeedState>(context)
                 .isBusy,
         isBottomLine: Provider
-            .of<Tweet>(context)
+            .of<TweetState>(context)
             .isScrollingDown,
       ),
       backgroundColor: Theme.of(context).backgroundColor,
@@ -233,7 +195,7 @@ class _ComposeRetweet
 
   final ComposeTweetReplyPageState viewState;
 
-  Widget _tweet(BuildContext context, Feed model) {
+  Widget _tweet(BuildContext context, Feed feed) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -252,19 +214,19 @@ class _ComposeRetweet
                   Container(
                     width: 25,
                     height: 25,
-                    child: customImage(context, model.user.profilePict),
+                    child: customImage(context, feed.user.profilePict),
                   ),
                   SizedBox(width: 10),
                   ConstrainedBox(
                     constraints: BoxConstraints(
                         minWidth: 0, maxWidth: fullWidth(context) * .5),
-                    child: TitleText(model.user.displayName,
+                    child: TitleText(feed.user.displayName,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         overflow: TextOverflow.ellipsis),
                   ),
                   SizedBox(width: 3),
-                  model.user.isVerified
+                  feed.user.isVerified
                       ? TwitterIcon(
                     icon: AppIcon.blueTick,
                     iconColor: AppColor.primary,
@@ -272,16 +234,16 @@ class _ComposeRetweet
                     paddingIcon: 3,
                   )
                       : SizedBox(width: 0),
-                  SizedBox(width: model.user.isVerified ? 5 : 0),
+                  SizedBox(width: feed.user.isVerified ? 5 : 0),
                   Flexible(
                     child: CustomText(
-                      '${model.user.userName}',
+                      '${feed.user.userName}',
                       style: userNameStyle,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(width: 4),
-                  CustomText('· ${getChatTime(model.createdAt)}',
+                  CustomText('· ${getChatTime(feed.createdAt)}',
                       style: userNameStyle),
                   Expanded(child: SizedBox()),
                 ],
@@ -290,7 +252,7 @@ class _ComposeRetweet
           ),
         ),
         UrlText(
-          text: model.description,
+          text: feed.description,
           style: TextStyle(
             color: Colors.black,
             fontSize: 14,
@@ -305,6 +267,8 @@ class _ComposeRetweet
   @override
   Widget build(BuildContext context) {
     var authState = Provider.of<AuthState>(context);
+    var searchState = Provider.of<SearchState>(context);
+    var tweetState = Provider.of<TweetState>(context);
     return Container(
       height: fullHeight(context),
       child: Column(
@@ -353,10 +317,12 @@ class _ComposeRetweet
                     ),
                   ],
                 ),
-                UserList(
-                  list: Provider
-                      .of<SearchState>(context)
-                      .users,
+                !tweetState.displayUserList ||
+                    searchState.users == null ||
+                    searchState.users.length <= 0
+                    ? SizedBox.shrink()
+                    : UserList(
+                  data: searchState.users,
                   textEditingController: viewState.textEditingController,
                 )
               ],
@@ -469,6 +435,8 @@ class ComposeTweet extends View<ComposeTweetPage, ComposeTweetReplyPageState> {
   @override
   Widget build(BuildContext context) {
     var authState = Provider.of<AuthState>(context, listen: false);
+    var searchState = Provider.of<SearchState>(context);
+    var tweetState = Provider.of<TweetState>(context);
     return Container(
       height: fullHeight(context),
       padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -499,10 +467,12 @@ class ComposeTweet extends View<ComposeTweetPage, ComposeTweetReplyPageState> {
                   image: viewState.image,
                   onCrossIconPressed: viewState._onCrossIconPressed,
                 ),
-                UserList(
-                  list: Provider
-                      .of<SearchState>(context)
-                      .users,
+                !tweetState.displayUserList ||
+                    searchState.users == null ||
+                    searchState.users.length <= 0
+                    ? SizedBox.shrink()
+                    : UserList(
+                  data: searchState.users,
                   textEditingController: viewState.textEditingController,
                 )
               ],
@@ -533,7 +503,7 @@ class _TextField extends StatelessWidget {
         TextField(
           controller: textEditingController,
           onChanged: (text) {
-            Provider.of<Tweet>(context, listen: false)
+            Provider.of<TweetState>(context, listen: false)
                 .onDescriptionChanged(text, searchState);
           },
           maxLines: null,

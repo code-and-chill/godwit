@@ -6,39 +6,33 @@ import 'package:twitter/utilities/theme.dart';
 import 'package:twitter/widgets/user/user_tile.dart';
 
 class UserList extends StatelessWidget {
-  const UserList({Key key, this.list, this.textEditingController})
+  const UserList({Key key, this.data, this.textEditingController})
       : super(key: key);
-  final List<User> list;
+  final List<User> data;
   final TextEditingController textEditingController;
 
   @override
   Widget build(BuildContext context) {
-    return !Provider.of<Tweet>(context).displayUserList ||
-            list == null ||
-            list.length < 0 ||
-            list.length == 0
-        ? SizedBox.shrink()
-        : Container(
-            padding: EdgeInsetsDirectional.only(bottom: 50),
-            color: TwitterColor.white,
-            constraints:
-                BoxConstraints(minHeight: 30, maxHeight: double.infinity),
-            child: ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                return UserTile(
-                  user: list[index],
-                  onTap: (user) {
-                    textEditingController.text = Provider.of<Tweet>(context)
-                            .getDescription(user.userName) +
-                        " ";
-                    textEditingController.selection = TextSelection.collapsed(
-                        offset: textEditingController.text.length);
-                    Provider.of<Tweet>(context).onUserSelected();
-                  },
-                );
-              },
-            ),
+    return Container(
+      padding: EdgeInsetsDirectional.only(bottom: 50),
+      color: TwitterColor.white,
+      constraints: BoxConstraints(minHeight: 30, maxHeight: double.infinity),
+      child: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return UserTile(
+            user: data[index],
+            onTap: (user) {
+              textEditingController.text = Provider.of<TweetState>(context)
+                      .getDescription(user.userName) +
+                  " ";
+              textEditingController.selection = TextSelection.collapsed(
+                  offset: textEditingController.text.length);
+              Provider.of<TweetState>(context).onUserSelected();
+            },
           );
+        },
+      ),
+    );
   }
 }

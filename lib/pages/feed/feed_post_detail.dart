@@ -42,7 +42,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
 
   Widget _commentRow(Feed model) {
     return Tweet(
-      model: model,
+      feed: model,
       type: TweetType.Reply,
       trailing:
           TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Reply),
@@ -51,7 +51,7 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
 
   Widget _tweetDetail(Feed model) {
     return Tweet(
-      model: model,
+      feed: model,
       type: TweetType.Detail,
       trailing:
       TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Detail),
