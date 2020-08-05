@@ -12,19 +12,19 @@ import 'package:twitter/widgets/image/icons_row.dart';
 import 'package:twitter/widgets/image/network_image.dart';
 
 class ImageViewPge extends StatefulWidget {
-  _ImageViewPgeState createState() => _ImageViewPgeState();
+  ImageViewPageState createState() => ImageViewPageState();
 }
 
-class _ImageViewPgeState extends State<ImageViewPge> {
+class ImageViewPageState extends State<ImageViewPge> {
   bool isToolAvailable = true;
 
-  FocusNode _focusNode;
-  TextEditingController _textEditingController;
+  FocusNode focusNode;
+  TextEditingController textEditingController;
 
   @override
   void initState() {
-    _focusNode = FocusNode();
-    _textEditingController = TextEditingController();
+    focusNode = FocusNode();
+    textEditingController = TextEditingController();
     super.initState();
   }
 
@@ -44,7 +44,17 @@ class _ImageViewPgeState extends State<ImageViewPge> {
                   isToolAvailable = !isToolAvailable;
                 });
               },
-              child: _imageFeed(state.getTweetDetails.last.imagePath),
+              child: state.getTweetDetails.last.imagePath == null
+                  ? Container()
+                  : Container(
+                      alignment: Alignment.center,
+                      child: Container(
+                        child: CustomNetworkImage(
+                          state.getTweetDetails.last.imagePath,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
             ),
           ),
         ),
@@ -85,9 +95,10 @@ class _ImageViewPgeState extends State<ImageViewPge> {
                       ),
                       Container(
                         color: Colors.brown.shade700.withAlpha(200),
-                        padding: EdgeInsets.only(right: 10, left: 10, bottom: 10),
+                        padding:
+                        EdgeInsets.only(right: 10, left: 10, bottom: 10),
                         child: TextField(
-                          controller: _textEditingController,
+                          controller: textEditingController,
                           maxLines: null,
                           style: TextStyle(color: Colors.white),
                           decoration: InputDecoration(
@@ -134,32 +145,12 @@ class _ImageViewPgeState extends State<ImageViewPge> {
     );
   }
 
-  Widget _imageFeed(String _image) {
-    return _image == null
-        ? Container()
-        : Container(
-            alignment: Alignment.center,
-            child: Container(
-              child: CustomNetworkImage(
-                _image,
-                fit: BoxFit.fitWidth,
-              ),
-            ),
-          );
-  }
-
-  void addLikeToTweet() {
-    var state = Provider.of<FeedState>(context, listen: false);
-    var authState = Provider.of<AuthState>(context, listen: false);
-    state.addLikeToTweet(state.getTweetDetails.last, authState.userId);
-  }
-
   void _submitButton() {
-    if (_textEditingController.text == null ||
-        _textEditingController.text.isEmpty) {
+    if (textEditingController.text == null ||
+        textEditingController.text.isEmpty) {
       return;
     }
-    if (_textEditingController.text.length > 280) {
+    if (textEditingController.text.length > 280) {
       return;
     }
     var state = Provider.of<FeedState>(context, listen: false);
@@ -169,10 +160,10 @@ class _ImageViewPgeState extends State<ImageViewPge> {
     if (profilePic == null) {
       profilePic = mockProfilePicture;
     }
-    var name = authState.getUser.displayName ??
-        authState.getUser.email.split('@')[0];
+    var name =
+        authState.getUser.displayName ?? authState.getUser.email.split('@')[0];
     var pic = authState.getUser.profilePict ?? mockProfilePicture;
-    var tags = getHashTags(_textEditingController.text);
+    var tags = getHashTags(textEditingController.text);
 
     User commentedUser = User(
         displayName: name,
@@ -184,7 +175,7 @@ class _ImageViewPgeState extends State<ImageViewPge> {
     var postId = state.getTweetDetails.last.key;
 
     Feed reply = Feed(
-      description: _textEditingController.text,
+      description: textEditingController.text,
       user: commentedUser,
       createdAt: DateTime.now().toUtc().toString(),
       tags: tags,
@@ -192,9 +183,9 @@ class _ImageViewPgeState extends State<ImageViewPge> {
       parentKey: postId,
     );
     state.addCommentToPost(reply);
-    FocusScope.of(context).requestFocus(_focusNode);
+    FocusScope.of(context).requestFocus(focusNode);
     setState(() {
-      _textEditingController.text = '';
+      textEditingController.text = '';
     });
   }
 

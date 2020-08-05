@@ -89,7 +89,7 @@ class AuthState extends AppState {
       loading = false;
       cprint(error, errorIn: 'signIn');
       firebaseAnalytics.logLogin(loginMethod: 'email_login');
-      customSnackBar(scaffoldKey, error.message);
+      customSnackBar(scaffoldKey, error.chat);
       // logoutCallback();
       return null;
     }
@@ -193,7 +193,7 @@ class AuthState extends AppState {
     } catch (error) {
       loading = false;
       cprint(error, errorIn: 'signUp');
-      customSnackBar(scaffoldKey, error.message);
+      customSnackBar(scaffoldKey, error.chat);
       return null;
     }
   }
@@ -269,12 +269,12 @@ class AuthState extends AppState {
         'An email verification link is send to your email.',
       );
     }).catchError((error) {
-      cprint(error.message, errorIn: 'sendEmailVerification');
+      cprint(error.chat, errorIn: 'sendEmailVerification');
       logEvent('email_verification_block',
           parameter: {getUser.displayName: user.email});
       customSnackBar(
         scaffoldKey,
-        error.message,
+        error.chat,
       );
     });
   }
@@ -295,11 +295,11 @@ class AuthState extends AppState {
             'A reset password link is sent yo your mail.You can reset your password from there');
         logEvent('forgot+password');
       }).catchError((error) {
-        cprint(error.message);
+        cprint(error.chat);
         return false;
       });
     } catch (error) {
-      customSnackBar(scaffoldKey, error.message);
+      customSnackBar(scaffoldKey, error.chat);
       return Future.value(false);
     }
   }

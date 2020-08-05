@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitter/model/feed.dart';
-import 'package:twitter/model/notification.dart';
 import 'package:twitter/model/user.dart';
 import 'package:twitter/states/auth.dart';
 import 'package:twitter/states/feed/feed.dart';
@@ -60,36 +59,13 @@ class _NotificationPageState extends State<NotificationPage> {
 class NotificationPageBody extends StatelessWidget {
   const NotificationPageBody({Key key}) : super(key: key);
 
-  Widget _notificationRow(BuildContext context, TwitterNotification model) {
-    var state = Provider.of<NotificationState>(context);
-    return FutureBuilder(
-      future: state.getTweetDetail(model.tweetKey),
-      builder: (BuildContext context, AsyncSnapshot<Feed> snapshot) {
-        if (snapshot.hasData) {
-          return NotificationTile(
-            model: snapshot.data,
-          );
-        } else if (snapshot.connectionState == ConnectionState.waiting ||
-            snapshot.connectionState == ConnectionState.active) {
-          return SizedBox(
-            height: 4,
-            child: LinearProgressIndicator(),
-          );
-        } else {
-          /// remove notification from firebase db if tweet in not available or deleted.
-          var authstate = Provider.of<AuthState>(context);
-          state.removeNotification(authstate.userId, model.tweetKey);
-          return SizedBox();
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    var state = Provider.of<NotificationState>(context);
-    var list = state.notificationList;
-    if (state?.isAppBusy ?? true && (list == null || list.isEmpty)) {
+    var notificationState = Provider.of<NotificationState>(context);
+    var authState = Provider.of<AuthState>(context);
+    var list = notificationState.notificationList;
+    if (notificationState?.isAppBusy ??
+        true && (list == null || list.isEmpty)) {
       return SizedBox(
         height: 3,
         child: LinearProgressIndicator(),
@@ -105,33 +81,52 @@ class NotificationPageBody extends StatelessWidget {
     }
     return ListView.builder(
       addAutomaticKeepAlives: true,
-      itemBuilder: (context, index) => _notificationRow(context, list[index]),
+      itemBuilder: (context, index) => FutureBuilder(
+        future: notificationState.getTweetDetail(list[index].tweetKey),
+        builder: (BuildContext context, AsyncSnapshot<Feed> snapshot) {
+          if (snapshot.hasData) {
+            return NotificationTile(
+              feed: snapshot.data,
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting ||
+              snapshot.connectionState == ConnectionState.active) {
+            return SizedBox(
+              height: 4,
+              child: LinearProgressIndicator(),
+            );
+          } else {
+            notificationState.removeNotification(
+                authState.userId, list[index].tweetKey);
+            return SizedBox();
+          }
+        },
+      ),
       itemCount: list.length,
     );
   }
 }
 
 class NotificationTile extends StatelessWidget {
-  final Feed model;
+  final Feed feed;
 
-  const NotificationTile({Key key, this.model}) : super(key: key);
+  const NotificationTile({Key key, this.feed}) : super(key: key);
 
   Widget _userList(BuildContext context, List<String> list) {
     // List<String> names = [];
     var length = list.length;
-    List<Widget> avaterList = [];
+    List<Widget> avatarList = [];
     final int noOfUser = list.length;
     var state = Provider.of<NotificationState>(context);
     if (list != null && list.length > 5) {
       list = list.take(5).toList();
     }
-    avaterList = list.map((userId) {
-      return _userAvater(userId, state, (name) {
+    avatarList = list.map((userId) {
+      return UserAvatar(userId, state, (name) {
         // names.add(name);
       });
     }).toList();
     if (noOfUser > 5) {
-      avaterList.add(
+      avatarList.add(
         Text(
           " +${noOfUser - 5}",
           style: subtitleStyle.copyWith(fontSize: 16),
@@ -150,7 +145,7 @@ class NotificationTile extends StatelessWidget {
                 iconColor: TwitterColor.ceriseRed,
                 size: 25),
             SizedBox(width: 10),
-            Row(children: avaterList),
+            Row(children: avatarList),
           ],
         ),
         // names.length > 0 ? Text(names[0]) : SizedBox(),
@@ -168,8 +163,8 @@ class NotificationTile extends StatelessWidget {
     return col;
   }
 
-  Widget _userAvater(
-      String userId, NotificationState state, ValueChanged<String> name) {
+  Widget UserAvatar(String userId, NotificationState state,
+      ValueChanged<String> name) {
     return FutureBuilder(
       future: state.getuserDetail(userId),
       //  initialData: InitialData,
@@ -181,7 +176,8 @@ class NotificationTile extends StatelessWidget {
             child: GestureDetector(
               onTap: () {
                 Navigator.of(context)
-                    .pushNamed('/ProfilePage/' + snapshot.data?.userId);
+                    .pushNamed(
+                    '/' + page.Profile + '/' + snapshot.data?.userId);
               },
               child:
                   customImage(context, snapshot.data.profilePict, height: 30),
@@ -196,9 +192,9 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var description = model.description.length > 150
-        ? model.description.substring(0, 150) + '...'
-        : model.description;
+    var description = feed.description.length > 150
+        ? feed.description.substring(0, 150) + '...'
+        : feed.description;
     return Column(
       children: <Widget>[
         Container(
@@ -207,10 +203,11 @@ class NotificationTile extends StatelessWidget {
           child: ListTile(
             onTap: () {
               var state = Provider.of<FeedState>(context, listen: false);
-              state.getPostDetailFromDatabase(null, feed: model);
-              Navigator.of(context).pushNamed('/FeedPostDetail/' + model.key);
+              state.getPostDetailFromDatabase(null, feed: feed);
+              Navigator.of(context).pushNamed(
+                  '/' + page.FeedPostDetail + '/' + feed.key);
             },
-            title: _userList(context, model.likes),
+            title: _userList(context, feed.likes),
             subtitle: Padding(
               padding: EdgeInsets.only(left: 60),
               child: UrlText(

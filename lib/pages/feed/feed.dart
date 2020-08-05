@@ -23,23 +23,19 @@ class FeedPage extends StatelessWidget {
 
   final GlobalKey<RefreshIndicatorState> refreshIndicatorKey;
 
-  Widget _floatingActionButton(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed('/' + page.CreateFeed + '/tweet');
-      },
-      child: TwitterIcon(
-        icon: AppIcon.fabTweet,
-        iconColor: Theme.of(context).colorScheme.onPrimary,
-        size: 25,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: _floatingActionButton(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/' + page.CreateFeed + '/tweet');
+        },
+        child: TwitterIcon(
+          icon: AppIcon.fabTweet,
+          iconColor: Theme.of(context).colorScheme.onPrimary,
+          size: 25,
+        ),
+      ),
       backgroundColor: TwitterColor.mystic,
       body: SafeArea(
         child: Container(

@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twitter/model/feed.dart';
-import 'package:twitter/states/auth.dart';
 import 'package:twitter/states/feed/feed.dart';
 import 'package:twitter/utilities/enum.dart';
 import 'package:twitter/utilities/page.dart' as page;
@@ -15,69 +13,21 @@ class FeedPostDetail extends StatefulWidget {
   FeedPostDetail({Key key, this.postId}) : super(key: key);
   final String postId;
 
-  _FeedPostDetailState createState() => _FeedPostDetailState();
+  FeedPostDetailState createState() => FeedPostDetailState();
 }
 
-class _FeedPostDetailState extends State<FeedPostDetail> {
+class FeedPostDetailState extends State<FeedPostDetail> {
   String postId;
 
   @override
   void initState() {
     postId = widget.postId;
-    // var state = Provider.of<FeedState>(context, listen: false);
-    // state.getpostDetailFromDatabase(postId);
     super.initState();
-  }
-
-  Widget _floatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        var state = Provider.of<FeedState>(context, listen: false);
-        state.setTweetToReply = state.getTweetDetails?.last;
-        Navigator.of(context).pushNamed('/ComposeTweetPage/' + postId);
-      },
-      child: Icon(Icons.add),
-    );
-  }
-
-  Widget _commentRow(Feed model) {
-    return Tweet(
-      feed: model,
-      type: TweetType.Reply,
-      trailing:
-          TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Reply),
-    );
-  }
-
-  Widget _tweetDetail(Feed model) {
-    return Tweet(
-      feed: model,
-      type: TweetType.Detail,
-      trailing:
-      TweetBottomSheet().tweetOptionIcon(context, model, TweetType.Detail),
-    );
-  }
-
-  void addLikeToComment(String commentId) {
-    var state = Provider.of<FeedState>(context, listen: false);
-    var authState = Provider.of<AuthState>(context, listen: false);
-    state.addLikeToTweet(state.getTweetDetails.last, authState.userId);
-  }
-
-  void openImage() async {
-    Navigator.pushNamed(context, '/' + page.ImageView);
-  }
-
-  void deleteTweet(TweetType type, String tweetId, {String parentKey}) {
-    var state = Provider.of<FeedState>(context, listen: false);
-    state.deleteTweet(tweetId, type, parentKey: parentKey);
-    Navigator.of(context).pop();
-    if (type == TweetType.Detail) Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    var state = Provider.of<FeedState>(context);
+    var feedState = Provider.of<FeedState>(context);
     return WillPopScope(
       onWillPop: () async {
         Provider.of<FeedState>(context, listen: false)
@@ -85,7 +35,15 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
         return Future.value(true);
       },
       child: Scaffold(
-        floatingActionButton: _floatingActionButton(),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            var state = Provider.of<FeedState>(context, listen: false);
+            state.setTweetToReply = state.getTweetDetails?.last;
+            Navigator.of(context)
+                .pushNamed('/ ' + page.ComposeTweet + '/' + postId);
+          },
+          child: Icon(Icons.add),
+        ),
         backgroundColor: Theme.of(context).backgroundColor,
         body: CustomScrollView(
           slivers: <Widget>[
@@ -105,10 +63,17 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  state.getTweetDetails == null ||
-                      state.getTweetDetails.length == 0
+                  feedState.getTweetDetails == null ||
+                      feedState.getTweetDetails.length == 0
                       ? Container()
-                      : _tweetDetail(state.getTweetDetails?.last),
+                      : Tweet(
+                    feed: feedState.getTweetDetails?.last,
+                    type: TweetType.Detail,
+                    trailing: TweetBottomSheet().tweetOptionIcon(
+                        context,
+                        feedState.getTweetDetails?.last,
+                        TweetType.Detail),
+                  ),
                   Container(
                     height: 6,
                     width: fullWidth(context),
@@ -119,18 +84,22 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
             ),
             SliverList(
               delegate: SliverChildListDelegate(
-                state.tweetReplyMap == null ||
-                    state.tweetReplyMap.length == 0 ||
-                    state.tweetReplyMap[postId] == null
+                feedState.tweetReplyMap == null ||
+                    feedState.tweetReplyMap.length == 0 ||
+                    feedState.tweetReplyMap[postId] == null
                     ? [
                   Container(
-                    child: Center(
-                      //  child: Text('No comments'),
-                    ),
+                    child: Center(),
                   )
                 ]
-                    : state.tweetReplyMap[postId]
-                    .map((x) => _commentRow(x))
+                    : feedState.tweetReplyMap[postId]
+                    .map((x) =>
+                    Tweet(
+                      feed: x,
+                      type: TweetType.Reply,
+                      trailing: TweetBottomSheet()
+                          .tweetOptionIcon(context, x, TweetType.Reply),
+                    ))
                     .toList(),
               ),
             )
